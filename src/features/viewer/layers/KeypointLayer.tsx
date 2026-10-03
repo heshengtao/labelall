@@ -1,6 +1,6 @@
-import { Circle, Group, Line, Rect, Text } from 'react-konva'
-import type Konva from 'konva'
+import { Circle, Line, Rect, Text } from 'react-konva'
 
+import { AnnotationGroup } from './AnnotationGroup'
 import type { AnnotationLayerProps } from './types'
 
 export function KeypointLayer({
@@ -11,10 +11,9 @@ export function KeypointLayer({
   scale,
   selectedIndex,
   hoveredIndex,
-  editable,
-  onSelect,
+  moveOffset,
   onHover,
-  onMove,
+  onShapeStart,
 }: AnnotationLayerProps) {
   return (
     <>
@@ -27,26 +26,16 @@ export function KeypointLayer({
         const hovered = hoveredIndex === index
         const skeleton = schemaOf(annotation.categoryId)?.skeleton ?? []
         const { bbox, keypoints } = annotation
+        const offset = moveOffset?.index === index ? { dx: moveOffset.dx, dy: moveOffset.dy } : null
 
         return (
-          <Group
+          <AnnotationGroup
             key={index}
-            x={0}
-            y={0}
-            draggable={editable && selected}
-            onClick={(event: Konva.KonvaEventObject<MouseEvent>) => {
-              event.cancelBubble = true
-              onSelect(index)
-            }}
-            onMouseEnter={() => onHover(index)}
-            onMouseLeave={() => onHover(null)}
-            onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) => {
-              const { x, y } = event.target.position()
-              event.target.position({ x: 0, y: 0 })
-              if (x !== 0 || y !== 0) {
-                onMove(index, x, y)
-              }
-            }}
+            index={index}
+            offset={offset}
+            onStart={onShapeStart}
+            onEnter={onHover}
+            onLeave={() => onHover(null)}
           >
             {skeleton.map(([from, to], skeletonIndex) => {
               // COCO stores skeleton indices 1-based; the keypoint list is 0-based.
@@ -102,7 +91,7 @@ export function KeypointLayer({
                 listening={false}
               />
             ) : null}
-          </Group>
+          </AnnotationGroup>
         )
       })}
     </>

@@ -3,22 +3,31 @@ import { useEffect, useRef, useState } from 'react'
 import type Konva from 'konva'
 import { Circle, Group, Image as KonvaImage, Layer, Line, Rect, Stage } from 'react-konva'
 
-import type { BoxEdge } from '@/core/annotationEdits'
+import { resizeBBox, type BoxEdge } from '@/core/annotationEdits'
 import { bboxFromCorners } from '@/core/geometry'
 import type { BBox, KeypointSchema, Point, Polygon } from '@/core/model'
+import type { EditorTool, LayerVisibility } from '@/store/uiStore'
 
 import type { IndexedAnnotation } from './annotations'
 import { BBoxLayer } from './layers/BBoxLayer'
 import { KeypointLayer } from './layers/KeypointLayer'
 import { MaskLayer } from './layers/MaskLayer'
 import { PolygonLayer } from './layers/PolygonLayer'
-import type { EditorTool, LayerVisibility } from '@/store/uiStore'
 import { toImagePoint, type Viewport } from './viewport'
 
 interface BoxDraft {
   start: Point
   end: Point
 }
+
+/**
+ * In-progress mouse gesture on an annotation. The geometry is only committed on
+ * release, so a drag is a single undoable edit and never rerenders the store on
+ * every mouse move.
+ */
+type Interaction =
+  | { kind: 'move'; index: number; start: Point; current: Point }
+  | { kind: 'resize'; index: number; edge: BoxEdge; start: Point; current: Point }
 
 export interface CanvasStageProps {
   image: HTMLImageElement | null
@@ -69,16 +78,18 @@ export function CanvasStage({
 }: CanvasStageProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const stageRef = useRef<Konva.Stage | null>(null)
+  const suppressClick = useRef(false)
   const [size, setSize] = useState({ width: 0, height: 0 })
   const [spaceHeld, setSpaceHeld] = useState(false)
   const [middleHeld, setMiddleHeld] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [interaction, setInteraction] = useState<Interaction | null>(null)
 
   const [draftBox, setDraftBox] = useState<BoxDraft | null>(null)
   const [draftPolygon, setDraftPolygon] = useState<Point[]>([])
   const [draftKeypoints, setDraftKeypoints] = useState<Point[]>([])
 
-  // Reset any in-progress drawing when the tool or the image changes.
+  // Reset any in-progress gesture when the tool or the image changes.
   const draftKey = `${tool}:${activeCategoryId ?? -1}:${imageWidth}x${imageHeight}`
   const [lastDraftKey, setLastDraftKey] = useState(draftKey)
   if (draftKey !== lastDraftKey) {
@@ -86,6 +97,7 @@ export function CanvasStage({
     setDraftBox(null)
     setDraftPolygon([])
     setDraftKeypoints([])
+    setInteraction(null)
   }
 
   useEffect(() => {
@@ -129,6 +141,7 @@ export function CanvasStage({
         setDraftBox(null)
         setDraftPolygon([])
         setDraftKeypoints([])
+        setInteraction(null)
       } else if (event.key === 'Backspace' && draftPolygon.length > 0) {
         event.preventDefault()
         setDraftPolygon((previous) => previous.slice(0, -1))
@@ -143,6 +156,72 @@ export function CanvasStage({
     return pointer ? toImagePoint(viewport, pointer) : null
   }
 
+  const beginMove = (index: number): void => {
+    if (tool !== 'select') {
+      return
+    }
+    const point = pointerToImage()
+    if (!point) {
+      return
+    }
+    onSelect(index)
+    setInteraction({ kind: 'move', index, start: point, current: point })
+  }
+
+  const beginResize = (index: number, edge: BoxEdge): void => {
+    if (tool !== 'select') {
+      return
+    }
+    const point = pointerToImage()
+    if (!point) {
+      return
+    }
+    onSelect(index)
+    setInteraction({ kind: 'resize', index, edge, start: point, current: point })
+  }
+
+  const commitInteraction = (): void => {
+    if (!interaction) {
+      return
+    }
+    if (interaction.kind === 'move') {
+      const dx = interaction.current.x - interaction.start.x
+      const dy = interaction.current.y - interaction.start.y
+      if (dx !== 0 || dy !== 0) {
+        onMove(interaction.index, dx, dy)
+      }
+    } else {
+      onResize(interaction.index, interaction.edge, interaction.current)
+    }
+    // Swallow the click that follows the release, so it cannot clear selection.
+    suppressClick.current = true
+    setInteraction(null)
+  }
+
+  // Live previews handed to the layers; nothing is written to the store yet.
+  const moveOffset =
+    interaction?.kind === 'move'
+      ? {
+          index: interaction.index,
+          dx: interaction.current.x - interaction.start.x,
+          dy: interaction.current.y - interaction.start.y,
+        }
+      : null
+
+  const resizePreview = ((): { index: number; box: BBox } | null => {
+    if (interaction?.kind !== 'resize') {
+      return null
+    }
+    const annotation = annotations.find((entry) => entry.index === interaction.index)?.annotation
+    if (!annotation || annotation.type !== 'bbox') {
+      return null
+    }
+    return {
+      index: interaction.index,
+      box: resizeBBox(annotation.bbox, interaction.edge, interaction.current),
+    }
+  })()
+
   const draftColor = colorOf(activeCategoryId ?? -1)
   const editable = tool === 'select'
   const layerProps = {
@@ -154,23 +233,31 @@ export function CanvasStage({
     selectedIndex,
     hoveredIndex,
     editable,
-    onSelect,
+    moveOffset,
+    resize: resizePreview,
     onHover: setHoveredIndex,
-    onMove,
-    onResize,
+    onShapeStart: beginMove,
+    onHandleStart: beginResize,
   }
+
+  const cursor =
+    spaceHeld || middleHeld
+      ? 'grabbing'
+      : interaction?.kind === 'resize'
+        ? 'nwse-resize'
+        : interaction?.kind === 'move'
+          ? 'move'
+          : editable && hoveredIndex !== null
+            ? 'move'
+            : tool === 'select'
+              ? 'default'
+              : 'crosshair'
 
   return (
     <div
       ref={containerRef}
       data-testid="canvas-stage"
-      style={{
-        position: 'relative',
-        flex: 1,
-        minHeight: 0,
-        overflow: 'hidden',
-        cursor: spaceHeld || middleHeld ? 'grabbing' : tool === 'select' ? 'default' : 'crosshair',
-      }}
+      style={{ position: 'relative', flex: 1, minHeight: 0, overflow: 'hidden', cursor }}
     >
       <Stage
         ref={stageRef}
@@ -195,16 +282,26 @@ export function CanvasStage({
           }
         }}
         onMouseMove={() => {
-          if (!draftBox) {
+          if (interaction) {
+            const point = pointerToImage()
+            if (point) {
+              setInteraction({ ...interaction, current: point })
+            }
             return
           }
-          const point = pointerToImage()
-          if (point) {
-            setDraftBox({ start: draftBox.start, end: point })
+          if (draftBox) {
+            const point = pointerToImage()
+            if (point) {
+              setDraftBox({ start: draftBox.start, end: point })
+            }
           }
         }}
         onMouseUp={() => {
           setMiddleHeld(false)
+          if (interaction) {
+            commitInteraction()
+            return
+          }
           if (draftBox) {
             const box = bboxFromCorners(
               draftBox.start.x,
@@ -218,7 +315,15 @@ export function CanvasStage({
             }
           }
         }}
+        onMouseLeave={() => {
+          // Releasing outside the canvas would otherwise leave the drag stuck.
+          commitInteraction()
+        }}
         onClick={(event: Konva.KonvaEventObject<MouseEvent>) => {
+          if (suppressClick.current) {
+            suppressClick.current = false
+            return
+          }
           if (tool === 'polygon') {
             const point = pointerToImage()
             if (point) {
@@ -259,9 +364,13 @@ export function CanvasStage({
             scaleX={viewport.scale}
             scaleY={viewport.scale}
             draggable={spaceHeld || middleHeld}
-            onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) =>
+            onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) => {
+              // Drag events bubble: only the pan group itself may move the view.
+              if (event.target !== event.currentTarget) {
+                return
+              }
               onPan(event.target.x(), event.target.y())
-            }
+            }}
           >
             {image ? (
               <KonvaImage image={image} width={imageWidth} height={imageHeight} listening={false} />

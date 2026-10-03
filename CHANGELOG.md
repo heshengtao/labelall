@@ -28,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The VOC reader now resolves each annotation's image to the file that actually
   exists in the dataset, instead of assuming a `JPEGImages/` directory.
+- Dragging an annotation now follows the pointer live, commits a single undoable
+  move (or resize) on release, and no longer drags the whole canvas along with
+  it — Konva's nested drag events were bubbling into the pan handler.
 
 ## [0.1.0] - 2026-10-03
 

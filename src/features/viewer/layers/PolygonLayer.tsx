@@ -1,8 +1,8 @@
-import { Group, Line, Text } from 'react-konva'
-import type Konva from 'konva'
+import { Line, Text } from 'react-konva'
 
 import { bboxFromPolygons } from '@/core/geometry'
 
+import { AnnotationGroup } from './AnnotationGroup'
 import type { AnnotationLayerProps } from './types'
 
 export function PolygonLayer({
@@ -12,10 +12,9 @@ export function PolygonLayer({
   scale,
   selectedIndex,
   hoveredIndex,
-  editable,
-  onSelect,
+  moveOffset,
   onHover,
-  onMove,
+  onShapeStart,
 }: AnnotationLayerProps) {
   return (
     <>
@@ -28,26 +27,16 @@ export function PolygonLayer({
         const hovered = hoveredIndex === index
         const width = (selected ? 3 : hovered ? 2.5 : 1.5) / scale
         const bbox = annotation.bbox ?? bboxFromPolygons(annotation.polygons)
+        const offset = moveOffset?.index === index ? { dx: moveOffset.dx, dy: moveOffset.dy } : null
 
         return (
-          <Group
+          <AnnotationGroup
             key={index}
-            x={0}
-            y={0}
-            draggable={editable && selected}
-            onClick={(event: Konva.KonvaEventObject<MouseEvent>) => {
-              event.cancelBubble = true
-              onSelect(index)
-            }}
-            onMouseEnter={() => onHover(index)}
-            onMouseLeave={() => onHover(null)}
-            onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) => {
-              const { x, y } = event.target.position()
-              event.target.position({ x: 0, y: 0 })
-              if (x !== 0 || y !== 0) {
-                onMove(index, x, y)
-              }
-            }}
+            index={index}
+            offset={offset}
+            onStart={onShapeStart}
+            onEnter={onHover}
+            onLeave={() => onHover(null)}
           >
             {annotation.polygons.map((polygon, polygonIndex) => (
               <Line
@@ -69,7 +58,7 @@ export function PolygonLayer({
                 listening={false}
               />
             ) : null}
-          </Group>
+          </AnnotationGroup>
         )
       })}
     </>

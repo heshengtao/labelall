@@ -1,5 +1,5 @@
 import type { BoxEdge } from '@/core/annotationEdits'
-import type { KeypointSchema, Point } from '@/core/model'
+import type { BBox, KeypointSchema } from '@/core/model'
 import type { IndexedAnnotation } from '@/features/viewer/annotations'
 
 export interface AnnotationLayerProps {
@@ -12,10 +12,15 @@ export interface AnnotationLayerProps {
   scale: number
   selectedIndex: number | null
   hoveredIndex: number | null
-  /** Whether the selected annotation may be dragged / resized. */
+  /** Whether annotations react to the mouse — only in the select tool. */
   editable: boolean
-  onSelect: (index: number | null) => void
+  /** Live translation (in image units) for the annotation being dragged. */
+  moveOffset: { index: number; dx: number; dy: number } | null
+  /** Live preview box for the annotation being resized. */
+  resize: { index: number; box: BBox } | null
   onHover: (index: number | null) => void
-  onMove: (index: number, dx: number, dy: number) => void
-  onResize: (index: number, edge: BoxEdge, point: Point) => void
+  /** Start dragging an annotation. */
+  onShapeStart: (index: number) => void
+  /** Start dragging one of a box's resize handles. */
+  onHandleStart: (index: number, edge: BoxEdge) => void
 }

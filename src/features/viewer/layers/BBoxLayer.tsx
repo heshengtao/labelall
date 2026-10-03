@@ -1,8 +1,9 @@
-import { Group, Rect, Text } from 'react-konva'
 import type Konva from 'konva'
+import { Rect, Text } from 'react-konva'
 
-import { BOX_EDGES, type BoxEdge } from '@/core/annotationEdits'
+import { BOX_EDGES } from '@/core/annotationEdits'
 
+import { AnnotationGroup } from './AnnotationGroup'
 import { HANDLE_SIZE, handlePosition } from './handles'
 import type { AnnotationLayerProps } from './types'
 
@@ -14,10 +15,11 @@ export function BBoxLayer({
   selectedIndex,
   hoveredIndex,
   editable,
-  onSelect,
+  moveOffset,
+  resize,
   onHover,
-  onMove,
-  onResize,
+  onShapeStart,
+  onHandleStart,
 }: AnnotationLayerProps) {
   return (
     <>
@@ -25,37 +27,28 @@ export function BBoxLayer({
         if (annotation.type !== 'bbox') {
           return null
         }
-        const { bbox } = annotation
+        // While resizing, draw the live preview box instead of the stored one.
+        const box = resize?.index === index ? resize.box : annotation.bbox
         const color = colorOf(annotation.categoryId)
         const selected = selectedIndex === index
         const hovered = hoveredIndex === index
         const width = (selected ? 3 : hovered ? 2.5 : 1.5) / scale
+        const offset = moveOffset?.index === index ? { dx: moveOffset.dx, dy: moveOffset.dy } : null
 
         return (
-          <Group
+          <AnnotationGroup
             key={index}
-            x={0}
-            y={0}
-            draggable={editable && selected}
-            onClick={(event: Konva.KonvaEventObject<MouseEvent>) => {
-              event.cancelBubble = true
-              onSelect(index)
-            }}
-            onMouseEnter={() => onHover(index)}
-            onMouseLeave={() => onHover(null)}
-            onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) => {
-              const { x, y } = event.target.position()
-              event.target.position({ x: 0, y: 0 })
-              if (x !== 0 || y !== 0) {
-                onMove(index, x, y)
-              }
-            }}
+            index={index}
+            offset={offset}
+            onStart={onShapeStart}
+            onEnter={onHover}
+            onLeave={() => onHover(null)}
           >
             <Rect
-              x={bbox.x}
-              y={bbox.y}
-              width={bbox.width}
-              height={bbox.height}
+              x={box.x}
+              y={box.y}
+              width={box.width}
+              height={box.height}
               stroke={color}
               strokeWidth={width}
               fill={selected ? `${color}22` : undefined}
@@ -63,16 +56,16 @@ export function BBoxLayer({
             {selected || hovered ? (
               <Text
                 text={nameOf(annotation.categoryId)}
-                x={bbox.x}
-                y={bbox.y - 16 / scale}
+                x={box.x}
+                y={box.y - 16 / scale}
                 fontSize={13 / scale}
                 fill={color}
                 listening={false}
               />
             ) : null}
             {editable && selected
-              ? BOX_EDGES.map((edge: BoxEdge) => {
-                  const position = handlePosition(bbox, edge)
+              ? BOX_EDGES.map((edge) => {
+                  const position = handlePosition(box, edge)
                   const size = HANDLE_SIZE / scale
                   return (
                     <Rect
@@ -84,18 +77,16 @@ export function BBoxLayer({
                       fill="#ffffff"
                       stroke={color}
                       strokeWidth={1 / scale}
-                      draggable
-                      onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) => {
-                        onResize(index, edge, {
-                          x: event.target.x() + size / 2,
-                          y: event.target.y() + size / 2,
-                        })
+                      onMouseDown={(event: Konva.KonvaEventObject<MouseEvent>) => {
+                        // Do not let a handle also start a whole-annotation move.
+                        event.cancelBubble = true
+                        onHandleStart(index, edge)
                       }}
                     />
                   )
                 })
               : null}
-          </Group>
+          </AnnotationGroup>
         )
       })}
     </>
