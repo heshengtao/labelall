@@ -20,6 +20,13 @@ describe('detectFormat', () => {
     expect(candidates[0]).toMatchObject({ format: 'voc', confidence: 1 })
   })
 
+  it('detects VOC when the XML sits in class folders next to its image', async () => {
+    const candidates = await detect('voc-inline')
+    expect(candidates[0]).toMatchObject({ format: 'voc' })
+    expect(candidates[0]?.confidence).toBeGreaterThanOrEqual(0.9)
+    expect(candidates.some((candidate) => candidate.format === 'imagefolder')).toBe(true)
+  })
+
   it('detects YOLO from images/ + labels/ and the class names in data.yaml', async () => {
     const candidates = await detect('yolo')
     expect(candidates[0]).toMatchObject({ format: 'yolo', confidence: 1 })

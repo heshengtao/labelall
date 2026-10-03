@@ -10,7 +10,7 @@ import { parse as parseYaml } from 'yaml'
 
 import type { VocBoxPolicy } from '../geometry'
 import type { SourceFormat } from '../model'
-import { fileDirname, fileExtension } from '../path'
+import { fileDirname, fileExtension, fileStem } from '../path'
 
 /** A file or directory listed relative to the dataset root (using `/`). */
 export interface DetectedFile {
@@ -108,6 +108,11 @@ const MAX_PROBE_BYTES = 32 * 1024 * 1024
 
 function isImage(path: string): boolean {
   return IMAGE_EXTENSIONS.has(fileExtension(path))
+}
+
+/** Whether an XML file has an image with the same file stem in the same folder. */
+function hasSiblingImage(xmlPath: string, stemsByDir: Map<string, Set<string>>): boolean {
+  return stemsByDir.get(fileDirname(xmlPath))?.has(fileStem(xmlPath)) ?? false
 }
 
 interface JsonShape {
@@ -209,19 +214,38 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
   }
 
   // ---- Pascal VOC ----------------------------------------------------------
+  // Build a per-folder index of image stems so we can tell whether an XML file
+  // sits next to its image — the layout most tools actually produce, and one
+  // that often also groups images by class.
+  const imageStemsByDir = new Map<string, Set<string>>()
+  for (const image of images) {
+    const dir = fileDirname(image.path)
+    const stems = imageStemsByDir.get(dir) ?? new Set<string>()
+    stems.add(fileStem(image.path))
+    imageStemsByDir.set(dir, stems)
+  }
+
   const hasVocDirs = dirs.has('Annotations') && dirs.has('JPEGImages')
   const annotationXmls = xmlFiles.filter((entry) => /(^|\/)Annotations\//.test(entry.path))
+  const pairedXmls = xmlFiles.filter((entry) => hasSiblingImage(entry.path, imageStemsByDir))
+
   if (hasVocDirs && annotationXmls.length > 0) {
     candidates.push({
       format: 'voc',
       confidence: 1,
       reason: `Pascal VOC layout (Annotations/ + JPEGImages/, ${annotationXmls.length} XML files)`,
     })
-  } else if (annotationXmls.length > 0 && images.length > 0) {
+  } else if (pairedXmls.length > 0) {
     candidates.push({
       format: 'voc',
-      confidence: 0.6,
-      reason: `${annotationXmls.length} XML annotations alongside images`,
+      confidence: 0.9,
+      reason: `${pairedXmls.length} XML annotation(s) sitting next to their images`,
+    })
+  } else if (xmlFiles.length > 0 && images.length > 0) {
+    candidates.push({
+      format: 'voc',
+      confidence: 0.5,
+      reason: `${xmlFiles.length} XML files alongside images`,
     })
   }
 
@@ -279,17 +303,26 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
   // ---- Classification / ImageFolder ---------------------------------------
   const hasAnnotationFiles =
     jsonFiles.length > 0 || xmlFiles.length > 0 || yamlFiles.length > 0 || labelTxtFiles.length > 0
+  const parentDirs = new Set(images.map((entry) => fileDirname(entry.path)))
+  // A flat folder of images is a single implicit class; nested folders look
+  // like one directory per class.
+  const looksLikeClasses = parentDirs.size > 1 && !(parentDirs.size === 1 && parentDirs.has(''))
+  // With annotation files present, class folders are still a valid *alternative*
+  // reading: the folder name becomes an image-level label and the geometry is
+  // ignored. Offer it at a lower confidence so the user can pick.
   if (!hasAnnotationFiles && images.length > 0) {
-    const parentDirs = new Set(images.map((entry) => fileDirname(entry.path)))
-    // A flat folder of images is a single implicit class; nested folders look
-    // like one directory per class.
-    const looksLikeClasses = parentDirs.size > 1 && !(parentDirs.size === 1 && parentDirs.has(''))
     candidates.push({
       format: 'imagefolder',
       confidence: looksLikeClasses ? 0.8 : 0.4,
       reason: looksLikeClasses
         ? `Images grouped into ${parentDirs.size} directories (one per class)`
         : 'Images with no annotation files',
+    })
+  } else if (pairedXmls.length > 0 && looksLikeClasses) {
+    candidates.push({
+      format: 'imagefolder',
+      confidence: 0.5,
+      reason: `Class folders detected (${parentDirs.size}); XML annotations ignored`,
     })
   }
 

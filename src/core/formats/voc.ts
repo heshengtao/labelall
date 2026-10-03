@@ -25,8 +25,8 @@ import type {
   ImageRecord,
 } from '../model'
 import { assignCategoryColors } from '../palette'
-import { fileBasename, fileExtension, fileStem, joinPath } from '../path'
-import type { DetectedFile } from './detect'
+import { fileBasename, fileDirname, fileExtension, fileStem, joinPath } from '../path'
+import { IMAGE_EXTENSIONS, type DetectedFile } from './detect'
 import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
 
 const parser = new XMLParser({ ignoreAttributes: false, trimValues: true })
@@ -68,6 +68,19 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
     throw new Error('No Pascal VOC annotation XML files were found')
   }
 
+  // Index the images so each XML can be matched to the file it actually
+  // describes — whether they live in JPEGImages/ or side by side in a class
+  // folder, and whether the XML stores a bare name or a full path.
+  const imageFiles = options.files.filter(
+    (entry) => !entry.isDir && IMAGE_EXTENSIONS.has(fileExtension(entry.path)),
+  )
+  const imageByBasename = new Map<string, string>()
+  const imageByDirStem = new Map<string, string>()
+  for (const image of imageFiles) {
+    imageByBasename.set(fileBasename(image.path).toLowerCase(), image.path)
+    imageByDirStem.set(`${fileDirname(image.path)}\u0000${fileStem(image.path)}`, image.path)
+  }
+
   const categories: Category[] = []
   const categoryIdByName = new Map<string, number>()
   const images: ImageRecord[] = []
@@ -89,12 +102,35 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
       continue
     }
 
-    const fileName = String(node.filename ?? fileBasename(target.path).replace(/\.xml$/i, '.jpg'))
+    const declared = [node.filename, node.path]
+      .filter((value): value is string => typeof value === 'string' && value.length > 0)
+      .map((value) => fileBasename(value.replace(/\\/g, '/')))
+
+    let imagePath: string | undefined
+    for (const candidate of declared) {
+      const found = imageByBasename.get(candidate.toLowerCase())
+      if (found) {
+        imagePath = found
+        break
+      }
+    }
+    if (!imagePath) {
+      imagePath = imageByDirStem.get(`${fileDirname(target.path)}\u0000${fileStem(target.path)}`)
+    }
+
+    const fileName =
+      imagePath !== undefined
+        ? fileBasename(imagePath)
+        : (declared[0] ?? fileBasename(target.path).replace(/\.xml$/i, '.jpg'))
+    if (imagePath === undefined) {
+      warnings.push(`${target.path}: no matching image found; expected ${fileName}`)
+    }
+
     const size = (node.size ?? {}) as { width?: unknown; height?: unknown }
     const imageId = images.length
     images.push({
       id: imageId,
-      filePath: joinPath('JPEGImages', fileName),
+      filePath: imagePath ?? joinPath('JPEGImages', fileName),
       fileName,
       width: Number(size.width ?? 0) || 0,
       height: Number(size.height ?? 0) || 0,

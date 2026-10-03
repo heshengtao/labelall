@@ -31,6 +31,23 @@ describe('readVoc', () => {
     }
   })
 
+  it('reads XMLs that live next to their images in class folders', async () => {
+    const { dataset, warnings } = await readVoc({
+      root: 'voc-inline',
+      readText: fixtureReader('voc-inline'),
+      files: scanFixture('voc-inline'),
+    })
+    expect(dataset.images.map((image) => image.filePath)).toEqual(['classA/a.jpg', 'classB/b.jpg'])
+    expect(dataset.classNames).toEqual(['fuse', 'insulator'])
+    expect(dataset.annotations).toHaveLength(2)
+    expect(warnings).toEqual([])
+
+    const first = dataset.annotations[0]
+    if (first.type === 'bbox') {
+      expect(first.bbox).toEqual({ x: 0, y: 0, width: 10, height: 10 })
+    }
+  })
+
   it('round-trips through the writer without moving the box', async () => {
     const first = await readVoc({
       root: 'voc',

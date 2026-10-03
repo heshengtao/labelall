@@ -1,0 +1,17 @@
+<annotation>
+  <folder>classB</folder>
+  <size>
+    <width>50</width>
+    <height>50</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>insulator</name>
+    <bndbox>
+      <xmin>5</xmin>
+      <ymin>5</ymin>
+      <xmax>20</xmax>
+      <ymax>20</ymax>
+    </bndbox>
+  </object>
+</annotation>

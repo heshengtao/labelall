@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Tolerant VOC detection: XML annotations that sit next to their images (often
+  grouped in class folders) are now recognised, and offered alongside the
+  classification-folder reading of the same dataset.
+
+### Fixed
+
+- The VOC reader now resolves each annotation's image to the file that actually
+  exists in the dataset, instead of assuming a `JPEGImages/` directory.
+
 ## [0.1.0] - 2026-10-03
 
 ### Added
