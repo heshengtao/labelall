@@ -1,0 +1,42 @@
+{
+  "version": "5.4.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "cat",
+      "points": [
+        [10, 20],
+        [40, 60]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "dog",
+      "points": [
+        [5, 5],
+        [15, 5],
+        [15, 25],
+        [5, 25]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "cat",
+      "points": [
+        [1, 1],
+        [2, 2]
+      ],
+      "group_id": null,
+      "shape_type": "line",
+      "flags": {}
+    }
+  ],
+  "imagePath": "img1.jpg",
+  "imageData": null,
+  "imageHeight": 240,
+  "imageWidth": 320
+}

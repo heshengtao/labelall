@@ -37,8 +37,8 @@ LabelAll 是一个开源的图片数据集工具，用来**加载、查看和标
 | **COCO** (json) | `*.json` 含 `images`/`annotations`/`categories` | ✅ | 🚧 | 含多边形与 RLE 分割、关键点、`iscrowd` |
 | **YOLO** (txt + yaml) | 同级 `images/` + `labels/`，`*.yaml` 含 `names:` | 🚧 | 🚧 | 检测 / 分割 / 姿态三种任务 |
 | **Pascal VOC** (xml) | `Annotations/*.xml` + `JPEGImages/` | 🚧 | 🚧 | 1 基闭区间坐标，可配置换算策略 |
-| **分类文件夹 / ImageNet** | 类名子目录，无标注文件 | 🚧 | 🚧 | 目录名字典序即类别顺序 |
-| **labelme** (json) | `*.json` 含 `shapes`/`imagePath` | 🚧 | — | 便于与 labelme 互通 |
+| **分类文件夹 / ImageNet** | 类名子目录，无标注文件 | ✅ | 🚧 | 目录名字典序即类别顺序 |
+| **labelme** (json) | `*.json` 含 `shapes`/`imagePath` | ✅ | — | 便于与 labelme 互通 |
 
 图例：✅ 已完成 · 🚧 开发中 · — 不计划支持
 
@@ -107,7 +107,7 @@ pnpm tauri build  # 打包桌面安装包
 ### 路线图
 
 - [x] **M0** 工程脚手架、MD3 主题、Tauri 集成、CI
-- [ ] **M1** 统一数据模型、格式探测、COCO / ImageFolder 读取
+- [x] **M1** 统一数据模型、格式探测、COCO / ImageFolder 读取
 - [ ] **M2** 平台抽象、打开数据集、图片列表
 - [ ] **M3** 查看器（缩放平移、四类标注叠加）
 - [ ] **M4** 标注编辑与类别管理、撤销重做
@@ -140,8 +140,8 @@ LabelAll is an open-source tool for **loading, viewing and annotating** common i
 | **COCO** (json) | `*.json` with `images`/`annotations`/`categories` | ✅ | 🚧 | Polygon and RLE segmentation, keypoints, `iscrowd` |
 | **YOLO** (txt + yaml) | sibling `images/` + `labels/`, `*.yaml` with `names:` | 🚧 | 🚧 | Detect / segment / pose tasks |
 | **Pascal VOC** (xml) | `Annotations/*.xml` + `JPEGImages/` | 🚧 | 🚧 | 1-based inclusive boxes, conversion policy configurable |
-| **Classification / ImageNet** | class-named subdirectories, no annotation files | 🚧 | 🚧 | Lexicographic directory order defines class ids |
-| **labelme** (json) | `*.json` with `shapes`/`imagePath` | 🚧 | — | Interop with labelme |
+| **Classification / ImageNet** | class-named subdirectories, no annotation files | ✅ | 🚧 | Lexicographic directory order defines class ids |
+| **labelme** (json) | `*.json` with `shapes`/`imagePath` | ✅ | — | Interop with labelme |
 
 Legend: ✅ done · 🚧 in progress · — not planned
 
@@ -183,7 +183,7 @@ pnpm tauri build  # desktop installers
 ### Roadmap
 
 - [x] **M0** Scaffolding, MD3 theme, Tauri integration, CI
-- [ ] **M1** Unified data model, format detection, COCO / ImageFolder readers
+- [x] **M1** Unified data model, format detection, COCO / ImageFolder readers
 - [ ] **M2** Platform abstraction, dataset opening, image list
 - [ ] **M3** Viewer (zoom/pan, overlays for all four annotation types)
 - [ ] **M4** Annotation editing, category management, undo/redo

@@ -18,5 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dynamic asset-protocol scoping so only folders the user opens become readable.
 - Tooling: oxlint, Prettier, Vitest with Testing Library, GitHub Actions CI.
 - Documentation: README (bilingual), CONTRIBUTING, LICENSE (Apache-2.0).
+- Platform-agnostic core (`src/core`): unified dataset model, geometry helpers,
+  category palette and automatic format detection.
+- COCO, classification/ImageFolder and labelme readers, with fixtures and unit
+  tests covering RLE masks, keypoints and multi-class datasets.
+
+### Changed
+
+- Corrected the project name from "LableAll" to "LabelAll".
 
 [Unreleased]: https://github.com/heshengtao/labelall/commits/main
