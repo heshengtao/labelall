@@ -48,7 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and a recent-datasets list (desktop reopens them directly).
 - Cancelling an in-flight scan or parse.
 - A locale-parity test that fails if zh-CN and en-US drift apart.
-- GitHub Pages deployment workflow with a build-time `VITE_BASE`.
+- Release workflow that builds macOS / Windows / Linux installers and drafts a
+  GitHub release when a version tag is pushed (see RELEASING.md).
 
 ### Changed
 

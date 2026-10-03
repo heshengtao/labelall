@@ -5,15 +5,11 @@
 **加载 · 查看 · 标注 常见图片数据集**
 **Load, view and annotate common image datasets**
 
-跨平台桌面应用 · 同一套前端同时提供 Web 版
+让打开和标注一个图片数据集，简单到只需要选一个文件夹。
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
-[![Tauri](https://img.shields.io/badge/Tauri-2-24C8DB.svg)](https://tauri.app/)
-[![React](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
-[![Rust](https://img.shields.io/badge/Rust-stable-000000.svg)](https://www.rust-lang.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6.svg)](https://www.typescriptlang.org/)
 
-[中文](#中文) · [English](#english) · [架构](#架构-architecture) · [开发](#本地开发-development)
+[中文](#中文) · [English](#english)
 
 </div>
 
@@ -21,199 +17,193 @@
 
 ## 中文
 
-### 这是什么
+### LabelAll 是什么
 
-LabelAll 是一个开源的图片数据集工具，用来**加载、查看和标注**市面上常见的图片数据集。
+LabelAll 是一款**免费开源**的图片数据集工具，帮你打开、浏览、标注和导出市面上常见的图片数据集。
 
-- **跨平台桌面端**：macOS / Windows / Linux，基于 Tauri 2（Rust + 系统 WebView），安装包体积小
-- **Web 端**：同一套前端代码可直接构建为静态站点，浏览器中打开即用
-- **多格式**：自动识别数据集格式，无需手工配置
-- **四类标注**：矩形框、多边形分割、关键点、分类标签
+不用写代码，不用先做格式转换，也不用记住标注文件放在哪——选一个文件夹，剩下的交给它。
 
-### 支持的数据集格式
+它适合：算法与视觉工程师、数据标注与审核团队、学生和研究者，以及任何需要快速查看或修改一批图片标注的人。
 
-| 格式 | 检测特征 | 读取 | 写入 | 说明 |
-| --- | :---: | :---: | :---: | --- |
-| **COCO** (json) | `*.json` 含 `images`/`annotations`/`categories` | ✅ | ✅ | 含多边形与 RLE 分割、关键点、`iscrowd` |
-| **YOLO** (txt + yaml) | 同级 `images/` + `labels/`，`*.yaml` 含 `names:` | ✅ | ✅ | 检测 / 分割 / 姿态三种任务 |
-| **Pascal VOC** (xml) | `Annotations/*.xml` + `JPEGImages/` | ✅ | ✅ | 1 基闭区间坐标，可配置换算策略 |
-| **分类文件夹 / ImageNet** | 类名子目录，无标注文件 | ✅ | 🚧 | 目录名字典序即类别顺序 |
-| **labelme** (json) | `*.json` 含 `shapes`/`imagePath` | ✅ | — | 便于与 labelme 互通 |
+### 它能做什么
 
-图例：✅ 已完成 · 🚧 开发中 · — 不计划支持
+**打开即用**
 
-> 同时支持常见开源数据集，如 MS COCO、ImageNet / ILSVRC、Pascal VOC 2007/2012、Open Images、VisDrone、CrowdHuman 等（按其原生格式加载）。
+- 放进文件夹就能用：自动识别数据集格式，不需要手工选择或配置。
+- 成千上万张图片的缩略图列表，滚动即时加载，查找和筛选都很快。
+- 可按划分（train / val / test）、类别筛选，也能按文件名搜索。
 
-### 技术栈
+**看得清楚**
 
-| 层 | 选型 |
+- 图片可自由缩放、平移，一键「适应窗口」或按 1:1 查看。
+- 矩形框、多边形、关键点、分类标签四类标注清晰叠加，按类别自动配色。
+- 每一层都可单独显示或隐藏，快速聚焦想看的内容。
+- 底部胶片条可前后快速翻看，方向键即可切换图片。
+
+**标注与修改**
+
+- 直接画矩形框、多边形、关键点，或给整张图打分类标签。
+- 拖动移动、八个控制点缩放、复制、删除，方向键微调到像素级。
+- 类别随时增删改和换色，管理起来一目了然。
+- 误操作没关系：撤销 / 重做随时回退。
+
+**导出与互通**
+
+- 一键导出为 COCO、YOLO、Pascal VOC、分类文件夹等常用格式。
+- 导出前会**明确告诉你哪些信息无法保留**，避免悄无声息地丢数据。
+- 原始文件不会被改动，导出结果单独存放，安全可回溯。
+
+**用起来顺手**
+
+- 深色 / 浅色主题，主题色可自由更换。
+- 简体中文 / English 界面，随时切换。
+- 桌面端与网页版体验一致；最近打开的数据集可一键回到上次的位置。
+
+### 支持的数据集
+
+| 格式 | 打开 | 导出 | 说明 |
+| --- | :---: | :---: | --- |
+| **COCO** | ✅ | ✅ | 含多边形与 RLE 分割、关键点 |
+| **YOLO** | ✅ | ✅ | 检测 / 分割 / 姿态三种任务均可 |
+| **Pascal VOC** | ✅ | ✅ | 常见的 1 基闭区间坐标标注 |
+| **分类文件夹 / ImageNet** | ✅ | 部分 | 目录名即类别名 |
+| **labelme** | ✅ | — | 便于与 labelme 互通 |
+
+> 也可直接打开 MS COCO、ImageNet / ILSVRC、Pascal VOC 2007/2012 等公开数据集的原始格式。
+
+### 快速上手
+
+1. 打开 LabelAll，点击「打开数据集」，选择数据集所在文件夹。
+2. 软件会自动识别格式，确认后即可开始浏览。
+3. 选中图片，按需新增或修改标注。
+4. 完成后导出为你需要的格式。
+
+常用快捷键：
+
+| 操作 | 快捷键 |
 | --- | --- |
-| 桌面外壳 | Tauri 2（Rust） |
-| 前端 | React 19 + TypeScript + Vite 8 |
-| UI | MUI v9 + Material Design 3 配色（Google 官方 HCT 调色引擎） |
-| 标注画布 | Konva / react-konva |
-| 状态 | zustand + immer |
-| 国际化 | i18next（简体中文 / English） |
-| 测试 | Vitest + Testing Library |
+| 上一张 / 下一张图片 | `←` / `→` |
+| 选择 / 移动 | `V` |
+| 画矩形框 | `B` |
+| 画多边形（双击闭合） | `P` |
+| 打关键点 | `K` |
+| 微调选中标注 | `方向键`（按住 `Shift` 每次 10px） |
+| 删除 / 复制选中标注 | `Delete` / `Ctrl`·`Cmd` + `D` |
+| 撤销 / 重做 | `Ctrl`·`Cmd` + `Z` / `Shift` + `Ctrl`·`Cmd` + `Z` |
+| 放大 / 缩小 / 适应窗口 | `+` / `-` / `0` |
+| 平移画布 | `空格` + 拖拽 |
 
-### 架构
+### 下载
 
-核心原则：**格式解析逻辑只用 TypeScript 写一份**，Web 端与桌面端共用，避免两套实现发散。
-
-```
-┌──────────────────────────────────────────────┐
-│  React UI（viewer / annotator / panels）      │
-├──────────────────────────────────────────────┤
-│  src/core/      统一数据模型 + 各格式读写       │  ← 纯 TS，两端共用
-├──────────────────────────────────────────────┤
-│  src/platform/  DatasetSource 抽象            │  ← 环境差异收敛在此
-│    ├── tauri.ts   → invoke + convertFileSrc   │
-│    └── web.ts     → File System Access API    │
-├──────────────────────────────────────────────┤
-│  Rust（src-tauri/）                           │  ← 只做通用文件系统能力
-│    目录遍历 · 文件读写 · 图片尺寸 · asset 授权   │
-└──────────────────────────────────────────────┘
-```
-
-- Rust **不实现任何格式解析器**，只暴露与格式无关的命令（遍历 / 读 / 写 / 图片头）。
-- 图片经 Tauri asset 协议按需流式加载，不做 base64 编码；且只对用户实际打开的数据集目录动态授权。
-- 解析运行在 Web Worker 中，避免大文件阻塞界面。
-
-### 本地开发
-
-前置要求：Node.js ≥ 20、pnpm ≥ 9、Rust stable（仅桌面端需要）。
-
-```bash
-pnpm install
-
-# Web 形态（浏览器打开 http://localhost:1420）
-pnpm dev
-
-# 桌面形态
-pnpm tauri dev
-```
-
-常用脚本：
-
-```bash
-pnpm typecheck    # tsc -b
-pnpm lint         # oxlint
-pnpm format       # prettier --write
-pnpm test         # vitest run
-pnpm build        # 产出静态 Web 版到 dist/
-pnpm tauri build  # 打包桌面安装包
-```
-
-### Web 部署
-
-`.github/workflows/deploy-web.yml` 会在推送到 `main` 时构建静态站点并发布到 GitHub Pages，
-构建时通过 `VITE_BASE` 注入 `/<repo>/` 作为资源前缀（本地默认 `/`）。在仓库 Settings → Pages
-里把 Source 设为 “GitHub Actions” 即可。
-
-### 路线图
-
-- [x] **M0** 工程脚手架、MD3 主题、Tauri 集成、CI
-- [x] **M1** 统一数据模型、格式探测、COCO / ImageFolder 读取
-- [x] **M2** 平台抽象、打开数据集、图片列表
-- [x] **M3** 查看器（缩放平移、四类标注叠加）
-- [x] **M4** 标注编辑与类别管理、撤销重做
-- [x] **M5** YOLO / VOC 读写、保存与导出、往返测试
-- [x] **M6** 打磨、Web 部署、文档与示例数据
-- [ ] **M7** 发布 v0.1.0（三平台安装包）
+前往 [Releases](../../releases) 下载对应系统的安装包（macOS / Windows / Linux）。
 
 ### 已知限制
 
-- 首版目标规模为 ≤ 5 万张图片、COCO JSON ≤ 100 MB；更大的数据集暂不保证流畅。
-- Web 端在 Chrome / Edge 可读写（File System Access API），Firefox / Safari 目前仅支持只读浏览。
+- 面向约 5 万张图片、标注文件不超过 100 MB 的数据集；更大规模暂不保证流畅。
+- 网页版在 Chrome / Edge 可读写，Firefox / Safari 目前仅支持只读浏览。
 
 ---
 
 ## English
 
-### What is this
+### What is LabelAll
 
-LabelAll is an open-source tool for **loading, viewing and annotating** common image datasets.
+LabelAll is a **free, open-source** tool for opening, browsing, annotating and exporting common
+image datasets.
 
-- **Cross-platform desktop app** for macOS / Windows / Linux, built on Tauri 2 (Rust + system webview) for small installers
-- **Web build** from the very same frontend source — deploy it as a static site and use it in a browser
-- **Many formats**, auto-detected with no manual configuration
-- **Four annotation types**: bounding boxes, polygons, keypoints and classification tags
+No code, no format conversion first, no hunting for the annotation files — pick a folder and it
+takes care of the rest.
 
-### Supported dataset formats
+It is for computer-vision engineers, annotation and QA teams, students and researchers, and anyone
+who needs to look at or edit a batch of image labels quickly.
 
-| Format | Detection signal | Read | Write | Notes |
-| --- | :---: | :---: | :---: | --- |
-| **COCO** (json) | `*.json` with `images`/`annotations`/`categories` | ✅ | ✅ | Polygon and RLE segmentation, keypoints, `iscrowd` |
-| **YOLO** (txt + yaml) | sibling `images/` + `labels/`, `*.yaml` with `names:` | ✅ | ✅ | Detect / segment / pose tasks |
-| **Pascal VOC** (xml) | `Annotations/*.xml` + `JPEGImages/` | ✅ | ✅ | 1-based inclusive boxes, conversion policy configurable |
-| **Classification / ImageNet** | class-named subdirectories, no annotation files | ✅ | 🚧 | Lexicographic directory order defines class ids |
-| **labelme** (json) | `*.json` with `shapes`/`imagePath` | ✅ | — | Interop with labelme |
+### What it does
 
-Legend: ✅ done · 🚧 in progress · — not planned
+**Open and go**
 
-### Tech stack
+- Drop in a folder: the dataset format is detected automatically — no manual setup.
+- A thumbnail list that stays smooth with tens of thousands of images, with quick search.
+- Filter by split (train / val / test) or by class, and search by file name.
 
-| Layer | Choice |
+**See clearly**
+
+- Zoom and pan freely, fit to window or inspect at 1:1.
+- Boxes, polygons, keypoints and classification tags overlay cleanly, coloured by class.
+- Toggle any layer on or off to focus on what matters.
+- A bottom filmstrip for quick browsing; arrow keys step through images.
+
+**Annotate and edit**
+
+- Draw boxes, polygons and keypoints, or add an image-level class label.
+- Drag to move, resize with eight handles, duplicate, delete, and nudge pixel by pixel.
+- Add, rename, recolour or remove classes at any time.
+- Mistakes are fine: undo and redo whenever you need.
+
+**Export and interop**
+
+- Export to COCO, YOLO, Pascal VOC or classification folders in one step.
+- Before exporting, LabelAll **tells you exactly what the target format cannot keep**, so nothing is
+  lost silently.
+- Your original files are never modified — exports go to a separate folder.
+
+**A pleasure to use**
+
+- Light and dark themes, with a customisable accent colour.
+- Simplified Chinese and English, switchable at any time.
+- The desktop app and the web build feel the same; recent datasets are one click away.
+
+### Supported datasets
+
+| Format | Open | Export | Notes |
+| --- | :---: | :---: | --- |
+| **COCO** | ✅ | ✅ | Polygon and RLE segmentation, keypoints |
+| **YOLO** | ✅ | ✅ | Detect, segment and pose tasks |
+| **Pascal VOC** | ✅ | ✅ | The usual 1-based inclusive boxes |
+| **Classification / ImageNet** | ✅ | Partial | The folder name is the class |
+| **labelme** | ✅ | — | Interop with labelme |
+
+> MS COCO, ImageNet / ILSVRC, Pascal VOC 2007/2012 and other public datasets can be opened in their
+> native format.
+
+### Quick start
+
+1. Open LabelAll and click “Open dataset”, then choose the dataset folder.
+2. The format is detected automatically — confirm and start browsing.
+3. Select an image and add or edit annotations as needed.
+4. Export to the format you want.
+
+Common shortcuts:
+
+| Action | Shortcut |
 | --- | --- |
-| Desktop shell | Tauri 2 (Rust) |
-| Frontend | React 19 + TypeScript + Vite 8 |
-| UI | MUI v9 with Material Design 3 colour (Google's official HCT engine) |
-| Annotation canvas | Konva / react-konva |
-| State | zustand + immer |
-| i18n | i18next (Simplified Chinese / English) |
-| Tests | Vitest + Testing Library |
+| Previous / next image | `←` / `→` |
+| Select / move | `V` |
+| Draw a box | `B` |
+| Draw a polygon (double-click to finish) | `P` |
+| Place keypoints | `K` |
+| Nudge the selected annotation | `Arrows` (hold `Shift` for 10px) |
+| Delete / duplicate selection | `Delete` / `Ctrl`·`Cmd` + `D` |
+| Undo / redo | `Ctrl`·`Cmd` + `Z` / `Shift` + `Ctrl`·`Cmd` + `Z` |
+| Zoom in / out / fit | `+` / `-` / `0` |
+| Pan the canvas | `Space` + drag |
 
-### Architecture
+### Download
 
-The core rule: **dataset parsing is written once, in TypeScript**, and shared by both the web and desktop builds — no divergent second implementation.
-
-- Rust implements **no format parsers**. It exposes only format-agnostic commands (walk / read / write / image header).
-- Images stream from disk through the Tauri asset protocol rather than being base64-encoded, and access is granted dynamically only for the folder the user actually opened.
-- Parsing runs in a Web Worker so large files never block the UI.
-
-See [中文 → 架构](#架构-architecture) for the diagram.
-
-### Development
-
-Requirements: Node.js ≥ 20, pnpm ≥ 9, Rust stable (desktop only).
-
-```bash
-pnpm install
-pnpm dev          # web, http://localhost:1420
-pnpm tauri dev    # desktop
-pnpm test         # vitest
-pnpm build        # static web build into dist/
-pnpm tauri build  # desktop installers
-```
-
-### Web deployment
-
-`.github/workflows/deploy-web.yml` builds the static site on every push to `main` and publishes it
-to GitHub Pages, injecting `/<repo>/` through `VITE_BASE` (local builds use `/`). Set the repository
-Pages source to “GitHub Actions”.
-
-### Roadmap
-
-- [x] **M0** Scaffolding, MD3 theme, Tauri integration, CI
-- [x] **M1** Unified data model, format detection, COCO / ImageFolder readers
-- [x] **M2** Platform abstraction, dataset opening, image list
-- [x] **M3** Viewer (zoom/pan, overlays for all four annotation types)
-- [x] **M4** Annotation editing, category management, undo/redo
-- [x] **M5** YOLO / VOC readers and writers, save & export, round-trip tests
-- [x] **M6** Polish, web deployment, docs and sample data
-- [ ] **M7** Release v0.1.0 (installers for three platforms)
+Grab the installer for your system from the [Releases](../../releases) page (macOS / Windows / Linux).
 
 ### Known limitations
 
-- The current target is up to ~50k images and COCO JSON up to ~100 MB; larger datasets are not guaranteed to be smooth yet.
-- The web build is read/write in Chrome / Edge (File System Access API) and read-only in Firefox / Safari.
+- Aimed at datasets of up to ~50k images with annotation files under 100 MB; larger ones are not
+  guaranteed to stay smooth yet.
+- The web build is read/write in Chrome / Edge and read-only in Firefox / Safari.
 
 ---
 
 ## 贡献 Contributing
 
-欢迎提交 Issue 与 Pull Request。请先阅读 [CONTRIBUTING.md](./CONTRIBUTING.md)。
-Issues and pull requests are welcome — please read [CONTRIBUTING.md](./CONTRIBUTING.md) first.
+欢迎提交 Issue 与 Pull Request。开发、构建与打包说明见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+Issues and pull requests are welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for development and
+build instructions.
 
 ## 许可证 License
 
