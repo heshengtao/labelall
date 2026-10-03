@@ -45,6 +45,8 @@
     "title": "Start annotating",
     "subtitle": "Open a dataset folder to start viewing and annotating.",
     "openHint": "Supports COCO, YOLO, Pascal VOC and classification folders (ImageFolder / ImageNet)",
+    "recent": "Recent",
+    "reopenUnsupported": "Browsers cannot reopen a folder without asking again",
     "featureFormats": "Many formats",
     "featureFormatsDesc": "Auto-detects common image dataset formats",
     "featureAnnotate": "Four annotation types",
@@ -145,5 +147,12 @@
     "yolo": "YOLO (auto task)",
     "voc": "Pascal VOC",
     "imagefolder": "ImageFolder"
+  },
+  "settings": {
+    "title": "Settings",
+    "seed": "Accent colour",
+    "reset": "Reset",
+    "defaultFormat": "Default export format",
+    "recent": "Recent datasets"
   }
 }

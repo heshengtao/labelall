@@ -33,6 +33,8 @@ interface DatasetState {
   currentImageId: number | null
   /** Index into `dataset.annotations`, or null. */
   selectedAnnotationIndex: number | null
+  /** Bumped to abandon an in-flight open; results from older generations are dropped. */
+  generation: number
   /** Undo/redo stack for edits to the dataset. */
   history: History
 
@@ -43,6 +45,7 @@ interface DatasetState {
   setDataset(handle: DatasetHandle, dataset: DatasetModel, warnings: string[]): void
   selectImage(imageId: number | null): void
   selectAnnotation(index: number | null): void
+  invalidateOpen(): void
   close(): void
 
   edit(recipe: (draft: Draft<DatasetModel>) => void, label: string): void
@@ -73,6 +76,7 @@ const initialState = {
   pending: null,
   currentImageId: null,
   selectedAnnotationIndex: null,
+  generation: 0,
   history: emptyHistory,
 }
 
@@ -97,6 +101,8 @@ export const useDatasetStore = create<DatasetState>((set) => ({
   selectImage: (imageId) => set({ currentImageId: imageId, selectedAnnotationIndex: null }),
 
   selectAnnotation: (index) => set({ selectedAnnotationIndex: index }),
+
+  invalidateOpen: () => set((state) => ({ generation: state.generation + 1 })),
 
   close: () => set({ ...initialState }),
 

@@ -104,6 +104,12 @@ pnpm build        # 产出静态 Web 版到 dist/
 pnpm tauri build  # 打包桌面安装包
 ```
 
+### Web 部署
+
+`.github/workflows/deploy-web.yml` 会在推送到 `main` 时构建静态站点并发布到 GitHub Pages，
+构建时通过 `VITE_BASE` 注入 `/<repo>/` 作为资源前缀（本地默认 `/`）。在仓库 Settings → Pages
+里把 Source 设为 “GitHub Actions” 即可。
+
 ### 路线图
 
 - [x] **M0** 工程脚手架、MD3 主题、Tauri 集成、CI
@@ -112,7 +118,7 @@ pnpm tauri build  # 打包桌面安装包
 - [x] **M3** 查看器（缩放平移、四类标注叠加）
 - [x] **M4** 标注编辑与类别管理、撤销重做
 - [x] **M5** YOLO / VOC 读写、保存与导出、往返测试
-- [ ] **M6** 打磨、Web 部署、文档与示例数据
+- [x] **M6** 打磨、Web 部署、文档与示例数据
 - [ ] **M7** 发布 v0.1.0（三平台安装包）
 
 ### 已知限制
@@ -180,6 +186,12 @@ pnpm build        # static web build into dist/
 pnpm tauri build  # desktop installers
 ```
 
+### Web deployment
+
+`.github/workflows/deploy-web.yml` builds the static site on every push to `main` and publishes it
+to GitHub Pages, injecting `/<repo>/` through `VITE_BASE` (local builds use `/`). Set the repository
+Pages source to “GitHub Actions”.
+
 ### Roadmap
 
 - [x] **M0** Scaffolding, MD3 theme, Tauri integration, CI
@@ -188,7 +200,7 @@ pnpm tauri build  # desktop installers
 - [x] **M3** Viewer (zoom/pan, overlays for all four annotation types)
 - [x] **M4** Annotation editing, category management, undo/redo
 - [x] **M5** YOLO / VOC readers and writers, save & export, round-trip tests
-- [ ] **M6** Polish, web deployment, docs and sample data
+- [x] **M6** Polish, web deployment, docs and sample data
 - [ ] **M7** Release v0.1.0 (installers for three platforms)
 
 ### Known limitations

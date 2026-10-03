@@ -44,6 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   writes into `export/<format>/` without touching the originals.
 - Image-dimension plumbing so normalised formats (YOLO) can be read in the
   worker, on both desktop and web.
+- Settings dialog with a live MD3 accent-colour picker, a default export format
+  and a recent-datasets list (desktop reopens them directly).
+- Cancelling an in-flight scan or parse.
+- A locale-parity test that fails if zh-CN and en-US drift apart.
+- GitHub Pages deployment workflow with a build-time `VITE_BASE`.
 
 ### Changed
 

@@ -11,6 +11,9 @@ const tauriPlatform = process.env.TAURI_ENV_PLATFORM
 const isDebug = Boolean(process.env.TAURI_ENV_DEBUG)
 
 export default defineConfig({
+  // GitHub Pages serves project sites from /<repo>/, so the base is injected by
+  // the deploy workflow; local builds use the root.
+  base: process.env.VITE_BASE || '/',
   plugins: [react()],
   resolve: {
     alias: {

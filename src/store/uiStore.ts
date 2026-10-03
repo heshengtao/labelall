@@ -23,6 +23,8 @@ interface UiState {
   categoriesOpen: boolean
   /** Whether the shortcuts dialog is open. */
   helpOpen: boolean
+  /** Whether the settings dialog is open. */
+  settingsOpen: boolean
 
   setViewMode(mode: ViewMode): void
   toggleLayer(layer: keyof LayerVisibility): void
@@ -30,6 +32,7 @@ interface UiState {
   setActiveCategory(categoryId: number | null): void
   setCategoriesOpen(open: boolean): void
   setHelpOpen(open: boolean): void
+  setSettingsOpen(open: boolean): void
 }
 
 export const useUiStore = create<UiState>((set) => ({
@@ -39,6 +42,7 @@ export const useUiStore = create<UiState>((set) => ({
   activeCategoryId: null,
   categoriesOpen: false,
   helpOpen: false,
+  settingsOpen: false,
 
   setViewMode: (viewMode) => set({ viewMode }),
   toggleLayer: (layer) =>
@@ -47,4 +51,5 @@ export const useUiStore = create<UiState>((set) => ({
   setActiveCategory: (activeCategoryId) => set({ activeCategoryId }),
   setCategoriesOpen: (categoriesOpen) => set({ categoriesOpen }),
   setHelpOpen: (helpOpen) => set({ helpOpen }),
+  setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
 }))

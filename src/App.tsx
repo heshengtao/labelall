@@ -5,6 +5,7 @@ import DatasetOutlinedIcon from '@mui/icons-material/DatasetOutlined'
 import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined'
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
+import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Alert,
   AppBar,
@@ -36,11 +37,13 @@ import { ExportButton } from '@/features/export/ExportButton'
 import { ShortcutsDialog } from '@/features/help/ShortcutsDialog'
 import { ImageList } from '@/features/imagelist/ImageList'
 import { OpenDialog } from '@/features/open/OpenDialog'
-import { beginOpen, cancelOpen, confirmOpen } from '@/features/open/openDatasetFlow'
+import { beginOpen, cancelOpen, confirmOpen, openHandle } from '@/features/open/openDatasetFlow'
+import { SettingsDialog } from '@/features/settings/SettingsDialog'
 import { Viewer } from '@/features/viewer/Viewer'
 import { getDatasetSource } from '@/platform'
 import { detectRuntimeEnv } from '@/platform/detect-env'
 import { useDatasetStore } from '@/store/datasetStore'
+import { useSettingsStore, type RecentDataset } from '@/store/settingsStore'
 import { useUiStore } from '@/store/uiStore'
 import type { ParseService } from '@/workers/parseClient'
 
@@ -116,6 +119,9 @@ export default function App() {
   const setStatus = useDatasetStore((state) => state.setStatus)
   const close = useDatasetStore((state) => state.close)
   const viewMode = useUiStore((state) => state.viewMode)
+  const setSettingsOpen = useUiStore((state) => state.setSettingsOpen)
+  const recent = useSettingsStore((state) => state.recent)
+  const rememberDataset = useSettingsStore((state) => state.rememberDataset)
 
   // The worker (and the parse service) are created on first use so the module
   // is never loaded — and no worker is spawned — until the user opens a dataset.
@@ -142,6 +148,34 @@ export default function App() {
     try {
       const service = await getParseService()
       await confirmOpen(service, candidate)
+      const state = useDatasetStore.getState()
+      if (state.dataset && state.handle) {
+        rememberDataset({
+          id: state.handle.id,
+          root: state.handle.root,
+          displayName: state.handle.displayName,
+          kind: getDatasetSource().kind,
+        })
+      }
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleOpenRecent = async (entry: RecentDataset): Promise<void> => {
+    // Web handles cannot be restored across sessions, so only the desktop build
+    // can reopen a recent dataset directly.
+    if (entry.kind !== 'tauri') {
+      return
+    }
+    setBusy(true)
+    try {
+      const service = await getParseService()
+      await openHandle(getDatasetSource(), service, {
+        id: entry.root,
+        root: entry.root,
+        displayName: entry.displayName,
+      })
     } finally {
       setBusy(false)
     }
@@ -191,11 +225,21 @@ export default function App() {
               sx={{ mr: 1 }}
             />
           </Tooltip>
+          {working ? (
+            <Button size="small" color="inherit" onClick={cancelOpen}>
+              {t('common.cancel')}
+            </Button>
+          ) : null}
           {dataset ? (
             <Button size="small" startIcon={<FolderOpenOutlinedIcon />} onClick={handleOpen}>
               {t('actions.openDataset')}
             </Button>
           ) : null}
+          <Tooltip title={t('settings.title')}>
+            <IconButton aria-label={t('settings.title')} onClick={() => setSettingsOpen(true)}>
+              <SettingsIcon />
+            </IconButton>
+          </Tooltip>
           <ThemeModeToggle />
           <LanguageToggle />
           {dataset ? (
@@ -231,7 +275,12 @@ export default function App() {
           </Stack>
         ) : (
           <Stack sx={{ flex: 1 }}>
-            <WelcomeView onOpenDataset={handleOpen} />
+            <WelcomeView
+              onOpenDataset={handleOpen}
+              recent={recent}
+              onOpenRecent={handleOpenRecent}
+              canReopen={runtimeEnv === 'tauri'}
+            />
           </Stack>
         )}
       </Box>
@@ -247,6 +296,7 @@ export default function App() {
 
       <CategoriesPanel />
       <ShortcutsDialog />
+      <SettingsDialog />
 
       <Snackbar
         open={error !== null}

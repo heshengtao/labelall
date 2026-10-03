@@ -45,6 +45,8 @@
     "title": "开始标注",
     "subtitle": "打开一个数据集目录即可开始查看与标注。",
     "openHint": "支持 COCO、YOLO、Pascal VOC 与分类文件夹（ImageFolder / ImageNet）",
+    "recent": "最近打开",
+    "reopenUnsupported": "浏览器无法免授权重新打开目录",
     "featureFormats": "多格式",
     "featureFormatsDesc": "自动识别常见图片数据集格式",
     "featureAnnotate": "四类标注",
@@ -145,5 +147,12 @@
     "yolo": "YOLO（自动任务）",
     "voc": "Pascal VOC",
     "imagefolder": "分类文件夹"
+  },
+  "settings": {
+    "title": "设置",
+    "seed": "主题色",
+    "reset": "重置",
+    "defaultFormat": "默认导出格式",
+    "recent": "最近打开的数据集"
   }
 }

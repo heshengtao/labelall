@@ -24,6 +24,7 @@ import type { ExportChoice } from '@/core/formats/losses'
 import { collectLosses, resolveExportFormat } from '@/core/formats/losses'
 import { getDatasetSource } from '@/platform'
 import { useDatasetStore } from '@/store/datasetStore'
+import { useSettingsStore } from '@/store/settingsStore'
 
 import { exportDataset } from './exportDataset'
 
@@ -58,7 +59,8 @@ export function ExportButton() {
   const losses = collectLosses(dataset, format)
 
   const openDialog = (): void => {
-    setChoice(defaultChoice(dataset.sourceFormat))
+    const preferred = useSettingsStore.getState().defaultExportFormat
+    setChoice(preferred ?? defaultChoice(dataset.sourceFormat))
     setError(null)
     setOpen(true)
   }

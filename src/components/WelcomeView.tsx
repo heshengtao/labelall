@@ -2,8 +2,10 @@ import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternate
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined'
 import DevicesOutlinedIcon from '@mui/icons-material/DevicesOutlined'
 import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined'
-import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, Chip, Stack, Tooltip, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+
+import type { RecentDataset } from '@/store/settingsStore'
 
 interface WelcomeFeature {
   icon: typeof FolderOpenOutlinedIcon
@@ -31,9 +33,17 @@ const FEATURES: WelcomeFeature[] = [
 
 export interface WelcomeViewProps {
   onOpenDataset: () => void
+  recent?: RecentDataset[]
+  onOpenRecent?: (entry: RecentDataset) => void
+  canReopen?: boolean
 }
 
-export function WelcomeView({ onOpenDataset }: WelcomeViewProps) {
+export function WelcomeView({
+  onOpenDataset,
+  recent = [],
+  onOpenRecent,
+  canReopen = false,
+}: WelcomeViewProps) {
   const { t } = useTranslation()
 
   return (
@@ -68,6 +78,30 @@ export function WelcomeView({ onOpenDataset }: WelcomeViewProps) {
           {t('welcome.openHint')}
         </Typography>
       </Stack>
+
+      {recent.length > 0 ? (
+        <Stack spacing={1} sx={{ alignItems: 'center' }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            {t('welcome.recent')}
+          </Typography>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center' }}>
+            {recent.map((entry) => (
+              <Tooltip
+                key={entry.id}
+                title={canReopen ? entry.root : t('welcome.reopenUnsupported')}
+              >
+                <span>
+                  <Chip
+                    label={entry.displayName}
+                    disabled={!canReopen}
+                    onClick={() => onOpenRecent?.(entry)}
+                  />
+                </span>
+              </Tooltip>
+            ))}
+          </Stack>
+        </Stack>
+      ) : null}
 
       <Box
         sx={{
