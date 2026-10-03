@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   category palette and automatic format detection.
 - COCO, classification/ImageFolder and labelme readers, with fixtures and unit
   tests covering RLE masks, keypoints and multi-class datasets.
+- `DatasetSource` platform abstraction with Tauri and File System Access API
+  implementations, plus an `<input webkitdirectory>` fallback for Firefox/Safari.
+- Open-dataset wizard: folder picker, format detection with confidence, and an
+  explicit confirmation step before parsing.
+- Parsing runs in a Web Worker, streaming file reads back to the main thread.
+- Virtualised thumbnail image list with split/class filters and filename search.
 
 ### Changed
 

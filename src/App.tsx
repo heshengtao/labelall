@@ -1,11 +1,17 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
+import CloseIcon from '@mui/icons-material/Close'
 import DatasetOutlinedIcon from '@mui/icons-material/DatasetOutlined'
+import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined'
 import {
+  Alert,
   AppBar,
   Box,
+  Button,
   Chip,
   CssBaseline,
+  IconButton,
+  LinearProgress,
   Snackbar,
   Stack,
   Toolbar,
@@ -17,12 +23,114 @@ import { useTranslation } from 'react-i18next'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { ThemeModeToggle } from '@/components/ThemeModeToggle'
 import { WelcomeView } from '@/components/WelcomeView'
+import type { DetectionCandidate } from '@/core/formats/detect'
+import { IMAGE_EXTENSIONS } from '@/core/formats/detect'
+import type { DatasetModel } from '@/core/model'
+import { fileExtension } from '@/core/path'
+import { ImageList } from '@/features/imagelist/ImageList'
+import { OpenDialog } from '@/features/open/OpenDialog'
+import { beginOpen, cancelOpen, confirmOpen } from '@/features/open/openDatasetFlow'
+import { getDatasetSource } from '@/platform'
 import { detectRuntimeEnv } from '@/platform/detect-env'
+import { useDatasetStore } from '@/store/datasetStore'
+import type { ParseService } from '@/workers/parseClient'
+
+interface DatasetHeaderProps {
+  name: string
+  dataset: DatasetModel
+  warnings: string[]
+}
+
+function DatasetHeader({ name, dataset, warnings }: DatasetHeaderProps) {
+  const { t } = useTranslation()
+  return (
+    <Stack spacing={1} sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          {name}
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+          {t('dataset.stats', {
+            images: dataset.images.length,
+            categories: dataset.categories.length,
+            annotations: dataset.annotations.length,
+          })}
+        </Typography>
+      </Stack>
+      {warnings.length > 0 ? (
+        <Alert severity="warning">
+          {t('dataset.warnings', { count: warnings.length })} — {warnings.slice(0, 3).join('; ')}
+        </Alert>
+      ) : null}
+    </Stack>
+  )
+}
 
 export default function App() {
   const { t } = useTranslation()
-  const [toast, setToast] = useState<string | null>(null)
   const runtimeEnv = detectRuntimeEnv()
+  const parseServiceRef = useRef<ParseService | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  const status = useDatasetStore((state) => state.status)
+  const progress = useDatasetStore((state) => state.progress)
+  const error = useDatasetStore((state) => state.error)
+  const handle = useDatasetStore((state) => state.handle)
+  const dataset = useDatasetStore((state) => state.dataset)
+  const warnings = useDatasetStore((state) => state.warnings)
+  const pending = useDatasetStore((state) => state.pending)
+  const currentImageId = useDatasetStore((state) => state.currentImageId)
+  const selectImage = useDatasetStore((state) => state.selectImage)
+  const setError = useDatasetStore((state) => state.setError)
+  const setStatus = useDatasetStore((state) => state.setStatus)
+  const close = useDatasetStore((state) => state.close)
+
+  // The worker (and the parse service) are created on first use so the module
+  // is never loaded — and no worker is spawned — until the user opens a dataset.
+  const getParseService = async (): Promise<ParseService> => {
+    if (!parseServiceRef.current) {
+      const { createWorkerParseService } = await import('@/workers/parseClient')
+      parseServiceRef.current = createWorkerParseService(getDatasetSource())
+    }
+    return parseServiceRef.current
+  }
+
+  const handleOpen = async (): Promise<void> => {
+    setBusy(true)
+    try {
+      const service = await getParseService()
+      await beginOpen(getDatasetSource(), service)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleConfirm = async (candidate: DetectionCandidate): Promise<void> => {
+    setBusy(true)
+    try {
+      const service = await getParseService()
+      await confirmOpen(service, candidate)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const resolveImageUrl = useCallback(
+    (relPath: string) => {
+      if (!handle) {
+        return Promise.reject(new Error('no dataset is open'))
+      }
+      return getDatasetSource().getImageUrl(handle, relPath)
+    },
+    [handle],
+  )
+
+  const working = status === 'scanning' || status === 'detecting' || status === 'parsing'
+  const imageCount = pending
+    ? pending.files.filter(
+        (entry) => !entry.isDir && IMAGE_EXTENSIONS.has(fileExtension(entry.path)),
+      ).length
+    : 0
 
   return (
     <>
@@ -40,10 +148,10 @@ export default function App() {
             variant="body2"
             sx={{ color: 'text.secondary', display: { xs: 'none', md: 'block' } }}
           >
-            {t('app.tagline')}
+            {dataset && handle ? handle.displayName : t('app.tagline')}
           </Typography>
           <Box sx={{ flex: 1 }} />
-          <Tooltip title={t('actions.openDataset')}>
+          <Tooltip title={t('env.desktop') + ' / ' + t('env.web')}>
             <Chip
               size="small"
               variant="outlined"
@@ -51,27 +159,75 @@ export default function App() {
               sx={{ mr: 1 }}
             />
           </Tooltip>
+          {dataset ? (
+            <Button size="small" startIcon={<FolderOpenOutlinedIcon />} onClick={handleOpen}>
+              {t('actions.openDataset')}
+            </Button>
+          ) : null}
           <ThemeModeToggle />
           <LanguageToggle />
+          {dataset ? (
+            <Tooltip title={t('dataset.close')}>
+              <IconButton aria-label={t('dataset.close')} onClick={close}>
+                <CloseIcon />
+              </IconButton>
+            </Tooltip>
+          ) : null}
         </Toolbar>
+        {working ? (
+          <LinearProgress variant="determinate" value={Math.round(progress * 100)} />
+        ) : null}
       </AppBar>
 
       <Box
         component="main"
         sx={{ flex: 1, display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}
       >
-        <Stack sx={{ flex: 1 }}>
-          <WelcomeView onOpenDataset={() => setToast(t('common.comingSoon'))} />
-        </Stack>
+        {dataset && handle ? (
+          <Stack sx={{ flex: 1, minHeight: 0 }}>
+            <DatasetHeader name={handle.displayName} dataset={dataset} warnings={warnings} />
+            <ImageList
+              dataset={dataset}
+              selectedId={currentImageId}
+              onSelect={selectImage}
+              resolveImageUrl={resolveImageUrl}
+            />
+          </Stack>
+        ) : (
+          <Stack sx={{ flex: 1 }}>
+            <WelcomeView onOpenDataset={handleOpen} />
+          </Stack>
+        )}
       </Box>
 
-      <Snackbar
-        open={toast !== null}
-        autoHideDuration={3000}
-        onClose={() => setToast(null)}
-        message={toast ?? ''}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      <OpenDialog
+        open={pending !== null}
+        candidates={pending?.candidates ?? []}
+        imageCount={imageCount}
+        busy={busy}
+        onConfirm={handleConfirm}
+        onCancel={cancelOpen}
       />
+
+      <Snackbar
+        open={error !== null}
+        autoHideDuration={6000}
+        onClose={() => {
+          setError(null)
+          setStatus('idle')
+        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity="error"
+          onClose={() => {
+            setError(null)
+            setStatus('idle')
+          }}
+        >
+          {error ?? ''}
+        </Alert>
+      </Snackbar>
     </>
   )
 }

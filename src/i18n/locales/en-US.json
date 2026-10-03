@@ -56,5 +56,26 @@
     "desktop": "Desktop",
     "web": "Web",
     "webReadOnly": "This browser only supports read-only mode"
+  },
+  "open": {
+    "title": "Open dataset",
+    "imagesInFolder": "Image files in this folder: {{count}}",
+    "noCandidates": "No known dataset format was detected in this folder.",
+    "unsupported": "Reading this format is not available yet",
+    "confirm": "Load dataset"
+  },
+  "dataset": {
+    "close": "Close dataset",
+    "stats": "{{images}} images · {{categories}} classes · {{annotations}} annotations",
+    "warnings": "{{count}} warning(s) while loading"
+  },
+  "imagelist": {
+    "search": "Search images",
+    "split": "Split",
+    "allSplits": "All splits",
+    "category": "Class",
+    "allCategories": "All classes",
+    "empty": "No images match the current filters",
+    "shown": "{{shown}} / {{total}} images"
   }
 }

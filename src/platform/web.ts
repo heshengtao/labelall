@@ -1,0 +1,258 @@
+import type { DetectedFile } from '@/core/formats/detect'
+import type { DatasetHandle, DatasetSource, TextFile } from './types'
+
+// --- Minimal File System Access API typings ---------------------------------
+// `showDirectoryPicker` and `createWritable` are still not in lib.dom, and we
+// only need a small slice of the API, so declare just that instead of pulling in
+// another dependency.
+interface FsWritable {
+  write(data: string): Promise<void>
+  close(): Promise<void>
+}
+interface FsFileHandle {
+  kind: 'file'
+  name: string
+  getFile(): Promise<File>
+  createWritable(): Promise<FsWritable>
+}
+interface FsDirectoryHandle {
+  kind: 'directory'
+  name: string
+  values(): AsyncIterableIterator<FsDirectoryHandle | FsFileHandle>
+  getDirectoryHandle(name: string, options?: { create?: boolean }): Promise<FsDirectoryHandle>
+  getFileHandle(name: string, options?: { create?: boolean }): Promise<FsFileHandle>
+}
+
+declare global {
+  interface Window {
+    showDirectoryPicker?: (options?: { mode?: 'read' | 'readwrite' }) => Promise<FsDirectoryHandle>
+  }
+}
+
+type Stored = { kind: 'fs'; dir: FsDirectoryHandle } | { kind: 'input'; files: Map<string, File> }
+
+const stored = new Map<string, Stored>()
+
+/** Turn a flat list of relative file paths into a listing that includes dirs. */
+export function entriesFromRelativePaths(
+  files: Iterable<{ path: string; size: number }>,
+): DetectedFile[] {
+  const entries = new Map<string, DetectedFile>()
+  for (const file of files) {
+    entries.set(file.path, { path: file.path, isDir: false, size: file.size })
+    const segments = file.path.split('/')
+    segments.pop()
+    while (segments.length > 0) {
+      const dir = segments.join('/')
+      if (!entries.has(dir)) {
+        entries.set(dir, { path: dir, isDir: true, size: 0 })
+      }
+      segments.pop()
+    }
+  }
+  return [...entries.values()].sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0))
+}
+
+function hasDirectoryPicker(): boolean {
+  return typeof window !== 'undefined' && typeof window.showDirectoryPicker === 'function'
+}
+
+// --- Blob URL cache ---------------------------------------------------------
+// Web images are served as object URLs, which must be revoked or they leak.
+// Keep a bounded LRU so browsing a large dataset stays flat in memory.
+const blobUrls = new Map<string, string>()
+const MAX_BLOB_URLS = 200
+
+function blobUrlFor(key: string, file: File): string {
+  const cached = blobUrls.get(key)
+  if (cached) {
+    return cached
+  }
+  const url = URL.createObjectURL(file)
+  blobUrls.set(key, url)
+  if (blobUrls.size > MAX_BLOB_URLS) {
+    const oldest = blobUrls.keys().next().value
+    if (oldest !== undefined) {
+      const stale = blobUrls.get(oldest)
+      if (stale) URL.revokeObjectURL(stale)
+      blobUrls.delete(oldest)
+    }
+  }
+  return url
+}
+
+function revokeAllBlobUrls(): void {
+  for (const url of blobUrls.values()) {
+    URL.revokeObjectURL(url)
+  }
+  blobUrls.clear()
+}
+
+// --- File System Access API helpers -----------------------------------------
+async function resolveDirectory(
+  root: FsDirectoryHandle,
+  segments: string[],
+  create: boolean,
+): Promise<FsDirectoryHandle> {
+  let current = root
+  for (const segment of segments) {
+    current = await current.getDirectoryHandle(segment, create ? { create: true } : undefined)
+  }
+  return current
+}
+
+async function readFsFile(root: FsDirectoryHandle, relPath: string): Promise<File> {
+  const segments = relPath.split('/')
+  const name = segments.pop()
+  if (!name) {
+    throw new Error(`invalid path: ${relPath}`)
+  }
+  const dir = await resolveDirectory(root, segments, false)
+  return (await dir.getFileHandle(name)).getFile()
+}
+
+async function collectFsFiles(
+  dir: FsDirectoryHandle,
+  prefix: string,
+  out: { path: string; size: number }[],
+): Promise<void> {
+  for await (const entry of dir.values()) {
+    const path = prefix ? `${prefix}/${entry.name}` : entry.name
+    if (entry.kind === 'directory') {
+      await collectFsFiles(entry, path, out)
+    } else {
+      const file = await entry.getFile()
+      out.push({ path, size: file.size })
+    }
+  }
+}
+
+// --- Legacy fallback: <input webkitdirectory> -------------------------------
+function pickWithInput(): Promise<Map<string, File> | null> {
+  return new Promise((resolve) => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.multiple = true
+    input.setAttribute('webkitdirectory', '')
+    input.style.display = 'none'
+
+    input.addEventListener(
+      'change',
+      () => {
+        const list = input.files ? Array.from(input.files) : []
+        input.remove()
+        if (list.length === 0) {
+          resolve(null)
+          return
+        }
+        const files = new Map<string, File>()
+        for (const file of list) {
+          const segments = (file.webkitRelativePath || file.name).split('/')
+          segments.shift() // drop the picked root folder name
+          const path = segments.join('/')
+          if (path) {
+            files.set(path, file)
+          }
+        }
+        resolve(files)
+      },
+      { once: true },
+    )
+
+    document.body.appendChild(input)
+    input.click()
+    // If the user cancels, most browsers fire no event and this promise simply
+    // never settles — the same as a native picker being dismissed.
+  })
+}
+
+export function createWebSource(): DatasetSource {
+  const canWrite = hasDirectoryPicker()
+
+  return {
+    kind: 'web',
+    canWrite,
+
+    async pickDataset(): Promise<DatasetHandle | null> {
+      revokeAllBlobUrls()
+      const id = crypto.randomUUID()
+
+      if (canWrite && window.showDirectoryPicker) {
+        const dir = await window.showDirectoryPicker({ mode: 'readwrite' })
+        stored.set(id, { kind: 'fs', dir })
+        return { id, root: '', displayName: dir.name }
+      }
+
+      const files = await pickWithInput()
+      if (!files) {
+        return null
+      }
+      stored.set(id, { kind: 'input', files })
+      const first = [...files.keys()][0] ?? 'dataset'
+      return { id, root: '', displayName: first.split('/')[0] }
+    },
+
+    async scan(handle): Promise<DetectedFile[]> {
+      const entry = stored.get(handle.id)
+      if (!entry) {
+        throw new Error('the dataset is no longer available; open it again')
+      }
+      if (entry.kind === 'input') {
+        return entriesFromRelativePaths(
+          [...entry.files].map(([path, file]) => ({ path, size: file.size })),
+        )
+      }
+      const files: { path: string; size: number }[] = []
+      await collectFsFiles(entry.dir, '', files)
+      return entriesFromRelativePaths(files)
+    },
+
+    async readText(handle, relPath): Promise<string> {
+      const entry = stored.get(handle.id)
+      if (!entry) {
+        throw new Error('the dataset is no longer available; open it again')
+      }
+      if (entry.kind === 'input') {
+        const file = entry.files.get(relPath)
+        if (!file) {
+          throw new Error(`file not found: ${relPath}`)
+        }
+        return file.text()
+      }
+      return (await readFsFile(entry.dir, relPath)).text()
+    },
+
+    async writeTexts(handle, files: TextFile[]): Promise<void> {
+      const entry = stored.get(handle.id)
+      if (!entry) {
+        throw new Error('the dataset is no longer available; open it again')
+      }
+      if (entry.kind === 'input') {
+        throw new Error('this browser can only open datasets read-only')
+      }
+      for (const file of files) {
+        const segments = file.path.split('/')
+        const name = segments.pop()
+        if (!name) continue
+        const dir = await resolveDirectory(entry.dir, segments, true)
+        const handleFile = await dir.getFileHandle(name, { create: true })
+        const writable = await handleFile.createWritable()
+        await writable.write(file.contents)
+        await writable.close()
+      }
+    },
+
+    async getImageUrl(handle, relPath): Promise<string> {
+      const entry = stored.get(handle.id)
+      if (!entry) {
+        throw new Error('the dataset is no longer available; open it again')
+      }
+      const file =
+        entry.kind === 'input' ? entry.files.get(relPath) : await readFsFile(entry.dir, relPath)
+      if (!file) {
+        throw new Error(`image not found: ${relPath}`)
+      }
+      return blobUrlFor(`${handle.id}:${relPath}`, file)
+    },
+  }
+}

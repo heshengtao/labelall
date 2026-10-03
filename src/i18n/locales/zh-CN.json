@@ -56,5 +56,26 @@
     "desktop": "桌面版",
     "web": "Web 版",
     "webReadOnly": "当前浏览器仅支持只读模式"
+  },
+  "open": {
+    "title": "打开数据集",
+    "imagesInFolder": "该目录下的图片文件：{{count}}",
+    "noCandidates": "未在该目录中识别出已知的数据集格式。",
+    "unsupported": "该格式暂不支持读取",
+    "confirm": "载入数据集"
+  },
+  "dataset": {
+    "close": "关闭数据集",
+    "stats": "{{images}} 张图片 · {{categories}} 个类别 · {{annotations}} 条标注",
+    "warnings": "载入时有 {{count}} 条提示"
+  },
+  "imagelist": {
+    "search": "搜索图片",
+    "split": "划分",
+    "allSplits": "全部划分",
+    "category": "类别",
+    "allCategories": "全部类别",
+    "empty": "没有符合当前筛选条件的图片",
+    "shown": "{{shown}} / {{total}} 张"
   }
 }

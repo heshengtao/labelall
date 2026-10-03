@@ -24,12 +24,63 @@ export interface DetectContext {
   readText: (relPath: string) => Promise<string>
 }
 
+/**
+ * Format-specific hints a reader needs, discovered during detection so the
+ * reader does not have to search the listing again.
+ */
+export interface DatasetParams {
+  /** COCO: the annotation JSON to read. */
+  annotationPath?: string
+  /** labelme: every per-image JSON that should be merged into one dataset. */
+  annotationPaths?: string[]
+  /** Directory that image paths in the annotation file are relative to. */
+  imageDir?: string
+  /** Split inferred from the file or directory name (train/val/test). */
+  split?: string
+}
+
 export interface DetectionCandidate {
   format: SourceFormat
   /** 0–1; higher wins. */
   confidence: number
   /** Human-readable explanation, shown in the open-dataset wizard. */
   reason: string
+  /** Parameters to hand to the reader if this candidate is chosen. */
+  params?: DatasetParams
+}
+
+/** Collapse the many spellings seen in the wild onto train/val/test. */
+function inferSplit(path: string): string | undefined {
+  const match = /(?:^|[^a-z])(train|training|val|valid|validation|test|testing)(?:[^a-z]|$)/i.exec(
+    path,
+  )
+  if (!match) {
+    return undefined
+  }
+  const raw = match[1].toLowerCase()
+  if (raw === 'training') return 'train'
+  if (raw === 'valid' || raw === 'validation') return 'val'
+  if (raw === 'testing') return 'test'
+  return raw
+}
+
+/**
+ * Find where a COCO annotation file's images live. The two layouts seen in the
+ * wild are `root/images/*` and `root/<split>/*` (e.g. train2017/val2017).
+ */
+function inferCocoImageDir(
+  annotationPath: string,
+  dirs: Set<string>,
+  images: DetectedFile[],
+): string | undefined {
+  if (dirs.has('images') && images.some((entry) => entry.path.startsWith('images/'))) {
+    return 'images'
+  }
+  const split = inferSplit(annotationPath)
+  if (split && dirs.has(split) && images.some((entry) => entry.path.startsWith(`${split}/`))) {
+    return split
+  }
+  return undefined
 }
 
 export const IMAGE_EXTENSIONS = new Set([
@@ -127,18 +178,30 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
       .slice(0, 3)
       .map(async (entry) => ({ entry, shape: await probeJson(ctx, entry.path) })),
   )
-  const cocoHit = cocoProbes.find((probe) => probe.shape.isCoco)
-  if (cocoHit) {
+  const cocoHits = cocoProbes.filter((probe) => probe.shape.isCoco)
+  for (const hit of cocoHits) {
     candidates.push({
       format: 'coco',
       confidence: 1,
-      reason: `COCO annotations found in ${cocoHit.entry.path}`,
+      reason: `COCO annotations found in ${hit.entry.path}`,
+      params: {
+        annotationPath: hit.entry.path,
+        imageDir: inferCocoImageDir(hit.entry.path, dirs, images),
+        split: inferSplit(hit.entry.path),
+      },
     })
-  } else if (jsonFiles.length === 1 && images.length > 0 && xmlFiles.length === 0) {
+  }
+  if (
+    cocoHits.length === 0 &&
+    jsonFiles.length === 1 &&
+    images.length > 0 &&
+    xmlFiles.length === 0
+  ) {
     candidates.push({
       format: 'coco',
       confidence: 0.5,
       reason: 'A single JSON file alongside images (unverified COCO layout)',
+      params: { annotationPath: jsonFiles[0].path, imageDir: '' },
     })
   }
 
@@ -196,10 +259,17 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
   )
   const labelmeHit = labelmeProbe.find((probe) => probe.shape.isLabelme)
   if (labelmeHit && images.length > 0) {
+    // labelme writes one JSON per image, so a whole dataset is every JSON that
+    // does not live in a COCO-style annotations/ directory. Files that turn out
+    // not to be labelme are skipped (with a warning) by the reader.
+    const annotationPaths = probeable
+      .filter((entry) => !/(^|\/)annotations\//.test(entry.path))
+      .map((entry) => entry.path)
     candidates.push({
       format: 'labelme',
       confidence: 0.9,
       reason: `labelme JSON found (${labelmeHit.entry.path})`,
+      params: { annotationPaths },
     })
   }
 

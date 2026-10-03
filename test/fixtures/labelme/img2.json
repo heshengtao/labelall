@@ -1,0 +1,22 @@
+{
+  "version": "5.4.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "bird",
+      "points": [
+        [0, 0],
+        [10, 0],
+        [10, 10],
+        [0, 10]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
+    }
+  ],
+  "imagePath": "img2.jpg",
+  "imageData": null,
+  "imageHeight": 100,
+  "imageWidth": 100
+}

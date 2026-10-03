@@ -180,3 +180,76 @@ export async function readLabelme(options: LabelmeReadOptions): Promise<ReadResu
 
   return { dataset, warnings }
 }
+
+export interface LabelmeDatasetReadOptions extends ReadContext {
+  /** labelme JSON files to merge, in the order they should appear. */
+  annotationPaths: string[]
+  imageDir?: string
+}
+
+/**
+ * Merge the per-image labelme JSONs into a single dataset.
+ *
+ * labelme has no dataset-level file, so a "dataset" is just every JSON in the
+ * folder. Image and category ids are reassigned as files are appended, and
+ * classes are de-duplicated by name. Anything that fails to parse as labelme is
+ * reported as a warning rather than failing the whole open.
+ */
+export async function readLabelmeDataset(options: LabelmeDatasetReadOptions): Promise<ReadResult> {
+  const warnings: string[] = []
+  const categories: Category[] = []
+  const categoryIdByName = new Map<string, number>()
+  const images: ImageRecord[] = []
+  const annotations: Annotation[] = []
+
+  for (const annotationPath of options.annotationPaths) {
+    let result: ReadResult
+    try {
+      result = await readLabelme({
+        root: options.root,
+        readText: options.readText,
+        annotationPath,
+        ...(options.imageDir ? { imageDir: options.imageDir } : {}),
+      })
+    } catch (error) {
+      warnings.push(`${annotationPath} could not be read as labelme: ${(error as Error).message}`)
+      continue
+    }
+    for (const warning of result.warnings) {
+      warnings.push(`${annotationPath}: ${warning}`)
+    }
+
+    const localCategoryIds = new Map<number, number>()
+    for (const category of result.dataset.categories) {
+      let id = categoryIdByName.get(category.name)
+      if (id === undefined) {
+        id = categories.length
+        categoryIdByName.set(category.name, id)
+        categories.push({ id, name: category.name })
+      }
+      localCategoryIds.set(category.id, id)
+    }
+
+    const imageId = images.length
+    images.push({ ...result.dataset.images[0], id: imageId })
+
+    for (const annotation of result.dataset.annotations) {
+      annotations.push({
+        ...annotation,
+        imageId,
+        categoryId: localCategoryIds.get(annotation.categoryId) ?? 0,
+      })
+    }
+  }
+
+  const dataset: DatasetModel = {
+    sourceFormat: 'labelme',
+    root: options.root,
+    images,
+    categories: assignCategoryColors(categories),
+    annotations,
+    classNames: categories.map((category) => category.name),
+  }
+
+  return { dataset, warnings }
+}

@@ -8,9 +8,11 @@ function detect(name: string) {
 }
 
 describe('detectFormat', () => {
-  it('detects COCO with full confidence', async () => {
+  it('detects COCO with full confidence and carries the annotation path', async () => {
     const candidates = await detect('coco')
     expect(candidates[0]).toMatchObject({ format: 'coco', confidence: 1 })
+    expect(candidates[0]?.params?.annotationPath).toBe('annotations/instances_train.json')
+    expect(candidates[0]?.params?.split).toBe('train')
   })
 
   it('detects Pascal VOC from the Annotations/ + JPEGImages/ layout', async () => {
@@ -32,6 +34,7 @@ describe('detectFormat', () => {
   it('prefers labelme over the unverified single-JSON COCO guess', async () => {
     const candidates = await detect('labelme')
     expect(candidates[0]).toMatchObject({ format: 'labelme', confidence: 0.9 })
+    expect(candidates[0]?.params?.annotationPaths).toEqual(['img1.json', 'img2.json'])
   })
 
   it('ranks a YOLO pose dataset as yolo-pose when kpt_shape is present', async () => {
