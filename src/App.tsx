@@ -31,6 +31,8 @@ import type { DetectionCandidate } from '@/core/formats/detect'
 import { IMAGE_EXTENSIONS } from '@/core/formats/detect'
 import type { DatasetModel } from '@/core/model'
 import { fileExtension } from '@/core/path'
+import { CategoriesPanel } from '@/features/categories/CategoriesPanel'
+import { ShortcutsDialog } from '@/features/help/ShortcutsDialog'
 import { ImageList } from '@/features/imagelist/ImageList'
 import { OpenDialog } from '@/features/open/OpenDialog'
 import { beginOpen, cancelOpen, confirmOpen } from '@/features/open/openDatasetFlow'
@@ -240,6 +242,9 @@ export default function App() {
         onConfirm={handleConfirm}
         onCancel={cancelOpen}
       />
+
+      <CategoriesPanel />
+      <ShortcutsDialog />
 
       <Snackbar
         open={error !== null}

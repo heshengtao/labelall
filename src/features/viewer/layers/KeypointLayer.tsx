@@ -11,12 +11,14 @@ export function KeypointLayer({
   scale,
   selectedIndex,
   hoveredIndex,
+  editable,
   onSelect,
   onHover,
+  onMove,
 }: AnnotationLayerProps) {
   return (
     <>
-      {annotations.map((annotation, index) => {
+      {annotations.map(({ annotation, index }) => {
         if (annotation.type !== 'keypoints') {
           return null
         }
@@ -27,7 +29,25 @@ export function KeypointLayer({
         const { bbox, keypoints } = annotation
 
         return (
-          <Group key={index}>
+          <Group
+            key={index}
+            x={0}
+            y={0}
+            draggable={editable && selected}
+            onClick={(event: Konva.KonvaEventObject<MouseEvent>) => {
+              event.cancelBubble = true
+              onSelect(index)
+            }}
+            onMouseEnter={() => onHover(index)}
+            onMouseLeave={() => onHover(null)}
+            onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) => {
+              const { x, y } = event.target.position()
+              event.target.position({ x: 0, y: 0 })
+              if (x !== 0 || y !== 0) {
+                onMove(index, x, y)
+              }
+            }}
+          >
             {skeleton.map(([from, to], skeletonIndex) => {
               // COCO stores skeleton indices 1-based; the keypoint list is 0-based.
               const a = keypoints[from - 1]
@@ -61,8 +81,8 @@ export function KeypointLayer({
               ),
             )}
 
-            {/* A keypoint instance has no outline of its own; use its bbox as the
-                click target so it can still be selected. */}
+            {/* A keypoint instance has no outline of its own; its bbox doubles as
+                the click target and the drag handle. */}
             <Rect
               x={bbox.x}
               y={bbox.y}
@@ -71,12 +91,6 @@ export function KeypointLayer({
               stroke={selected || hovered ? color : undefined}
               strokeWidth={selected ? 2 / scale : hovered ? 1.5 / scale : 0}
               fill="rgba(0,0,0,0.001)"
-              onClick={(event: Konva.KonvaEventObject<MouseEvent>) => {
-                event.cancelBubble = true
-                onSelect(index)
-              }}
-              onMouseEnter={() => onHover(index)}
-              onMouseLeave={() => onHover(null)}
             />
             {selected || hovered ? (
               <Text

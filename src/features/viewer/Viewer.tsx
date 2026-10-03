@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
@@ -18,7 +18,11 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
-import type { DatasetModel } from '@/core/model'
+import { resizeBBox, translateAnnotation, type BoxEdge } from '@/core/annotationEdits'
+import { bboxArea, bboxFromPoints, bboxFromPolygons, polygonArea } from '@/core/geometry'
+import type { BBox, DatasetModel, Point, Polygon } from '@/core/model'
+import { AnnotateToolbar } from '@/features/annotate/AnnotateToolbar'
+import { useEditorShortcuts } from '@/features/annotate/useEditorShortcuts'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useUiStore } from '@/store/uiStore'
 
@@ -46,8 +50,12 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
   const selectImage = useDatasetStore((state) => state.selectImage)
   const selectAnnotation = useDatasetStore((state) => state.selectAnnotation)
   const selectedIndex = useDatasetStore((state) => state.selectedAnnotationIndex)
+  const addAnnotation = useDatasetStore((state) => state.addAnnotation)
+  const updateAnnotation = useDatasetStore((state) => state.updateAnnotation)
   const layers = useUiStore((state) => state.layers)
   const toggleLayer = useUiStore((state) => state.toggleLayer)
+  const tool = useUiStore((state) => state.tool)
+  const activeCategoryId = useUiStore((state) => state.activeCategoryId)
 
   const imageIds = useMemo(() => dataset.images.map((image) => image.id), [dataset.images])
   const index = imageIndexOf(imageIds, currentImageId)
@@ -77,8 +85,8 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
   const imageLabels = useMemo(
     () =>
       annotations
-        .filter((annotation) => annotation.type === 'classification')
-        .map((annotation) => nameOf(annotation.categoryId))
+        .filter((entry) => entry.annotation.type === 'classification')
+        .map((entry) => nameOf(entry.annotation.categoryId))
         .filter((name) => name.length > 0),
     [annotations, nameOf],
   )
@@ -127,41 +135,94 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
     [dataset.images, imageCount, index, selectImage],
   )
 
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent): void => {
-      const target = event.target as HTMLElement | null
-      if (
-        target &&
-        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
-      ) {
+  const fit = useCallback(() => setViewport(null), [])
+
+  const onCreateBBox = useCallback(
+    (bbox: BBox) => {
+      if (currentImageId === null || activeCategoryId === null) {
         return
       }
-      switch (event.key) {
-        case 'ArrowLeft':
-          goTo(-1)
-          break
-        case 'ArrowRight':
-          goTo(1)
-          break
-        case '+':
-        case '=':
-          zoomByCenter(1.25)
-          break
-        case '-':
-        case '_':
-          zoomByCenter(1 / 1.25)
-          break
-        case '0':
-          setViewport(null)
-          break
-        default:
-          return
+      addAnnotation({ type: 'bbox', imageId: currentImageId, categoryId: activeCategoryId, bbox })
+    },
+    [addAnnotation, currentImageId, activeCategoryId],
+  )
+
+  const onCreatePolygon = useCallback(
+    (polygon: Polygon) => {
+      if (currentImageId === null || activeCategoryId === null) {
+        return
       }
-      event.preventDefault()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [goTo, zoomByCenter])
+      addAnnotation({
+        type: 'polygon',
+        imageId: currentImageId,
+        categoryId: activeCategoryId,
+        polygons: [polygon],
+        bbox: bboxFromPolygons([polygon]),
+        area: polygonArea(polygon),
+      })
+    },
+    [addAnnotation, currentImageId, activeCategoryId],
+  )
+
+  const onCreateKeypoints = useCallback(
+    (points: Point[]) => {
+      if (currentImageId === null || activeCategoryId === null) {
+        return
+      }
+      const names = schemaOf(activeCategoryId)?.names ?? []
+      const keypoints = points.map((point, position) => ({
+        x: point.x,
+        y: point.y,
+        v: 2 as const,
+        ...(names[position] ? { name: names[position] } : {}),
+      }))
+      const bbox = bboxFromPoints(points)
+      addAnnotation({
+        type: 'keypoints',
+        imageId: currentImageId,
+        categoryId: activeCategoryId,
+        bbox,
+        keypoints,
+        numKeypoints: points.length,
+        area: bboxArea(bbox),
+      })
+    },
+    [addAnnotation, currentImageId, activeCategoryId, schemaOf],
+  )
+
+  const onMoveAnnotation = useCallback(
+    (targetIndex: number, dx: number, dy: number) =>
+      updateAnnotation(
+        targetIndex,
+        (annotation) => translateAnnotation(annotation, dx, dy),
+        'move annotation',
+      ),
+    [updateAnnotation],
+  )
+
+  const onResizeAnnotation = useCallback(
+    (targetIndex: number, edge: BoxEdge, point: Point) =>
+      updateAnnotation(
+        targetIndex,
+        (annotation) =>
+          annotation.type === 'bbox'
+            ? { ...annotation, bbox: resizeBBox(annotation.bbox, edge, point) }
+            : annotation,
+        'resize annotation',
+      ),
+    [updateAnnotation],
+  )
+
+  const shortcuts = useMemo(
+    () => ({
+      zoomIn: () => zoomByCenter(1.25),
+      zoomOut: () => zoomByCenter(1 / 1.25),
+      fit,
+      navigate: goTo,
+    }),
+    [zoomByCenter, fit, goTo],
+  )
+  useEditorShortcuts(shortcuts)
 
   if (!image) {
     return (
@@ -236,6 +297,8 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
         ) : null}
       </Stack>
 
+      <AnnotateToolbar />
+
       <CanvasStage
         image={imageElement}
         imageWidth={imageWidth}
@@ -243,14 +306,21 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
         viewport={view}
         annotations={annotations}
         layers={layers}
+        tool={tool}
+        activeCategoryId={activeCategoryId}
         colorOf={colorOf}
         nameOf={nameOf}
         schemaOf={schemaOf}
         selectedIndex={selectedIndex}
         onSelect={selectAnnotation}
+        onMove={onMoveAnnotation}
+        onResize={onResizeAnnotation}
+        onCreateBBox={onCreateBBox}
+        onCreatePolygon={onCreatePolygon}
+        onCreateKeypoints={onCreateKeypoints}
         onZoom={onZoom}
         onPan={onPan}
-        onResize={onResize}
+        onResizeStage={onResize}
       />
 
       <Filmstrip

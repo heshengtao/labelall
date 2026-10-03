@@ -33,6 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Overlays for boxes, polygons, keypoints (with skeletons) and crowd masks,
   coloured per category, with click/hover selection and per-layer visibility.
 - Bottom filmstrip for stepping through nearby images.
+- Annotation editing: draw boxes, polygons and keypoints, add image-level class
+  labels, then move, resize (8 handles), duplicate, delete or nudge annotations.
+- Class management panel (add / rename / recolour / delete) and a keyboard
+  shortcut reference.
+- Undo/redo backed by immer patches, with Cmd/Ctrl+Z and Shift+Cmd/Ctrl+Z.
 
 ### Changed
 

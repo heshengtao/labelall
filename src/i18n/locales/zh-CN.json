@@ -92,5 +92,44 @@
     "layerPolygon": "多边形",
     "layerKeypoint": "关键点",
     "layerMask": "掩码"
+  },
+  "annotate": {
+    "toolSelect": "选择 / 移动",
+    "toolBbox": "绘制矩形框",
+    "toolPolygon": "绘制多边形",
+    "toolKeypoint": "放置关键点",
+    "category": "类别",
+    "addLabel": "为本图添加一个分类标签",
+    "label": "标签",
+    "duplicate": "复制",
+    "delete": "删除",
+    "undo": "撤销",
+    "redo": "重做"
+  },
+  "categories": {
+    "title": "类别管理",
+    "hint": "可重命名、改色或删除类别；删除类别会同时删除其标注。",
+    "name": "名称",
+    "supercategory": "父类",
+    "newCategory": "新建类别",
+    "delete": "删除类别"
+  },
+  "shortcuts": {
+    "title": "快捷键",
+    "select": "选择 / 移动",
+    "bbox": "绘制矩形框",
+    "polygon": "绘制多边形（双击闭合）",
+    "keypoint": "放置关键点",
+    "navigate": "上一张 / 下一张",
+    "nudge": "微调选中标注 1px",
+    "nudgeLarge": "微调选中标注 10px",
+    "delete": "删除选中标注",
+    "duplicate": "复制选中标注",
+    "undo": "撤销",
+    "redo": "重做",
+    "zoom": "放大 / 缩小",
+    "fit": "适应窗口",
+    "pan": "平移（或中键拖拽）",
+    "help": "显示帮助 / 取消"
   }
 }

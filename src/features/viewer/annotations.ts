@@ -1,14 +1,26 @@
 import type { Annotation, Category } from '@/core/model'
 
-/** The annotations belonging to one image, in file order. */
+export interface IndexedAnnotation {
+  annotation: Annotation
+  /** Position in the dataset's annotation array — the editing handle. */
+  index: number
+}
+
+/** The annotations of one image, each paired with its global index. */
 export function annotationsForImage(
   annotations: readonly Annotation[],
   imageId: number | null,
-): Annotation[] {
+): IndexedAnnotation[] {
   if (imageId === null) {
     return []
   }
-  return annotations.filter((annotation) => annotation.imageId === imageId)
+  const result: IndexedAnnotation[] = []
+  annotations.forEach((annotation, index) => {
+    if (annotation.imageId === imageId) {
+      result.push({ annotation, index })
+    }
+  })
+  return result
 }
 
 export function categoryColor(category: Category | undefined): string {

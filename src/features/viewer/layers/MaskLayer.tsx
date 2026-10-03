@@ -15,12 +15,14 @@ export function MaskLayer({
   scale,
   selectedIndex,
   hoveredIndex,
+  editable,
   onSelect,
   onHover,
+  onMove,
 }: AnnotationLayerProps) {
   return (
     <>
-      {annotations.map((annotation, index) => {
+      {annotations.map(({ annotation, index }) => {
         if (annotation.type !== 'mask' || !annotation.bbox) {
           return null
         }
@@ -30,7 +32,25 @@ export function MaskLayer({
         const hovered = hoveredIndex === index
 
         return (
-          <Group key={index}>
+          <Group
+            key={index}
+            x={0}
+            y={0}
+            draggable={editable && selected}
+            onClick={(event: Konva.KonvaEventObject<MouseEvent>) => {
+              event.cancelBubble = true
+              onSelect(index)
+            }}
+            onMouseEnter={() => onHover(index)}
+            onMouseLeave={() => onHover(null)}
+            onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) => {
+              const { x, y } = event.target.position()
+              event.target.position({ x: 0, y: 0 })
+              if (x !== 0 || y !== 0) {
+                onMove(index, x, y)
+              }
+            }}
+          >
             <Rect
               x={bbox.x}
               y={bbox.y}
@@ -40,12 +60,6 @@ export function MaskLayer({
               strokeWidth={(selected ? 3 : 2) / scale}
               dash={[8 / scale, 6 / scale]}
               fill={selected ? `${color}22` : undefined}
-              onClick={(event: Konva.KonvaEventObject<MouseEvent>) => {
-                event.cancelBubble = true
-                onSelect(index)
-              }}
-              onMouseEnter={() => onHover(index)}
-              onMouseLeave={() => onHover(null)}
             />
             {selected || hovered ? (
               <Text

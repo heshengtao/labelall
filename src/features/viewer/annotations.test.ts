@@ -10,8 +10,13 @@ describe('annotationsForImage', () => {
     { type: 'bbox', imageId: 1, categoryId: 1, bbox: { x: 1, y: 1, width: 1, height: 1 } },
   ]
 
-  it('keeps only the annotations of the requested image', () => {
-    expect(annotationsForImage(annotations, 1)).toHaveLength(2)
+  it('keeps the annotations of one image with their global indices', () => {
+    const entries = annotationsForImage(annotations, 1)
+    expect(entries.map((entry) => entry.index)).toEqual([0, 2])
+    expect(entries.map((entry) => entry.annotation.type)).toEqual(['classification', 'bbox'])
+  })
+
+  it('handles a missing image', () => {
     expect(annotationsForImage(annotations, 2)).toHaveLength(1)
     expect(annotationsForImage(annotations, null)).toEqual([])
   })

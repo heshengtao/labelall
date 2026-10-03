@@ -92,5 +92,44 @@
     "layerPolygon": "Polygons",
     "layerKeypoint": "Keypoints",
     "layerMask": "Masks"
+  },
+  "annotate": {
+    "toolSelect": "Select / move",
+    "toolBbox": "Draw a box",
+    "toolPolygon": "Draw a polygon",
+    "toolKeypoint": "Place keypoints",
+    "category": "Class",
+    "addLabel": "Add a class label to this image",
+    "label": "Label",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "undo": "Undo",
+    "redo": "Redo"
+  },
+  "categories": {
+    "title": "Classes",
+    "hint": "Rename, recolour or remove classes. Deleting a class also removes its annotations.",
+    "name": "Name",
+    "supercategory": "Supercategory",
+    "newCategory": "New class",
+    "delete": "Delete class"
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "select": "Select / move",
+    "bbox": "Draw a box",
+    "polygon": "Draw a polygon (double-click to finish)",
+    "keypoint": "Place keypoints",
+    "navigate": "Previous / next image",
+    "nudge": "Nudge selected annotation 1px",
+    "nudgeLarge": "Nudge selected annotation 10px",
+    "delete": "Delete selected annotation",
+    "duplicate": "Duplicate selected annotation",
+    "undo": "Undo",
+    "redo": "Redo",
+    "zoom": "Zoom in / out",
+    "fit": "Fit to window",
+    "pan": "Pan (or middle-drag)",
+    "help": "Show this help / cancel"
   }
 }

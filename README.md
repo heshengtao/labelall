@@ -110,7 +110,7 @@ pnpm tauri build  # 打包桌面安装包
 - [x] **M1** 统一数据模型、格式探测、COCO / ImageFolder 读取
 - [x] **M2** 平台抽象、打开数据集、图片列表
 - [x] **M3** 查看器（缩放平移、四类标注叠加）
-- [ ] **M4** 标注编辑与类别管理、撤销重做
+- [x] **M4** 标注编辑与类别管理、撤销重做
 - [ ] **M5** YOLO / VOC 读写、保存与导出、往返测试
 - [ ] **M6** 打磨、Web 部署、文档与示例数据
 - [ ] **M7** 发布 v0.1.0（三平台安装包）
@@ -186,7 +186,7 @@ pnpm tauri build  # desktop installers
 - [x] **M1** Unified data model, format detection, COCO / ImageFolder readers
 - [x] **M2** Platform abstraction, dataset opening, image list
 - [x] **M3** Viewer (zoom/pan, overlays for all four annotation types)
-- [ ] **M4** Annotation editing, category management, undo/redo
+- [x] **M4** Annotation editing, category management, undo/redo
 - [ ] **M5** YOLO / VOC readers and writers, save & export, round-trip tests
 - [ ] **M6** Polish, web deployment, docs and sample data
 - [ ] **M7** Release v0.1.0 (installers for three platforms)

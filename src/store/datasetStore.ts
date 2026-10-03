@@ -1,8 +1,13 @@
+import type { Draft } from 'immer'
 import { create } from 'zustand'
 
-import type { DatasetModel } from '@/core/model'
+import { duplicateAnnotation } from '@/core/annotationEdits'
 import type { DetectionCandidate, DetectedFile } from '@/core/formats/detect'
+import type { Annotation, Category, DatasetModel } from '@/core/model'
+import { colorForIndex } from '@/core/palette'
 import type { DatasetHandle } from '@/platform/types'
+
+import { applyEdit, emptyHistory, redoEdit, undoEdit, type History } from './history'
 
 export type OpenStatus = 'idle' | 'scanning' | 'detecting' | 'ready' | 'parsing' | 'error'
 
@@ -26,8 +31,10 @@ interface DatasetState {
   warnings: string[]
   pending: PendingOpen | null
   currentImageId: number | null
-  /** Currently highlighted annotation, or null. */
+  /** Index into `dataset.annotations`, or null. */
   selectedAnnotationIndex: number | null
+  /** Undo/redo stack for edits to the dataset. */
+  history: History
 
   setStatus(status: OpenStatus): void
   setProgress(progress: number): void
@@ -35,9 +42,25 @@ interface DatasetState {
   setPending(pending: PendingOpen | null): void
   setDataset(handle: DatasetHandle, dataset: DatasetModel, warnings: string[]): void
   selectImage(imageId: number | null): void
-  /** Highlight an annotation by its index within the image's annotation list. */
   selectAnnotation(index: number | null): void
   close(): void
+
+  edit(recipe: (draft: Draft<DatasetModel>) => void, label: string): void
+  undo(): void
+  redo(): void
+
+  addAnnotation(annotation: Annotation, label?: string): void
+  updateAnnotation(
+    index: number,
+    update: (annotation: Annotation) => Annotation,
+    label: string,
+  ): void
+  deleteAnnotation(index: number): void
+  duplicateAnnotation(index: number): void
+
+  addCategory(name: string): void
+  updateCategory(id: number, patch: Partial<Category>): void
+  deleteCategory(id: number): void
 }
 
 const initialState = {
@@ -50,6 +73,7 @@ const initialState = {
   pending: null,
   currentImageId: null,
   selectedAnnotationIndex: null,
+  history: emptyHistory,
 }
 
 export const useDatasetStore = create<DatasetState>((set) => ({
@@ -67,6 +91,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
       warnings,
       currentImageId: dataset.images[0]?.id ?? null,
       selectedAnnotationIndex: null,
+      history: emptyHistory,
     }),
 
   selectImage: (imageId) => set({ currentImageId: imageId, selectedAnnotationIndex: null }),
@@ -74,4 +99,149 @@ export const useDatasetStore = create<DatasetState>((set) => ({
   selectAnnotation: (index) => set({ selectedAnnotationIndex: index }),
 
   close: () => set({ ...initialState }),
+
+  edit: (recipe, label) =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = applyEdit(state.dataset, state.history, label, recipe)
+      return { dataset: result.value, history: result.history }
+    }),
+
+  undo: () =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = undoEdit(state.dataset, state.history)
+      return {
+        dataset: result.value,
+        history: result.history,
+        selectedAnnotationIndex: null,
+      }
+    }),
+
+  redo: () =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = redoEdit(state.dataset, state.history)
+      return {
+        dataset: result.value,
+        history: result.history,
+        selectedAnnotationIndex: null,
+      }
+    }),
+
+  addAnnotation: (annotation, label = 'add annotation') =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = applyEdit(state.dataset, state.history, label, (draft) => {
+        draft.annotations.push(annotation)
+      })
+      return {
+        dataset: result.value,
+        history: result.history,
+        selectedAnnotationIndex: result.value.annotations.length - 1,
+      }
+    }),
+
+  updateAnnotation: (index, update, label) =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = applyEdit(state.dataset, state.history, label, (draft) => {
+        const current = draft.annotations[index]
+        if (current) {
+          draft.annotations[index] = update(current as Annotation)
+        }
+      })
+      return { dataset: result.value, history: result.history }
+    }),
+
+  deleteAnnotation: (index) =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = applyEdit(state.dataset, state.history, 'delete annotation', (draft) => {
+        draft.annotations.splice(index, 1)
+      })
+      return {
+        dataset: result.value,
+        history: result.history,
+        selectedAnnotationIndex: null,
+      }
+    }),
+
+  duplicateAnnotation: (index) =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = applyEdit(state.dataset, state.history, 'duplicate annotation', (draft) => {
+        const current = draft.annotations[index]
+        if (current) {
+          draft.annotations.splice(index + 1, 0, duplicateAnnotation(current as Annotation))
+        }
+      })
+      return {
+        dataset: result.value,
+        history: result.history,
+        selectedAnnotationIndex: index + 1,
+      }
+    }),
+
+  addCategory: (name) =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const nextId = state.dataset.categories.reduce((max, item) => Math.max(max, item.id), -1) + 1
+      const category: Category = {
+        id: nextId,
+        name: name.trim() || `class-${nextId}`,
+        color: colorForIndex(state.dataset.categories.length),
+      }
+      const result = applyEdit(state.dataset, state.history, 'add category', (draft) => {
+        draft.categories.push(category)
+      })
+      return { dataset: result.value, history: result.history }
+    }),
+
+  updateCategory: (id, patch) =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = applyEdit(state.dataset, state.history, 'edit category', (draft) => {
+        const index = draft.categories.findIndex((item) => item.id === id)
+        const current = draft.categories[index]
+        if (current) {
+          Object.assign(current, patch)
+        }
+      })
+      return { dataset: result.value, history: result.history }
+    }),
+
+  deleteCategory: (id) =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const result = applyEdit(state.dataset, state.history, 'delete category', (draft) => {
+        draft.categories = draft.categories.filter((item) => item.id !== id)
+        draft.annotations = draft.annotations.filter((item) => item.categoryId !== id)
+      })
+      return {
+        dataset: result.value,
+        history: result.history,
+        selectedAnnotationIndex: null,
+      }
+    }),
 }))
