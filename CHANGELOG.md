@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Ten interface languages — Simplified and Traditional Chinese, English, Japanese, Korean,
+  Spanish, French, German, Russian and Arabic — selectable from the header or Settings. Arabic
+  switches the whole interface to a mirrored right-to-left layout.
+- Translated READMEs for all ten languages, with a language switcher at the top of each.
+- An MD3 right-click menu in the viewer (duplicate or delete an annotation; fit or deselect on the
+  canvas) replacing the webview's own context menu.
+- A Dockerfile and docker-compose for self-hosting the web build, plus a Cloudflare Pages deploy
+  workflow; see DEPLOY.md.
+
 ## [0.1.2] - 2026-10-03
 
 ### Added
