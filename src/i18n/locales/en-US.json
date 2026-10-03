@@ -37,9 +37,7 @@
     "system": "System"
   },
   "language": {
-    "label": "Language",
-    "zh": "简体中文",
-    "en": "English"
+    "label": "Language"
   },
   "welcome": {
     "title": "Start annotating",

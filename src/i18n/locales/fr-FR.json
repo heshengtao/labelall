@@ -1,0 +1,182 @@
+{
+  "app": {
+    "name": "LabelAll",
+    "tagline": "Charger, consulter et annoter des jeux d'images courants"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "rename": "Renommer",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "loading": "Chargement…",
+    "empty": "Rien pour l'instant",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "back": "Retour",
+    "next": "Suivant",
+    "yes": "Oui",
+    "no": "Non",
+    "comingSoon": "Cette fonctionnalité est encore en développement"
+  },
+  "actions": {
+    "openDataset": "Ouvrir un jeu de données",
+    "recentDatasets": "Récents",
+    "export": "Exporter",
+    "settings": "Paramètres",
+    "help": "Aide"
+  },
+  "theme": {
+    "label": "Apparence",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "language": {
+    "label": "Langue"
+  },
+  "welcome": {
+    "title": "Commencer à annoter",
+    "subtitle": "Ouvrez un dossier de jeu de données pour commencer à consulter et annoter.",
+    "openHint": "Prend en charge COCO, YOLO, Pascal VOC et les dossiers de classification (ImageFolder / ImageNet)",
+    "recent": "Récents",
+    "reopenUnsupported": "Les navigateurs ne peuvent pas rouvrir un dossier sans redemander",
+    "featureFormats": "Nombreux formats",
+    "featureFormatsDesc": "Détecte automatiquement les formats de jeux d'images courants",
+    "featureAnnotate": "Quatre types d'annotation",
+    "featureAnnotateDesc": "Boîtes englobantes, polygones, points clés et étiquettes de classification",
+    "featureCrossPlatform": "Multiplateforme",
+    "featureCrossPlatformDesc": "Un même frontend pour l'application de bureau et la version web"
+  },
+  "env": {
+    "desktop": "Bureau",
+    "web": "Web",
+    "webReadOnly": "Ce navigateur ne prend en charge que le mode lecture seule"
+  },
+  "open": {
+    "title": "Ouvrir un jeu de données",
+    "imagesInFolder": "Fichiers image dans ce dossier : {{count}}",
+    "noCandidates": "Aucun format de jeu de données connu n'a été détecté dans ce dossier.",
+    "unsupported": "La lecture de ce format n'est pas encore disponible",
+    "confirm": "Charger"
+  },
+  "dataset": {
+    "close": "Fermer le jeu de données",
+    "stats": "{{images}} images · {{categories}} classes · {{annotations}} annotations",
+    "warnings": "{{count}} avertissement(s) au chargement"
+  },
+  "imagelist": {
+    "search": "Rechercher des images",
+    "split": "Sous-ensemble",
+    "allSplits": "Tous les sous-ensembles",
+    "category": "Classe",
+    "allCategories": "Toutes les classes",
+    "empty": "Aucune image ne correspond aux filtres actuels",
+    "shown": "{{shown}} / {{total}} images"
+  },
+  "viewer": {
+    "grid": "Grille",
+    "canvas": "Visionneuse",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "fit": "Ajuster à la fenêtre",
+    "prev": "Image précédente",
+    "next": "Image suivante",
+    "filmstrip": "Bandeau d'images",
+    "noImage": "Aucune image sélectionnée",
+    "layerBbox": "Boîtes",
+    "layerPolygon": "Polygones",
+    "layerKeypoint": "Points clés",
+    "layerMask": "Masques"
+  },
+  "annotate": {
+    "toolSelect": "Sélectionner / déplacer",
+    "toolBbox": "Dessiner une boîte",
+    "toolPolygon": "Dessiner un polygone",
+    "toolKeypoint": "Placer des points clés",
+    "keypointNeedsSchema": "Cette classe n'a pas de points clés définis (seuls les jeux COCO keypoints ou YOLO-pose en ont)",
+    "category": "Classe",
+    "label": "Étiquette",
+    "labelHint": "Ajouter la classe sélectionnée comme étiquette de toute l'image",
+    "unlabel": "Retirer l'étiquette",
+    "unlabelHint": "Retirer de cette image l'étiquette de la classe sélectionnée",
+    "duplicate": "Dupliquer",
+    "delete": "Supprimer",
+    "undo": "Annuler",
+    "redo": "Rétablir"
+  },
+  "categories": {
+    "title": "Classes",
+    "hint": "Renommez, recolorez ou supprimez des classes. Supprimer une classe supprime aussi ses annotations.",
+    "name": "Nom",
+    "supercategory": "Super-catégorie",
+    "newCategory": "Nouvelle classe",
+    "colour": "Couleur",
+    "delete": "Supprimer la classe"
+  },
+  "shortcuts": {
+    "title": "Raccourcis clavier",
+    "select": "Sélectionner / déplacer",
+    "bbox": "Dessiner une boîte",
+    "polygon": "Dessiner un polygone (double-clic pour terminer)",
+    "keypoint": "Placer des points clés",
+    "navigate": "Image précédente / suivante",
+    "nudge": "Déplacer l'annotation sélectionnée de 1px",
+    "nudgeLarge": "Déplacer l'annotation sélectionnée de 10px",
+    "delete": "Supprimer l'annotation sélectionnée",
+    "duplicate": "Dupliquer l'annotation sélectionnée",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "zoom": "Zoom avant / arrière",
+    "fit": "Ajuster à la fenêtre",
+    "pan": "Déplacer (ou glisser avec le bouton du milieu)",
+    "help": "Afficher cette aide / annuler"
+  },
+  "export": {
+    "title": "Exporter",
+    "format": "Format",
+    "hint": "Les fichiers sont écrits dans {{path}} à l'intérieur du jeu de données ; les originaux ne sont pas modifiés.",
+    "losses": "Certaines données ne peuvent pas être représentées :",
+    "noLosses": "Ce format peut représenter tout le jeu de données.",
+    "confirm": "Exporter",
+    "done": "{{count}} fichier(s) exporté(s) au format {{format}}",
+    "readOnly": "Ce navigateur ne peut ouvrir les jeux de données qu'en lecture seule",
+    "coco": "COCO",
+    "yolo": "YOLO (tâche automatique)",
+    "voc": "Pascal VOC",
+    "imagefolder": "ImageFolder"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "seed": "Couleur d'accent",
+    "palette": "Palette",
+    "hex": "Hex",
+    "reset": "Réinitialiser",
+    "defaultFormat": "Format d'export par défaut",
+    "recent": "Jeux de données récents"
+  },
+  "update": {
+    "title": "Mise à jour",
+    "check": "Rechercher des mises à jour",
+    "available": "La version {{version}} est disponible",
+    "current": "Vous êtes à jour",
+    "downloading": "Téléchargement et installation…",
+    "install": "Installer et redémarrer",
+    "later": "Plus tard",
+    "error": "Échec de la recherche de mise à jour",
+    "desktopOnly": "Les mises à jour automatiques ne sont disponibles que dans l'application de bureau"
+  },
+  "context": {
+    "deselect": "Désélectionner"
+  },
+  "report": {
+    "errorTitle": "Échec de l'import",
+    "warningTitle": "Importé avec des remarques",
+    "errorHint": "Ce jeu de données n'a pas pu être lu. Vérifiez que vous avez choisi le bon dossier et que ses fichiers sont complets, puis réessayez.",
+    "warningHint": "Le jeu de données a été chargé, mais les éléments suivants ont été ignorés ou interprétés de façon souple :"
+  }
+}

@@ -6,16 +6,11 @@ import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Tooltip } from 
 import { useTranslation } from 'react-i18next'
 
 import {
+  LANGUAGE_NATIVE_NAMES,
   LANGUAGE_STORAGE_KEY,
   SUPPORTED_LANGUAGES,
   normalizeLanguage,
-  type SupportedLanguage,
 } from '@/i18n'
-
-const LANGUAGE_LABEL_KEY: Record<SupportedLanguage, string> = {
-  'zh-CN': 'language.zh',
-  'en-US': 'language.en',
-}
 
 export function LanguageToggle() {
   const { t, i18n } = useTranslation()
@@ -51,7 +46,7 @@ export function LanguageToggle() {
             }}
           >
             <ListItemIcon>{lng === current ? <CheckIcon fontSize="small" /> : null}</ListItemIcon>
-            <ListItemText>{t(LANGUAGE_LABEL_KEY[lng])}</ListItemText>
+            <ListItemText>{LANGUAGE_NATIVE_NAMES[lng]}</ListItemText>
           </MenuItem>
         ))}
       </Menu>

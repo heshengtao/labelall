@@ -1,0 +1,182 @@
+{
+  "app": {
+    "name": "LabelAll",
+    "tagline": "一般的な画像データセットの読み込み・閲覧・アノテーション"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "キャンセル",
+    "close": "閉じる",
+    "confirm": "確定",
+    "save": "保存",
+    "delete": "削除",
+    "rename": "名前を変更",
+    "add": "追加",
+    "search": "検索",
+    "loading": "読み込み中…",
+    "empty": "まだ何もありません",
+    "error": "エラーが発生しました",
+    "retry": "再試行",
+    "back": "戻る",
+    "next": "次へ",
+    "yes": "はい",
+    "no": "いいえ",
+    "comingSoon": "この機能は開発中です"
+  },
+  "actions": {
+    "openDataset": "データセットを開く",
+    "recentDatasets": "最近使ったもの",
+    "export": "エクスポート",
+    "settings": "設定",
+    "help": "ヘルプ"
+  },
+  "theme": {
+    "label": "外観",
+    "light": "ライト",
+    "dark": "ダーク",
+    "system": "システム"
+  },
+  "language": {
+    "label": "言語"
+  },
+  "welcome": {
+    "title": "アノテーションを始める",
+    "subtitle": "データセットのフォルダを開くと、閲覧とアノテーションを開始できます。",
+    "openHint": "COCO・YOLO・Pascal VOC・分類フォルダ（ImageFolder / ImageNet）に対応",
+    "recent": "最近使ったもの",
+    "reopenUnsupported": "ブラウザでは確認なしにフォルダを開き直せません",
+    "featureFormats": "多数のフォーマット",
+    "featureFormatsDesc": "一般的な画像データセット形式を自動判別",
+    "featureAnnotate": "4 種類のアノテーション",
+    "featureAnnotateDesc": "矩形・ポリゴン・キーポイント・分類タグ",
+    "featureCrossPlatform": "クロスプラットフォーム",
+    "featureCrossPlatformDesc": "デスクトップ版と Web 版で同じフロントエンドを共有"
+  },
+  "env": {
+    "desktop": "デスクトップ",
+    "web": "Web",
+    "webReadOnly": "このブラウザは読み取り専用モードのみ対応です"
+  },
+  "open": {
+    "title": "データセットを開く",
+    "imagesInFolder": "このフォルダの画像ファイル：{{count}}",
+    "noCandidates": "既知のデータセット形式が見つかりませんでした。",
+    "unsupported": "この形式の読み込みは未対応です",
+    "confirm": "読み込む"
+  },
+  "dataset": {
+    "close": "データセットを閉じる",
+    "stats": "{{images}} 枚 · {{categories}} クラス · {{annotations}} 件のアノテーション",
+    "warnings": "読み込み時に {{count}} 件の警告"
+  },
+  "imagelist": {
+    "search": "画像を検索",
+    "split": "分割",
+    "allSplits": "すべての分割",
+    "category": "クラス",
+    "allCategories": "すべてのクラス",
+    "empty": "現在の絞り込みに一致する画像がありません",
+    "shown": "{{shown}} / {{total}} 枚"
+  },
+  "viewer": {
+    "grid": "グリッド",
+    "canvas": "ビューア",
+    "zoomIn": "拡大",
+    "zoomOut": "縮小",
+    "fit": "ウィンドウに合わせる",
+    "prev": "前の画像",
+    "next": "次の画像",
+    "filmstrip": "フィルムストリップ",
+    "noImage": "画像が選択されていません",
+    "layerBbox": "矩形",
+    "layerPolygon": "ポリゴン",
+    "layerKeypoint": "キーポイント",
+    "layerMask": "マスク"
+  },
+  "annotate": {
+    "toolSelect": "選択 / 移動",
+    "toolBbox": "矩形を描く",
+    "toolPolygon": "ポリゴンを描く",
+    "toolKeypoint": "キーポイントを配置",
+    "keypointNeedsSchema": "このクラスにはキーポイント定義がありません（COCO キーポイントまたは YOLO-pose のみ）",
+    "category": "クラス",
+    "label": "ラベル",
+    "labelHint": "選択中のクラスを画像全体のラベルとして追加",
+    "unlabel": "ラベルを削除",
+    "unlabelHint": "この画像から選択中のクラスのラベルを削除",
+    "duplicate": "複製",
+    "delete": "削除",
+    "undo": "元に戻す",
+    "redo": "やり直す"
+  },
+  "categories": {
+    "title": "クラス管理",
+    "hint": "クラスの名前変更・色変更・削除ができます。削除するとそのアノテーションも消えます。",
+    "name": "名前",
+    "supercategory": "上位クラス",
+    "newCategory": "新しいクラス",
+    "colour": "色",
+    "delete": "クラスを削除"
+  },
+  "shortcuts": {
+    "title": "キーボードショートカット",
+    "select": "選択 / 移動",
+    "bbox": "矩形を描く",
+    "polygon": "ポリゴンを描く（ダブルクリックで確定）",
+    "keypoint": "キーポイントを配置",
+    "navigate": "前 / 次の画像",
+    "nudge": "選択中のアノテーションを 1px 移動",
+    "nudgeLarge": "選択中のアノテーションを 10px 移動",
+    "delete": "選択中のアノテーションを削除",
+    "duplicate": "選択中のアノテーションを複製",
+    "undo": "元に戻す",
+    "redo": "やり直す",
+    "zoom": "拡大 / 縮小",
+    "fit": "ウィンドウに合わせる",
+    "pan": "パン（または中ボタンドラッグ）",
+    "help": "ヘルプを表示 / キャンセル"
+  },
+  "export": {
+    "title": "エクスポート",
+    "format": "形式",
+    "hint": "ファイルはデータセット内の {{path}} に書き出されます。元のファイルは変更しません。",
+    "losses": "表現できない内容：",
+    "noLosses": "この形式はデータセット全体を表現できます。",
+    "confirm": "エクスポート",
+    "done": "{{count}} 個のファイルを {{format}} として書き出しました",
+    "readOnly": "このブラウザは読み取り専用でしか開けません",
+    "coco": "COCO",
+    "yolo": "YOLO（自動タスク）",
+    "voc": "Pascal VOC",
+    "imagefolder": "分類フォルダ"
+  },
+  "settings": {
+    "title": "設定",
+    "seed": "アクセントカラー",
+    "palette": "パレット",
+    "hex": "HEX",
+    "reset": "リセット",
+    "defaultFormat": "既定のエクスポート形式",
+    "recent": "最近使ったデータセット"
+  },
+  "update": {
+    "title": "アップデート",
+    "check": "アップデートを確認",
+    "available": "バージョン {{version}} が利用可能です",
+    "current": "最新バージョンです",
+    "downloading": "ダウンロードしてインストール中…",
+    "install": "インストールして再起動",
+    "later": "後で",
+    "error": "アップデートの確認に失敗しました",
+    "desktopOnly": "自動アップデートはデスクトップ版のみ対応です"
+  },
+  "context": {
+    "deselect": "選択を解除"
+  },
+  "report": {
+    "errorTitle": "読み込みに失敗しました",
+    "warningTitle": "読み込みました（注意あり）",
+    "errorHint": "このデータセットを読み込めませんでした。正しいフォルダを選び、ファイルが揃っているか確認して再試行してください。",
+    "warningHint": "読み込みは完了しましたが、以下はスキップまたは緩く解釈されました："
+  }
+}

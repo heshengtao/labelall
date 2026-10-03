@@ -26,6 +26,8 @@ function paletteFromRoles(roles: Md3Roles): PaletteOptions {
 
 export interface CreateAppThemeOptions {
   seed?: string
+  /** Layout direction; `rtl` mirrors the whole interface (Arabic). */
+  direction?: 'ltr' | 'rtl'
 }
 
 /**
@@ -37,6 +39,7 @@ export function createAppTheme(options: CreateAppThemeOptions = {}): Theme {
   const md3 = buildMd3Theme(options.seed ?? DEFAULT_SEED)
 
   return createTheme({
+    direction: options.direction ?? 'ltr',
     cssVariables: { colorSchemeSelector: 'class' },
     colorSchemes: {
       light: { palette: paletteFromRoles(md3.light) },

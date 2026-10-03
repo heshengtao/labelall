@@ -1,0 +1,182 @@
+{
+  "app": {
+    "name": "LabelAll",
+    "tagline": "Carga, visualiza y anota datasets de imágenes habituales"
+  },
+  "common": {
+    "ok": "Aceptar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "rename": "Renombrar",
+    "add": "Añadir",
+    "search": "Buscar",
+    "loading": "Cargando…",
+    "empty": "Aún no hay nada",
+    "error": "Se ha producido un error",
+    "retry": "Reintentar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "yes": "Sí",
+    "no": "No",
+    "comingSoon": "Esta función aún está en desarrollo"
+  },
+  "actions": {
+    "openDataset": "Abrir dataset",
+    "recentDatasets": "Recientes",
+    "export": "Exportar",
+    "settings": "Ajustes",
+    "help": "Ayuda"
+  },
+  "theme": {
+    "label": "Apariencia",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "language": {
+    "label": "Idioma"
+  },
+  "welcome": {
+    "title": "Empieza a anotar",
+    "subtitle": "Abre una carpeta de dataset para empezar a ver y anotar.",
+    "openHint": "Compatible con COCO, YOLO, Pascal VOC y carpetas de clasificación (ImageFolder / ImageNet)",
+    "recent": "Recientes",
+    "reopenUnsupported": "Los navegadores no pueden reabrir una carpeta sin volver a preguntar",
+    "featureFormats": "Muchos formatos",
+    "featureFormatsDesc": "Detecta automáticamente los formatos de dataset más comunes",
+    "featureAnnotate": "Cuatro tipos de anotación",
+    "featureAnnotateDesc": "Cajas, polígonos, puntos clave y etiquetas de clasificación",
+    "featureCrossPlatform": "Multiplataforma",
+    "featureCrossPlatformDesc": "Un mismo frontend para la app de escritorio y la versión web"
+  },
+  "env": {
+    "desktop": "Escritorio",
+    "web": "Web",
+    "webReadOnly": "Este navegador solo admite el modo de solo lectura"
+  },
+  "open": {
+    "title": "Abrir dataset",
+    "imagesInFolder": "Archivos de imagen en esta carpeta: {{count}}",
+    "noCandidates": "No se ha detectado ningún formato de dataset conocido en esta carpeta.",
+    "unsupported": "Este formato aún no se puede leer",
+    "confirm": "Cargar dataset"
+  },
+  "dataset": {
+    "close": "Cerrar dataset",
+    "stats": "{{images}} imágenes · {{categories}} clases · {{annotations}} anotaciones",
+    "warnings": "{{count}} aviso(s) al cargar"
+  },
+  "imagelist": {
+    "search": "Buscar imágenes",
+    "split": "Partición",
+    "allSplits": "Todas las particiones",
+    "category": "Clase",
+    "allCategories": "Todas las clases",
+    "empty": "Ninguna imagen coincide con los filtros actuales",
+    "shown": "{{shown}} / {{total}} imágenes"
+  },
+  "viewer": {
+    "grid": "Cuadrícula",
+    "canvas": "Visor",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "fit": "Ajustar a la ventana",
+    "prev": "Imagen anterior",
+    "next": "Imagen siguiente",
+    "filmstrip": "Tira de imágenes",
+    "noImage": "Ninguna imagen seleccionada",
+    "layerBbox": "Cajas",
+    "layerPolygon": "Polígonos",
+    "layerKeypoint": "Puntos clave",
+    "layerMask": "Máscaras"
+  },
+  "annotate": {
+    "toolSelect": "Seleccionar / mover",
+    "toolBbox": "Dibujar una caja",
+    "toolPolygon": "Dibujar un polígono",
+    "toolKeypoint": "Colocar puntos clave",
+    "keypointNeedsSchema": "Esta clase no tiene puntos clave definidos (solo los datasets COCO keypoints o YOLO-pose los tienen)",
+    "category": "Clase",
+    "label": "Etiqueta",
+    "labelHint": "Añadir la clase seleccionada como etiqueta de toda la imagen",
+    "unlabel": "Quitar etiqueta",
+    "unlabelHint": "Quitar de esta imagen la etiqueta de la clase seleccionada",
+    "duplicate": "Duplicar",
+    "delete": "Eliminar",
+    "undo": "Deshacer",
+    "redo": "Rehacer"
+  },
+  "categories": {
+    "title": "Clases",
+    "hint": "Renombra, cambia el color o elimina clases. Al eliminar una clase también se eliminan sus anotaciones.",
+    "name": "Nombre",
+    "supercategory": "Supercategoría",
+    "newCategory": "Nueva clase",
+    "colour": "Color",
+    "delete": "Eliminar clase"
+  },
+  "shortcuts": {
+    "title": "Atajos de teclado",
+    "select": "Seleccionar / mover",
+    "bbox": "Dibujar una caja",
+    "polygon": "Dibujar un polígono (doble clic para terminar)",
+    "keypoint": "Colocar puntos clave",
+    "navigate": "Imagen anterior / siguiente",
+    "nudge": "Mover la anotación seleccionada 1px",
+    "nudgeLarge": "Mover la anotación seleccionada 10px",
+    "delete": "Eliminar la anotación seleccionada",
+    "duplicate": "Duplicar la anotación seleccionada",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "zoom": "Acercar / alejar",
+    "fit": "Ajustar a la ventana",
+    "pan": "Desplazar (o arrastrar con el botón central)",
+    "help": "Mostrar esta ayuda / cancelar"
+  },
+  "export": {
+    "title": "Exportar",
+    "format": "Formato",
+    "hint": "Los archivos se escriben en {{path}} dentro del dataset; los originales no se tocan.",
+    "losses": "Hay datos que no se pueden representar:",
+    "noLosses": "Este formato puede representar todo el dataset.",
+    "confirm": "Exportar",
+    "done": "Se han exportado {{count}} archivo(s) como {{format}}",
+    "readOnly": "Este navegador solo puede abrir datasets en modo lectura",
+    "coco": "COCO",
+    "yolo": "YOLO (tarea automática)",
+    "voc": "Pascal VOC",
+    "imagefolder": "ImageFolder"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "seed": "Color de acento",
+    "palette": "Paleta",
+    "hex": "Hex",
+    "reset": "Restablecer",
+    "defaultFormat": "Formato de exportación predeterminado",
+    "recent": "Datasets recientes"
+  },
+  "update": {
+    "title": "Actualización",
+    "check": "Buscar actualizaciones",
+    "available": "La versión {{version}} está disponible",
+    "current": "Estás en la última versión",
+    "downloading": "Descargando e instalando…",
+    "install": "Instalar y reiniciar",
+    "later": "Más tarde",
+    "error": "No se pudo buscar actualizaciones",
+    "desktopOnly": "Las actualizaciones automáticas solo están disponibles en la app de escritorio"
+  },
+  "context": {
+    "deselect": "Deseleccionar"
+  },
+  "report": {
+    "errorTitle": "Error al importar",
+    "warningTitle": "Importado con avisos",
+    "errorHint": "No se ha podido leer este dataset. Comprueba que has elegido la carpeta correcta y que sus archivos están completos, y vuelve a intentarlo.",
+    "warningHint": "El dataset se ha cargado, pero lo siguiente se omitió o se interpretó de forma flexible:"
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "app": {
+    "name": "LabelAll",
+    "tagline": "Gängige Bilddatensätze laden, ansehen und annotieren"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "rename": "Umbenennen",
+    "add": "Hinzufügen",
+    "search": "Suchen",
+    "loading": "Wird geladen…",
+    "empty": "Noch nichts vorhanden",
+    "error": "Etwas ist schiefgelaufen",
+    "retry": "Erneut versuchen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "yes": "Ja",
+    "no": "Nein",
+    "comingSoon": "Diese Funktion ist noch in Entwicklung"
+  },
+  "actions": {
+    "openDataset": "Datensatz öffnen",
+    "recentDatasets": "Zuletzt verwendet",
+    "export": "Exportieren",
+    "settings": "Einstellungen",
+    "help": "Hilfe"
+  },
+  "theme": {
+    "label": "Darstellung",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
+  },
+  "language": {
+    "label": "Sprache"
+  },
+  "welcome": {
+    "title": "Mit dem Annotieren beginnen",
+    "subtitle": "Öffne einen Datensatzordner, um Bilder anzusehen und zu annotieren.",
+    "openHint": "Unterstützt COCO, YOLO, Pascal VOC und Klassifikationsordner (ImageFolder / ImageNet)",
+    "recent": "Zuletzt verwendet",
+    "reopenUnsupported": "Browser können einen Ordner nicht ohne erneute Nachfrage wieder öffnen",
+    "featureFormats": "Viele Formate",
+    "featureFormatsDesc": "Erkennt gängige Bilddatensatz-Formate automatisch",
+    "featureAnnotate": "Vier Annotationstypen",
+    "featureAnnotateDesc": "Rechtecke, Polygone, Keypoints und Klassifikations-Tags",
+    "featureCrossPlatform": "Plattformübergreifend",
+    "featureCrossPlatformDesc": "Ein gemeinsames Frontend für Desktop-App und Web-Version"
+  },
+  "env": {
+    "desktop": "Desktop",
+    "web": "Web",
+    "webReadOnly": "Dieser Browser unterstützt nur den Lesemodus"
+  },
+  "open": {
+    "title": "Datensatz öffnen",
+    "imagesInFolder": "Bilddateien in diesem Ordner: {{count}}",
+    "noCandidates": "In diesem Ordner wurde kein bekanntes Datensatzformat erkannt.",
+    "unsupported": "Dieses Format kann noch nicht gelesen werden",
+    "confirm": "Laden"
+  },
+  "dataset": {
+    "close": "Datensatz schließen",
+    "stats": "{{images}} Bilder · {{categories}} Klassen · {{annotations}} Annotationen",
+    "warnings": "{{count}} Hinweis(e) beim Laden"
+  },
+  "imagelist": {
+    "search": "Bilder suchen",
+    "split": "Split",
+    "allSplits": "Alle Splits",
+    "category": "Klasse",
+    "allCategories": "Alle Klassen",
+    "empty": "Keine Bilder entsprechen den aktuellen Filtern",
+    "shown": "{{shown}} / {{total}} Bilder"
+  },
+  "viewer": {
+    "grid": "Raster",
+    "canvas": "Betrachter",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "fit": "An Fenster anpassen",
+    "prev": "Vorheriges Bild",
+    "next": "Nächstes Bild",
+    "filmstrip": "Filmstreifen",
+    "noImage": "Kein Bild ausgewählt",
+    "layerBbox": "Rechtecke",
+    "layerPolygon": "Polygone",
+    "layerKeypoint": "Keypoints",
+    "layerMask": "Masken"
+  },
+  "annotate": {
+    "toolSelect": "Auswählen / verschieben",
+    "toolBbox": "Rechteck zeichnen",
+    "toolPolygon": "Polygon zeichnen",
+    "toolKeypoint": "Keypoints setzen",
+    "keypointNeedsSchema": "Für diese Klasse sind keine Keypoints definiert (nur COCO-Keypoint- oder YOLO-Pose-Datensätze haben welche)",
+    "category": "Klasse",
+    "label": "Label",
+    "labelHint": "Die ausgewählte Klasse als Label für das ganze Bild hinzufügen",
+    "unlabel": "Label entfernen",
+    "unlabelHint": "Das Label der ausgewählten Klasse von diesem Bild entfernen",
+    "duplicate": "Duplizieren",
+    "delete": "Löschen",
+    "undo": "Rückgängig",
+    "redo": "Wiederholen"
+  },
+  "categories": {
+    "title": "Klassen",
+    "hint": "Klassen umbenennen, umfärben oder löschen. Beim Löschen werden auch ihre Annotationen entfernt.",
+    "name": "Name",
+    "supercategory": "Oberkategorie",
+    "newCategory": "Neue Klasse",
+    "colour": "Farbe",
+    "delete": "Klasse löschen"
+  },
+  "shortcuts": {
+    "title": "Tastenkürzel",
+    "select": "Auswählen / verschieben",
+    "bbox": "Rechteck zeichnen",
+    "polygon": "Polygon zeichnen (Doppelklick zum Abschließen)",
+    "keypoint": "Keypoints setzen",
+    "navigate": "Vorheriges / nächstes Bild",
+    "nudge": "Ausgewählte Annotation um 1px verschieben",
+    "nudgeLarge": "Ausgewählte Annotation um 10px verschieben",
+    "delete": "Ausgewählte Annotation löschen",
+    "duplicate": "Ausgewählte Annotation duplizieren",
+    "undo": "Rückgängig",
+    "redo": "Wiederholen",
+    "zoom": "Vergrößern / verkleinern",
+    "fit": "An Fenster anpassen",
+    "pan": "Verschieben (oder Mittelklick-Ziehen)",
+    "help": "Diese Hilfe anzeigen / abbrechen"
+  },
+  "export": {
+    "title": "Exportieren",
+    "format": "Format",
+    "hint": "Die Dateien werden in {{path}} im Datensatz geschrieben; die Originale bleiben unverändert.",
+    "losses": "Manche Daten können nicht dargestellt werden:",
+    "noLosses": "Dieses Format kann den gesamten Datensatz darstellen.",
+    "confirm": "Exportieren",
+    "done": "{{count}} Datei(en) als {{format}} exportiert",
+    "readOnly": "Dieser Browser kann Datensätze nur lesend öffnen",
+    "coco": "COCO",
+    "yolo": "YOLO (automatische Aufgabe)",
+    "voc": "Pascal VOC",
+    "imagefolder": "ImageFolder"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "seed": "Akzentfarbe",
+    "palette": "Palette",
+    "hex": "Hex",
+    "reset": "Zurücksetzen",
+    "defaultFormat": "Standard-Exportformat",
+    "recent": "Zuletzt verwendete Datensätze"
+  },
+  "update": {
+    "title": "Aktualisierung",
+    "check": "Nach Updates suchen",
+    "available": "Version {{version}} ist verfügbar",
+    "current": "Du bist auf dem neuesten Stand",
+    "downloading": "Wird heruntergeladen und installiert…",
+    "install": "Installieren und neu starten",
+    "later": "Später",
+    "error": "Updateprüfung fehlgeschlagen",
+    "desktopOnly": "Automatische Updates gibt es nur in der Desktop-App"
+  },
+  "context": {
+    "deselect": "Auswahl aufheben"
+  },
+  "report": {
+    "errorTitle": "Import fehlgeschlagen",
+    "warningTitle": "Mit Hinweisen importiert",
+    "errorHint": "Dieser Datensatz konnte nicht gelesen werden. Prüfe, ob du den richtigen Ordner gewählt hast und die Dateien vollständig sind, und versuche es erneut.",
+    "warningHint": "Der Datensatz wurde geladen, aber Folgendes wurde übersprungen oder locker interpretiert:"
+  }
+}

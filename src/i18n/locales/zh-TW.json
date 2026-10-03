@@ -1,0 +1,182 @@
+{
+  "app": {
+    "name": "LabelAll",
+    "tagline": "載入、檢視與標註常見圖片資料集"
+  },
+  "common": {
+    "ok": "確定",
+    "cancel": "取消",
+    "close": "關閉",
+    "confirm": "確認",
+    "save": "儲存",
+    "delete": "刪除",
+    "rename": "重新命名",
+    "add": "新增",
+    "search": "搜尋",
+    "loading": "載入中…",
+    "empty": "尚無內容",
+    "error": "發生錯誤",
+    "retry": "重試",
+    "back": "返回",
+    "next": "下一步",
+    "yes": "是",
+    "no": "否",
+    "comingSoon": "此功能仍在開發中"
+  },
+  "actions": {
+    "openDataset": "開啟資料集",
+    "recentDatasets": "最近開啟",
+    "export": "匯出",
+    "settings": "設定",
+    "help": "說明"
+  },
+  "theme": {
+    "label": "外觀",
+    "light": "淺色",
+    "dark": "深色",
+    "system": "跟隨系統"
+  },
+  "language": {
+    "label": "語言"
+  },
+  "welcome": {
+    "title": "開始標註",
+    "subtitle": "開啟資料集資料夾即可開始檢視與標註。",
+    "openHint": "支援 COCO、YOLO、Pascal VOC 與分類資料夾（ImageFolder / ImageNet）",
+    "recent": "最近開啟",
+    "reopenUnsupported": "瀏覽器無法免授權重新開啟資料夾",
+    "featureFormats": "多格式",
+    "featureFormatsDesc": "自動辨識常見圖片資料集格式",
+    "featureAnnotate": "四類標註",
+    "featureAnnotateDesc": "矩形框、多邊形、關鍵點與分類標籤",
+    "featureCrossPlatform": "跨平台",
+    "featureCrossPlatformDesc": "桌面應用與 Web 版共用同一套前端"
+  },
+  "env": {
+    "desktop": "桌面版",
+    "web": "Web 版",
+    "webReadOnly": "目前瀏覽器僅支援唯讀模式"
+  },
+  "open": {
+    "title": "開啟資料集",
+    "imagesInFolder": "此資料夾中的圖片檔：{{count}}",
+    "noCandidates": "未在此資料夾中辨識出已知的資料集格式。",
+    "unsupported": "此格式暫不支援讀取",
+    "confirm": "載入資料集"
+  },
+  "dataset": {
+    "close": "關閉資料集",
+    "stats": "{{images}} 張圖片 · {{categories}} 個類別 · {{annotations}} 筆標註",
+    "warnings": "載入時有 {{count}} 則提示"
+  },
+  "imagelist": {
+    "search": "搜尋圖片",
+    "split": "分割",
+    "allSplits": "全部分割",
+    "category": "類別",
+    "allCategories": "全部類別",
+    "empty": "沒有符合目前篩選條件的圖片",
+    "shown": "{{shown}} / {{total}} 張"
+  },
+  "viewer": {
+    "grid": "格狀",
+    "canvas": "檢視器",
+    "zoomIn": "放大",
+    "zoomOut": "縮小",
+    "fit": "符合視窗",
+    "prev": "上一張",
+    "next": "下一張",
+    "filmstrip": "圖片底片列",
+    "noImage": "未選擇圖片",
+    "layerBbox": "矩形框",
+    "layerPolygon": "多邊形",
+    "layerKeypoint": "關鍵點",
+    "layerMask": "遮罩"
+  },
+  "annotate": {
+    "toolSelect": "選取 / 移動",
+    "toolBbox": "繪製矩形框",
+    "toolPolygon": "繪製多邊形",
+    "toolKeypoint": "放置關鍵點",
+    "keypointNeedsSchema": "此類別沒有關鍵點定義（僅 COCO 關鍵點或 YOLO-pose 資料集才有）",
+    "category": "類別",
+    "label": "標籤",
+    "labelHint": "將所選類別新增為整張圖片的標籤",
+    "unlabel": "移除標籤",
+    "unlabelHint": "從本張圖片移除所選類別的標籤",
+    "duplicate": "複製",
+    "delete": "刪除",
+    "undo": "復原",
+    "redo": "重做"
+  },
+  "categories": {
+    "title": "類別管理",
+    "hint": "可重新命名、變更顏色或刪除類別；刪除類別會一併刪除其標註。",
+    "name": "名稱",
+    "supercategory": "上層類別",
+    "newCategory": "新增類別",
+    "colour": "顏色",
+    "delete": "刪除類別"
+  },
+  "shortcuts": {
+    "title": "鍵盤快速鍵",
+    "select": "選取 / 移動",
+    "bbox": "繪製矩形框",
+    "polygon": "繪製多邊形（連按兩下結束）",
+    "keypoint": "放置關鍵點",
+    "navigate": "上一張 / 下一張",
+    "nudge": "微調選取的標註 1px",
+    "nudgeLarge": "微調選取的標註 10px",
+    "delete": "刪除選取的標註",
+    "duplicate": "複製選取的標註",
+    "undo": "復原",
+    "redo": "重做",
+    "zoom": "放大 / 縮小",
+    "fit": "符合視窗",
+    "pan": "平移（或中鍵拖曳）",
+    "help": "顯示說明 / 取消"
+  },
+  "export": {
+    "title": "匯出",
+    "format": "格式",
+    "hint": "檔案會寫入資料集內的 {{path}}，不會更動原始檔案。",
+    "losses": "以下內容無法完整表示：",
+    "noLosses": "此格式可完整表示目前的資料集。",
+    "confirm": "匯出",
+    "done": "已匯出 {{count}} 個檔案（{{format}}）",
+    "readOnly": "目前瀏覽器僅支援唯讀開啟",
+    "coco": "COCO",
+    "yolo": "YOLO（自動任務）",
+    "voc": "Pascal VOC",
+    "imagefolder": "分類資料夾"
+  },
+  "settings": {
+    "title": "設定",
+    "seed": "主題色",
+    "palette": "調色盤",
+    "hex": "顏色值",
+    "reset": "重設",
+    "defaultFormat": "預設匯出格式",
+    "recent": "最近開啟的資料集"
+  },
+  "update": {
+    "title": "自動更新",
+    "check": "檢查更新",
+    "available": "發現新版本 {{version}}",
+    "current": "已是最新版本",
+    "downloading": "正在下載並安裝…",
+    "install": "安裝並重新啟動",
+    "later": "稍後",
+    "error": "檢查更新失敗",
+    "desktopOnly": "僅桌面版支援自動更新"
+  },
+  "context": {
+    "deselect": "取消選取"
+  },
+  "report": {
+    "errorTitle": "匯入失敗",
+    "warningTitle": "已匯入，但有提示",
+    "errorHint": "無法讀取此資料集。請確認選取的是正確的資料夾，且檔案完整，然後重試。",
+    "warningHint": "資料集已載入，但以下內容被略過或寬鬆處理："
+  }
+}

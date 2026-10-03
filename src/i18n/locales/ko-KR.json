@@ -1,0 +1,182 @@
+{
+  "app": {
+    "name": "LabelAll",
+    "tagline": "일반적인 이미지 데이터셋 불러오기 · 보기 · 라벨링"
+  },
+  "common": {
+    "ok": "확인",
+    "cancel": "취소",
+    "close": "닫기",
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "rename": "이름 변경",
+    "add": "추가",
+    "search": "검색",
+    "loading": "불러오는 중…",
+    "empty": "아직 내용이 없습니다",
+    "error": "문제가 발생했습니다",
+    "retry": "다시 시도",
+    "back": "뒤로",
+    "next": "다음",
+    "yes": "예",
+    "no": "아니요",
+    "comingSoon": "이 기능은 아직 개발 중입니다"
+  },
+  "actions": {
+    "openDataset": "데이터셋 열기",
+    "recentDatasets": "최근 항목",
+    "export": "내보내기",
+    "settings": "설정",
+    "help": "도움말"
+  },
+  "theme": {
+    "label": "화면 모드",
+    "light": "라이트",
+    "dark": "다크",
+    "system": "시스템"
+  },
+  "language": {
+    "label": "언어"
+  },
+  "welcome": {
+    "title": "라벨링 시작하기",
+    "subtitle": "데이터셋 폴더를 열면 바로 보고 라벨링할 수 있습니다.",
+    "openHint": "COCO, YOLO, Pascal VOC, 분류 폴더(ImageFolder / ImageNet) 지원",
+    "recent": "최근 항목",
+    "reopenUnsupported": "브라우저에서는 다시 묻지 않고 폴더를 다시 열 수 없습니다",
+    "featureFormats": "다양한 형식",
+    "featureFormatsDesc": "일반적인 이미지 데이터셋 형식을 자동으로 감지",
+    "featureAnnotate": "네 가지 라벨 유형",
+    "featureAnnotateDesc": "바운딩 박스, 폴리곤, 키포인트, 분류 태그",
+    "featureCrossPlatform": "크로스 플랫폼",
+    "featureCrossPlatformDesc": "데스크톱 앱과 웹 버전이 같은 프런트엔드를 공유"
+  },
+  "env": {
+    "desktop": "데스크톱",
+    "web": "웹",
+    "webReadOnly": "이 브라우저는 읽기 전용 모드만 지원합니다"
+  },
+  "open": {
+    "title": "데이터셋 열기",
+    "imagesInFolder": "이 폴더의 이미지 파일: {{count}}",
+    "noCandidates": "알려진 데이터셋 형식을 찾지 못했습니다.",
+    "unsupported": "이 형식은 아직 읽을 수 없습니다",
+    "confirm": "불러오기"
+  },
+  "dataset": {
+    "close": "데이터셋 닫기",
+    "stats": "이미지 {{images}}장 · 클래스 {{categories}}개 · 라벨 {{annotations}}개",
+    "warnings": "불러오는 중 경고 {{count}}건"
+  },
+  "imagelist": {
+    "search": "이미지 검색",
+    "split": "분할",
+    "allSplits": "모든 분할",
+    "category": "클래스",
+    "allCategories": "모든 클래스",
+    "empty": "현재 필터에 맞는 이미지가 없습니다",
+    "shown": "{{shown}} / {{total}}장"
+  },
+  "viewer": {
+    "grid": "그리드",
+    "canvas": "뷰어",
+    "zoomIn": "확대",
+    "zoomOut": "축소",
+    "fit": "창에 맞추기",
+    "prev": "이전 이미지",
+    "next": "다음 이미지",
+    "filmstrip": "필름스트립",
+    "noImage": "선택된 이미지가 없습니다",
+    "layerBbox": "박스",
+    "layerPolygon": "폴리곤",
+    "layerKeypoint": "키포인트",
+    "layerMask": "마스크"
+  },
+  "annotate": {
+    "toolSelect": "선택 / 이동",
+    "toolBbox": "박스 그리기",
+    "toolPolygon": "폴리곤 그리기",
+    "toolKeypoint": "키포인트 배치",
+    "keypointNeedsSchema": "이 클래스에는 키포인트 정의가 없습니다(COCO 키포인트나 YOLO-pose 데이터셋만 해당)",
+    "category": "클래스",
+    "label": "라벨",
+    "labelHint": "선택한 클래스를 이미지 전체 라벨로 추가",
+    "unlabel": "라벨 제거",
+    "unlabelHint": "이 이미지에서 선택한 클래스 라벨 제거",
+    "duplicate": "복제",
+    "delete": "삭제",
+    "undo": "실행 취소",
+    "redo": "다시 실행"
+  },
+  "categories": {
+    "title": "클래스 관리",
+    "hint": "클래스를 이름 변경·색 변경·삭제할 수 있습니다. 삭제하면 해당 라벨도 함께 삭제됩니다.",
+    "name": "이름",
+    "supercategory": "상위 클래스",
+    "newCategory": "새 클래스",
+    "colour": "색상",
+    "delete": "클래스 삭제"
+  },
+  "shortcuts": {
+    "title": "키보드 단축키",
+    "select": "선택 / 이동",
+    "bbox": "박스 그리기",
+    "polygon": "폴리곤 그리기(더블 클릭으로 완료)",
+    "keypoint": "키포인트 배치",
+    "navigate": "이전 / 다음 이미지",
+    "nudge": "선택한 라벨 1px 이동",
+    "nudgeLarge": "선택한 라벨 10px 이동",
+    "delete": "선택한 라벨 삭제",
+    "duplicate": "선택한 라벨 복제",
+    "undo": "실행 취소",
+    "redo": "다시 실행",
+    "zoom": "확대 / 축소",
+    "fit": "창에 맞추기",
+    "pan": "이동(또는 휠 버튼 드래그)",
+    "help": "도움말 표시 / 취소"
+  },
+  "export": {
+    "title": "내보내기",
+    "format": "형식",
+    "hint": "파일은 데이터셋 안의 {{path}}에 기록되며 원본은 그대로 둡니다.",
+    "losses": "표현할 수 없는 내용:",
+    "noLosses": "이 형식은 데이터셋 전체를 표현할 수 있습니다.",
+    "confirm": "내보내기",
+    "done": "{{count}}개 파일을 {{format}}(으)로 내보냈습니다",
+    "readOnly": "이 브라우저는 읽기 전용으로만 열 수 있습니다",
+    "coco": "COCO",
+    "yolo": "YOLO(자동 작업)",
+    "voc": "Pascal VOC",
+    "imagefolder": "분류 폴더"
+  },
+  "settings": {
+    "title": "설정",
+    "seed": "강조 색상",
+    "palette": "팔레트",
+    "hex": "HEX",
+    "reset": "초기화",
+    "defaultFormat": "기본 내보내기 형식",
+    "recent": "최근 데이터셋"
+  },
+  "update": {
+    "title": "업데이트",
+    "check": "업데이트 확인",
+    "available": "버전 {{version}}을(를) 사용할 수 있습니다",
+    "current": "최신 버전입니다",
+    "downloading": "다운로드 및 설치 중…",
+    "install": "설치 후 다시 시작",
+    "later": "나중에",
+    "error": "업데이트 확인에 실패했습니다",
+    "desktopOnly": "자동 업데이트는 데스크톱 앱에서만 지원됩니다"
+  },
+  "context": {
+    "deselect": "선택 해제"
+  },
+  "report": {
+    "errorTitle": "가져오기 실패",
+    "warningTitle": "가져왔지만 확인 필요",
+    "errorHint": "이 데이터셋을 읽을 수 없습니다. 올바른 폴더를 선택했는지, 파일이 온전한지 확인한 뒤 다시 시도하세요.",
+    "warningHint": "데이터셋을 불러왔지만 다음 항목은 건너뛰거나 느슨하게 처리되었습니다:"
+  }
+}

@@ -18,7 +18,12 @@ import { useTranslation } from 'react-i18next'
 import { ColorFieldWithReset } from '@/components/ColorField'
 import { SEED_COLUMNS, SEED_PRESETS } from '@/components/presets'
 import type { ExportChoice } from '@/core/formats/losses'
-import { LANGUAGE_STORAGE_KEY, SUPPORTED_LANGUAGES, normalizeLanguage } from '@/i18n'
+import {
+  LANGUAGE_NATIVE_NAMES,
+  LANGUAGE_STORAGE_KEY,
+  SUPPORTED_LANGUAGES,
+  normalizeLanguage,
+} from '@/i18n'
 import { useSettingsStore } from '@/store/settingsStore'
 import { useUiStore } from '@/store/uiStore'
 import { useUpdateStore } from '@/store/updateStore'
@@ -26,7 +31,6 @@ import { DEFAULT_SEED } from '@/theme/md3'
 
 const EXPORT_FORMATS: ExportChoice[] = ['coco', 'yolo', 'voc', 'imagefolder']
 const MODES = ['light', 'dark', 'system'] as const
-const LANGUAGE_LABEL: Record<string, string> = { 'zh-CN': 'language.zh', 'en-US': 'language.en' }
 
 export function SettingsDialog() {
   const { t, i18n } = useTranslation()
@@ -101,7 +105,7 @@ export function SettingsDialog() {
           >
             {SUPPORTED_LANGUAGES.map((value) => (
               <MenuItem key={value} value={value}>
-                {t(LANGUAGE_LABEL[value])}
+                {LANGUAGE_NATIVE_NAMES[value]}
               </MenuItem>
             ))}
           </TextField>
