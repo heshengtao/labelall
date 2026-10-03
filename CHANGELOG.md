@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-03
+
 ### Added
 
 - Project scaffolding: React 19 + TypeScript + Vite 8 frontend, Tauri 2 desktop shell.
@@ -55,4 +57,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/commits/main
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/heshengtao/labelall/releases/tag/v0.1.0
