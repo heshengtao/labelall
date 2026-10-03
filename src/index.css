@@ -1,0 +1,22 @@
+/* Minimal global reset — the rest is handled by MUI's CssBaseline so that the
+   MD3 colour scheme drives every surface. */
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  isolation: isolate;
+}
+
+/* Desktop app: never show a text cursor or selection when dragging the canvas. */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}

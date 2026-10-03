@@ -1,0 +1,60 @@
+{
+  "app": {
+    "name": "LableAll",
+    "tagline": "Load, view and annotate common image datasets"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "rename": "Rename",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading…",
+    "empty": "Nothing here yet",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "yes": "Yes",
+    "no": "No",
+    "comingSoon": "This feature is still under development"
+  },
+  "actions": {
+    "openDataset": "Open dataset",
+    "recentDatasets": "Recent",
+    "export": "Export",
+    "settings": "Settings",
+    "help": "Help"
+  },
+  "theme": {
+    "label": "Appearance",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language",
+    "zh": "简体中文",
+    "en": "English"
+  },
+  "welcome": {
+    "title": "Start annotating",
+    "subtitle": "Open a dataset folder to start viewing and annotating.",
+    "openHint": "Supports COCO, YOLO, Pascal VOC and classification folders (ImageFolder / ImageNet)",
+    "featureFormats": "Many formats",
+    "featureFormatsDesc": "Auto-detects common image dataset formats",
+    "featureAnnotate": "Four annotation types",
+    "featureAnnotateDesc": "Bounding boxes, polygons, keypoints and classification tags",
+    "featureCrossPlatform": "Cross-platform",
+    "featureCrossPlatformDesc": "One frontend shared by the desktop app and the web build"
+  },
+  "env": {
+    "desktop": "Desktop",
+    "web": "Web",
+    "webReadOnly": "This browser only supports read-only mode"
+  }
+}

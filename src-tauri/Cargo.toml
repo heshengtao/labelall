@@ -1,0 +1,46 @@
+[package]
+name = "lableall"
+version = "0.1.0"
+description = "Load, view and annotate common image datasets"
+authors = ["heshengtao"]
+license = "Apache-2.0"
+repository = "https://github.com/heshengtao/lableall"
+edition = "2021"
+rust-version = "1.77.2"
+
+# The library is what Tauri links against; the binary is a thin wrapper so that
+# the same crate can later be reused for mobile targets.
+[lib]
+name = "lableall_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# `protocol-asset` powers `convertFileSrc`, which streams images straight from
+# disk into the webview instead of base64-encoding them over IPC.
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+walkdir = "2"
+rayon = "1"
+thiserror = "2"
+# Only the container formats we actually parse headers for.
+image = { version = "0.25", default-features = false, features = [
+  "jpeg",
+  "png",
+  "webp",
+  "bmp",
+  "tiff",
+  "gif",
+] }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
