@@ -172,6 +172,9 @@
     "error": "检查更新失败",
     "desktopOnly": "仅桌面版支持自动更新"
   },
+  "context": {
+    "deselect": "取消选择"
+  },
   "report": {
     "errorTitle": "导入失败",
     "warningTitle": "已导入，但有提示",

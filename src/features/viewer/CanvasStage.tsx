@@ -9,6 +9,7 @@ import type { BBox, KeypointSchema, Point, Polygon } from '@/core/model'
 import type { EditorTool, LayerVisibility } from '@/store/uiStore'
 
 import type { IndexedAnnotation } from './annotations'
+import type { CanvasContextMenuState } from './CanvasContextMenu'
 import { BBoxLayer } from './layers/BBoxLayer'
 import { KeypointLayer } from './layers/KeypointLayer'
 import { MaskLayer } from './layers/MaskLayer'
@@ -59,6 +60,8 @@ export interface CanvasStageProps {
   onZoom: (pointer: Point, factor: number) => void
   onPan: (x: number, y: number) => void
   onResizeStage: (size: { width: number; height: number }) => void
+  /** Right-click on the canvas, with the annotation under the pointer if any. */
+  onContextMenu: (state: CanvasContextMenuState) => void
 }
 
 /** The OS cursor that matches dragging a given box edge. */
@@ -100,6 +103,7 @@ export function CanvasStage({
   onZoom,
   onPan,
   onResizeStage,
+  onContextMenu,
 }: CanvasStageProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const stageRef = useRef<Konva.Stage | null>(null)
@@ -441,6 +445,24 @@ export function CanvasStage({
             onCreatePolygon(draftPolygon)
             setDraftPolygon([])
           }
+        }}
+        onContextMenu={(event: Konva.KonvaEventObject<MouseEvent>) => {
+          // Suppress the webview's own menu; we render an MD3 one instead.
+          event.evt.preventDefault()
+          let node: Konva.Node | null = event.target
+          let index: number | null = null
+          while (node) {
+            const value = node.getAttr('annotationIndex')
+            if (typeof value === 'number') {
+              index = value
+              break
+            }
+            node = node.getParent()
+          }
+          if (index !== null) {
+            onSelect(index)
+          }
+          onContextMenu({ x: event.evt.clientX, y: event.evt.clientY, index })
         }}
       >
         <Layer>

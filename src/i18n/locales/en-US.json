@@ -172,6 +172,9 @@
     "error": "Update check failed",
     "desktopOnly": "Automatic updates are only available in the desktop app"
   },
+  "context": {
+    "deselect": "Deselect"
+  },
   "report": {
     "errorTitle": "Import failed",
     "warningTitle": "Imported with notes",

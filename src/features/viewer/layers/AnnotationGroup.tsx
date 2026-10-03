@@ -31,6 +31,8 @@ export function AnnotationGroup({
 }: AnnotationGroupProps) {
   return (
     <Group
+      // Custom attr, read back on right-click to find which annotation was hit.
+      annotationIndex={index}
       x={offset?.dx ?? 0}
       y={offset?.dy ?? 0}
       onMouseDown={(event: Konva.KonvaEventObject<MouseEvent>) => {

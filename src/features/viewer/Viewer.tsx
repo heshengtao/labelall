@@ -27,6 +27,7 @@ import { useDatasetStore } from '@/store/datasetStore'
 import { useUiStore } from '@/store/uiStore'
 
 import { CanvasStage } from './CanvasStage'
+import { CanvasContextMenu, type CanvasContextMenuState } from './CanvasContextMenu'
 import { Filmstrip } from './Filmstrip'
 import { annotationsForImage, categoryColor, categoryName, imageIndexOf } from './annotations'
 import { useLoadedImage, useResolvedUrl } from './useLoadedImage'
@@ -52,6 +53,8 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
   const selectedIndex = useDatasetStore((state) => state.selectedAnnotationIndex)
   const addAnnotation = useDatasetStore((state) => state.addAnnotation)
   const updateAnnotation = useDatasetStore((state) => state.updateAnnotation)
+  const deleteAnnotation = useDatasetStore((state) => state.deleteAnnotation)
+  const duplicateAnnotation = useDatasetStore((state) => state.duplicateAnnotation)
   const layers = useUiStore((state) => state.layers)
   const toggleLayer = useUiStore((state) => state.toggleLayer)
   const tool = useUiStore((state) => state.tool)
@@ -98,6 +101,7 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
 
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 })
   const [viewport, setViewport] = useState<Viewport | null>(null)
+  const [contextMenu, setContextMenu] = useState<CanvasContextMenuState | null>(null)
   const onResize = useCallback((size: { width: number; height: number }) => setStageSize(size), [])
 
   const fitted = useMemo(
@@ -321,6 +325,16 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
         onZoom={onZoom}
         onPan={onPan}
         onResizeStage={onResize}
+        onContextMenu={setContextMenu}
+      />
+
+      <CanvasContextMenu
+        state={contextMenu}
+        onClose={() => setContextMenu(null)}
+        onDelete={deleteAnnotation}
+        onDuplicate={duplicateAnnotation}
+        onFit={fit}
+        onDeselect={() => selectAnnotation(null)}
       />
 
       <Filmstrip
