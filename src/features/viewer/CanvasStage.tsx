@@ -53,6 +53,23 @@ export interface CanvasStageProps {
   onResizeStage: (size: { width: number; height: number }) => void
 }
 
+/** The OS cursor that matches dragging a given box edge. */
+function cursorForEdge(edge: BoxEdge): string {
+  switch (edge) {
+    case 'nw':
+    case 'se':
+      return 'nwse-resize'
+    case 'ne':
+    case 'sw':
+      return 'nesw-resize'
+    case 'n':
+    case 's':
+      return 'ns-resize'
+    default:
+      return 'ew-resize'
+  }
+}
+
 export function CanvasStage({
   image,
   imageWidth,
@@ -84,6 +101,7 @@ export function CanvasStage({
   const [middleHeld, setMiddleHeld] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [interaction, setInteraction] = useState<Interaction | null>(null)
+  const [hoveredHandle, setHoveredHandle] = useState<BoxEdge | null>(null)
 
   const [draftBox, setDraftBox] = useState<BoxDraft | null>(null)
   const [draftPolygon, setDraftPolygon] = useState<Point[]>([])
@@ -238,20 +256,29 @@ export function CanvasStage({
     onHover: setHoveredIndex,
     onShapeStart: beginMove,
     onHandleStart: beginResize,
+    onHandleHover: setHoveredHandle,
   }
 
+  const activeEdge = interaction?.kind === 'resize' ? interaction.edge : (hoveredHandle ?? null)
   const cursor =
     spaceHeld || middleHeld
       ? 'grabbing'
-      : interaction?.kind === 'resize'
-        ? 'nwse-resize'
-        : interaction?.kind === 'move'
+      : activeEdge
+        ? cursorForEdge(activeEdge)
+        : interaction?.kind === 'move' || (editable && hoveredIndex !== null)
           ? 'move'
-          : editable && hoveredIndex !== null
-            ? 'move'
-            : tool === 'select'
-              ? 'default'
-              : 'crosshair'
+          : tool === 'select'
+            ? 'default'
+            : 'crosshair'
+
+  // Konva writes `cursor` onto its own `.konvajs-content` element, which sits
+  // inside our wrapper and wins the cascade — so set it there, not on the div.
+  useEffect(() => {
+    const container = stageRef.current?.container()
+    if (container) {
+      container.style.cursor = cursor
+    }
+  }, [cursor])
 
   return (
     <div

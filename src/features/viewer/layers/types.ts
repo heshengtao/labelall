@@ -23,4 +23,6 @@ export interface AnnotationLayerProps {
   onShapeStart: (index: number) => void
   /** Start dragging one of a box's resize handles. */
   onHandleStart: (index: number, edge: BoxEdge) => void
+  /** Hover a resize handle (so the cursor can match the edge), or null. */
+  onHandleHover: (edge: BoxEdge | null) => void
 }

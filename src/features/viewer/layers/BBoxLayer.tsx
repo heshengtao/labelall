@@ -20,6 +20,7 @@ export function BBoxLayer({
   onHover,
   onShapeStart,
   onHandleStart,
+  onHandleHover,
 }: AnnotationLayerProps) {
   return (
     <>
@@ -82,6 +83,8 @@ export function BBoxLayer({
                         event.cancelBubble = true
                         onHandleStart(index, edge)
                       }}
+                      onMouseEnter={() => onHandleHover(edge)}
+                      onMouseLeave={() => onHandleHover(null)}
                     />
                   )
                 })
