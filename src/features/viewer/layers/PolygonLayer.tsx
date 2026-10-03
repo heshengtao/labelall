@@ -1,8 +1,9 @@
-import { Line, Text } from 'react-konva'
+import { Line } from 'react-konva'
 
 import { bboxFromPolygons } from '@/core/geometry'
 
 import { AnnotationGroup } from './AnnotationGroup'
+import { AnnotationLabel } from './AnnotationLabel'
 import type { AnnotationLayerProps } from './types'
 
 export function PolygonLayer({
@@ -49,13 +50,12 @@ export function PolygonLayer({
               />
             ))}
             {selected || hovered ? (
-              <Text
-                text={nameOf(annotation.categoryId)}
+              <AnnotationLabel
                 x={bbox.x}
-                y={bbox.y - 16 / scale}
-                fontSize={13 / scale}
-                fill={color}
-                listening={false}
+                y={bbox.y - 2 / scale}
+                text={nameOf(annotation.categoryId)}
+                color={color}
+                scale={scale}
               />
             ) : null}
           </AnnotationGroup>

@@ -28,6 +28,14 @@ interface BoxDraft {
 type Interaction =
   | { kind: 'move'; index: number; start: Point; current: Point }
   | { kind: 'resize'; index: number; edge: BoxEdge; start: Point; current: Point }
+  | {
+      kind: 'pan'
+      /** Pointer position in stage (screen) pixels when the pan began. */
+      startScreen: Point
+      /** Viewport offset when the pan began. */
+      startViewport: Point
+      moved: boolean
+    }
 
 export interface CanvasStageProps {
   image: HTMLImageElement | null
@@ -174,6 +182,24 @@ export function CanvasStage({
     return pointer ? toImagePoint(viewport, pointer) : null
   }
 
+  const pointerScreen = (): Point | null => {
+    const pointer = stageRef.current?.getPointerPosition()
+    return pointer ? { x: pointer.x, y: pointer.y } : null
+  }
+
+  const beginPan = (): void => {
+    const screen = pointerScreen()
+    if (!screen) {
+      return
+    }
+    setInteraction({
+      kind: 'pan',
+      startScreen: screen,
+      startViewport: { x: viewport.x, y: viewport.y },
+      moved: false,
+    })
+  }
+
   const beginMove = (index: number): void => {
     if (tool !== 'select') {
       return
@@ -200,6 +226,14 @@ export function CanvasStage({
 
   const commitInteraction = (): void => {
     if (!interaction) {
+      return
+    }
+    if (interaction.kind === 'pan') {
+      // The viewport was already moved live; nothing to commit.
+      if (interaction.moved) {
+        suppressClick.current = true
+      }
+      setInteraction(null)
       return
     }
     if (interaction.kind === 'move') {
@@ -261,15 +295,17 @@ export function CanvasStage({
 
   const activeEdge = interaction?.kind === 'resize' ? interaction.edge : (hoveredHandle ?? null)
   const cursor =
-    spaceHeld || middleHeld
+    interaction?.kind === 'pan' || middleHeld
       ? 'grabbing'
-      : activeEdge
-        ? cursorForEdge(activeEdge)
-        : interaction?.kind === 'move' || (editable && hoveredIndex !== null)
-          ? 'move'
-          : tool === 'select'
-            ? 'default'
-            : 'crosshair'
+      : spaceHeld
+        ? 'grab'
+        : activeEdge
+          ? cursorForEdge(activeEdge)
+          : interaction?.kind === 'move' || (editable && hoveredIndex !== null)
+            ? 'move'
+            : tool === 'select'
+              ? 'default'
+              : 'crosshair'
 
   // Konva writes `cursor` onto its own `.konvajs-content` element, which sits
   // inside our wrapper and wins the cascade — so set it there, not on the div.
@@ -298,9 +334,20 @@ export function CanvasStage({
         onMouseDown={(event: Konva.KonvaEventObject<MouseEvent>) => {
           if (event.evt.button === 1) {
             setMiddleHeld(true)
+            beginPan()
             return
           }
-          if (event.evt.button !== 0 || tool !== 'bbox') {
+          if (event.evt.button !== 0) {
+            return
+          }
+          const onBackground = event.target === event.target.getStage()
+          // Space always pans; in the select tool, dragging the empty canvas does
+          // too — you should not have to hold a key to move the view.
+          if (spaceHeld || (onBackground && tool === 'select')) {
+            beginPan()
+            return
+          }
+          if (tool !== 'bbox') {
             return
           }
           const point = pointerToImage()
@@ -309,6 +356,17 @@ export function CanvasStage({
           }
         }}
         onMouseMove={() => {
+          if (interaction?.kind === 'pan') {
+            const screen = pointerScreen()
+            if (screen) {
+              onPan(
+                interaction.startViewport.x + (screen.x - interaction.startScreen.x),
+                interaction.startViewport.y + (screen.y - interaction.startScreen.y),
+              )
+              setInteraction({ ...interaction, moved: true })
+            }
+            return
+          }
           if (interaction) {
             const point = pointerToImage()
             if (point) {
@@ -329,6 +387,7 @@ export function CanvasStage({
             commitInteraction()
             return
           }
+          // (pan is handled by commitInteraction as well)
           if (draftBox) {
             const box = bboxFromCorners(
               draftBox.start.x,
@@ -385,20 +444,7 @@ export function CanvasStage({
         }}
       >
         <Layer>
-          <Group
-            x={viewport.x}
-            y={viewport.y}
-            scaleX={viewport.scale}
-            scaleY={viewport.scale}
-            draggable={spaceHeld || middleHeld}
-            onDragEnd={(event: Konva.KonvaEventObject<DragEvent>) => {
-              // Drag events bubble: only the pan group itself may move the view.
-              if (event.target !== event.currentTarget) {
-                return
-              }
-              onPan(event.target.x(), event.target.y())
-            }}
-          >
+          <Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>
             {image ? (
               <KonvaImage image={image} width={imageWidth} height={imageHeight} listening={false} />
             ) : null}

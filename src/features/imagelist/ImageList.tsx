@@ -4,6 +4,7 @@ import { Box, MenuItem, Stack, TextField, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
 import type { DatasetModel } from '@/core/model'
+import { useUiStore } from '@/store/uiStore'
 
 import { ImageCell } from './ImageCell'
 import { VirtualGrid } from './VirtualGrid'
@@ -22,6 +23,7 @@ const GAP = 12
 
 export function ImageList({ dataset, selectedId, onSelect, resolveImageUrl }: ImageListProps) {
   const { t } = useTranslation()
+  const setViewMode = useUiStore((state) => state.setViewMode)
   const [split, setSplit] = useState<string>('all')
   const [category, setCategory] = useState<string>('all')
   const [query, setQuery] = useState('')
@@ -107,6 +109,10 @@ export function ImageList({ dataset, selectedId, onSelect, resolveImageUrl }: Im
               image={image}
               selected={image.id === selectedId}
               onSelect={onSelect}
+              onOpen={(imageId) => {
+                onSelect(imageId)
+                setViewMode('viewer')
+              }}
               resolveImageUrl={resolveImageUrl}
             />
           )}

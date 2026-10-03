@@ -1,6 +1,7 @@
-import { Rect, Text } from 'react-konva'
+import { Rect } from 'react-konva'
 
 import { AnnotationGroup } from './AnnotationGroup'
+import { AnnotationLabel } from './AnnotationLabel'
 import type { AnnotationLayerProps } from './types'
 
 /**
@@ -51,13 +52,12 @@ export function MaskLayer({
               fill={selected ? `${color}22` : undefined}
             />
             {selected || hovered ? (
-              <Text
-                text={nameOf(annotation.categoryId)}
+              <AnnotationLabel
                 x={bbox.x}
-                y={bbox.y - 16 / scale}
-                fontSize={13 / scale}
-                fill={color}
-                listening={false}
+                y={bbox.y - 2 / scale}
+                text={nameOf(annotation.categoryId)}
+                color={color}
+                scale={scale}
               />
             ) : null}
           </AnnotationGroup>

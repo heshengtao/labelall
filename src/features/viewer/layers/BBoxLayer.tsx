@@ -1,9 +1,10 @@
 import type Konva from 'konva'
-import { Rect, Text } from 'react-konva'
+import { Rect } from 'react-konva'
 
 import { BOX_EDGES } from '@/core/annotationEdits'
 
 import { AnnotationGroup } from './AnnotationGroup'
+import { AnnotationLabel } from './AnnotationLabel'
 import { HANDLE_SIZE, handlePosition } from './handles'
 import type { AnnotationLayerProps } from './types'
 
@@ -55,13 +56,12 @@ export function BBoxLayer({
               fill={selected ? `${color}22` : undefined}
             />
             {selected || hovered ? (
-              <Text
-                text={nameOf(annotation.categoryId)}
+              <AnnotationLabel
                 x={box.x}
-                y={box.y - 16 / scale}
-                fontSize={13 / scale}
-                fill={color}
-                listening={false}
+                y={box.y - 2 / scale}
+                text={nameOf(annotation.categoryId)}
+                color={color}
+                scale={scale}
               />
             ) : null}
             {editable && selected

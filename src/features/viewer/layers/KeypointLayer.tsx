@@ -1,6 +1,7 @@
-import { Circle, Line, Rect, Text } from 'react-konva'
+import { Circle, Line, Rect } from 'react-konva'
 
 import { AnnotationGroup } from './AnnotationGroup'
+import { AnnotationLabel } from './AnnotationLabel'
 import type { AnnotationLayerProps } from './types'
 
 export function KeypointLayer({
@@ -82,13 +83,12 @@ export function KeypointLayer({
               fill="rgba(0,0,0,0.001)"
             />
             {selected || hovered ? (
-              <Text
-                text={nameOf(annotation.categoryId)}
+              <AnnotationLabel
                 x={bbox.x}
-                y={bbox.y - 16 / scale}
-                fontSize={13 / scale}
-                fill={color}
-                listening={false}
+                y={bbox.y - 2 / scale}
+                text={nameOf(annotation.categoryId)}
+                color={color}
+                scale={scale}
               />
             ) : null}
           </AnnotationGroup>

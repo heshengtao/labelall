@@ -36,6 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deleting an annotation selects its neighbour, so the delete button no longer
   goes grey after a single use. The class panel's Add button no longer wraps,
   and the keypoint tool is disabled for classes without a keypoint schema.
+- In the select tool, dragging the empty canvas now pans the view directly, and
+  the pointer cursor reflects the current gesture (move, per-edge resize, pan).
+- Annotation names are drawn as filled category-coloured chips with white text,
+  the way annotation tools usually label them.
+- Double-clicking a thumbnail in the grid opens that image in the viewer.
 
 ## [0.1.0] - 2026-10-03
 

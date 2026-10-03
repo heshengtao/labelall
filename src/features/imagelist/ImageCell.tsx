@@ -8,10 +8,12 @@ export interface ImageCellProps {
   image: ImageRecord
   selected: boolean
   onSelect: (imageId: number) => void
+  /** Double-click: open this image in the viewer. */
+  onOpen: (imageId: number) => void
   resolveImageUrl: (relPath: string) => Promise<string>
 }
 
-export function ImageCell({ image, selected, onSelect, resolveImageUrl }: ImageCellProps) {
+export function ImageCell({ image, selected, onSelect, onOpen, resolveImageUrl }: ImageCellProps) {
   const [url, setUrl] = useState<string | null>(null)
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export function ImageCell({ image, selected, onSelect, resolveImageUrl }: ImageC
     <Card
       variant="outlined"
       onClick={() => onSelect(image.id)}
+      onDoubleClick={() => onOpen(image.id)}
       sx={{
         cursor: 'pointer',
         height: '100%',
