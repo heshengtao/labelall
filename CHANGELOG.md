@@ -31,6 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dragging an annotation now follows the pointer live, commits a single undoable
   move (or resize) on release, and no longer drags the whole canvas along with
   it — Konva's nested drag events were bubbling into the pan handler.
+- Image-level class labels are toggled: the button shows whether the class is
+  already on the image and removes it, instead of stacking duplicates.
+- Deleting an annotation selects its neighbour, so the delete button no longer
+  goes grey after a single use. The class panel's Add button no longer wraps,
+  and the keypoint tool is disabled for classes without a keypoint schema.
 
 ## [0.1.0] - 2026-10-03
 

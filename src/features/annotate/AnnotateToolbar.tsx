@@ -25,11 +25,22 @@ import { useTranslation } from 'react-i18next'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useUiStore, type EditorTool } from '@/store/uiStore'
 
-const TOOLS: Array<{ value: EditorTool; icon: typeof NearMeIcon; labelKey: string }> = [
+const TOOLS: Array<{
+  value: EditorTool
+  icon: typeof NearMeIcon
+  labelKey: string
+  /** Keypoints only make sense for a class that defines a keypoint schema. */
+  needsSchema?: boolean
+}> = [
   { value: 'select', icon: NearMeIcon, labelKey: 'annotate.toolSelect' },
   { value: 'bbox', icon: CropFreeIcon, labelKey: 'annotate.toolBbox' },
   { value: 'polygon', icon: PolylineIcon, labelKey: 'annotate.toolPolygon' },
-  { value: 'keypoint', icon: ScatterPlotIcon, labelKey: 'annotate.toolKeypoint' },
+  {
+    value: 'keypoint',
+    icon: ScatterPlotIcon,
+    labelKey: 'annotate.toolKeypoint',
+    needsSchema: true,
+  },
 ]
 
 export function AnnotateToolbar() {
@@ -41,9 +52,9 @@ export function AnnotateToolbar() {
   const canRedo = useDatasetStore((state) => state.history.future.length > 0)
   const undo = useDatasetStore((state) => state.undo)
   const redo = useDatasetStore((state) => state.redo)
-  const addAnnotation = useDatasetStore((state) => state.addAnnotation)
   const deleteAnnotation = useDatasetStore((state) => state.deleteAnnotation)
   const duplicateAnnotation = useDatasetStore((state) => state.duplicateAnnotation)
+  const toggleClassification = useDatasetStore((state) => state.toggleClassification)
 
   const tool = useUiStore((state) => state.tool)
   const setTool = useUiStore((state) => state.setTool)
@@ -58,6 +69,19 @@ export function AnnotateToolbar() {
 
   const hasSelection = selectedIndex !== null
   const canLabel = activeCategoryId !== null && currentImageId !== null
+  const activeSchema =
+    activeCategoryId === null
+      ? undefined
+      : dataset.categories.find((category) => category.id === activeCategoryId)?.keypointSchema
+  const hasLabel =
+    activeCategoryId !== null &&
+    currentImageId !== null &&
+    dataset.annotations.some(
+      (annotation) =>
+        annotation.type === 'classification' &&
+        annotation.imageId === currentImageId &&
+        annotation.categoryId === activeCategoryId,
+    )
 
   return (
     <Stack
@@ -71,13 +95,20 @@ export function AnnotateToolbar() {
         value={tool}
         onChange={(_, value: EditorTool | null) => value && setTool(value)}
       >
-        {TOOLS.map(({ value, icon: Icon, labelKey }) => (
-          <ToggleButton key={value} value={value} aria-label={t(labelKey)}>
-            <Tooltip title={t(labelKey)}>
-              <Icon fontSize="small" />
-            </Tooltip>
-          </ToggleButton>
-        ))}
+        {TOOLS.map(({ value, icon: Icon, labelKey, needsSchema }) => {
+          const disabled = Boolean(needsSchema) && !activeSchema
+          const title = disabled ? t('annotate.keypointNeedsSchema') : t(labelKey)
+          return (
+            <ToggleButton key={value} value={value} disabled={disabled} aria-label={title}>
+              <Tooltip title={title}>
+                {/* Disabled buttons swallow pointer events; re-enable them for the tip. */}
+                <span style={{ display: 'inline-flex', pointerEvents: 'auto' }}>
+                  <Icon fontSize="small" />
+                </span>
+              </Tooltip>
+            </ToggleButton>
+          )
+        })}
       </ToggleButtonGroup>
 
       <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
@@ -99,21 +130,19 @@ export function AnnotateToolbar() {
         ))}
       </TextField>
 
-      <Tooltip title={t('annotate.addLabel')}>
+      <Tooltip title={hasLabel ? t('annotate.unlabelHint') : t('annotate.labelHint')}>
         <span>
           <Button
             size="small"
+            variant={hasLabel ? 'contained' : 'text'}
             startIcon={<LabelOutlinedIcon />}
             disabled={!canLabel}
             onClick={() => {
               if (currentImageId === null || activeCategoryId === null) return
-              addAnnotation(
-                { type: 'classification', imageId: currentImageId, categoryId: activeCategoryId },
-                'add label',
-              )
+              toggleClassification(currentImageId, activeCategoryId)
             }}
           >
-            {t('annotate.label')}
+            {hasLabel ? t('annotate.unlabel') : t('annotate.label')}
           </Button>
         </span>
       </Tooltip>

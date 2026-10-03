@@ -69,10 +69,36 @@ interface DatasetState {
   ): void
   deleteAnnotation(index: number): void
   duplicateAnnotation(index: number): void
+  /** Add this class as an image-level label, or remove it if it is already there. */
+  toggleClassification(imageId: number, categoryId: number): void
 
   addCategory(name: string): void
   updateCategory(id: number, patch: Partial<Category>): void
   deleteCategory(id: number): void
+}
+
+/** Closest remaining annotation of the same image, so deleting keeps a selection. */
+function nearestIndexForImage(
+  dataset: DatasetModel,
+  imageId: number | null,
+  removed: number,
+): number | null {
+  if (imageId === null) {
+    return null
+  }
+  const indices: number[] = []
+  dataset.annotations.forEach((annotation, index) => {
+    if (annotation.imageId === imageId) {
+      indices.push(index)
+    }
+  })
+  if (indices.length === 0) {
+    return null
+  }
+  return indices.reduce(
+    (best, index) => (Math.abs(index - removed) < Math.abs(best - removed) ? index : best),
+    indices[0],
+  )
 }
 
 const initialState = {
@@ -190,7 +216,38 @@ export const useDatasetStore = create<DatasetState>((set) => ({
       return {
         dataset: result.value,
         history: result.history,
-        selectedAnnotationIndex: null,
+        selectedAnnotationIndex: nearestIndexForImage(result.value, state.currentImageId, index),
+      }
+    }),
+
+  toggleClassification: (imageId, categoryId) =>
+    set((state) => {
+      if (!state.dataset) {
+        return {}
+      }
+      const existing = state.dataset.annotations.findIndex(
+        (annotation) =>
+          annotation.type === 'classification' &&
+          annotation.imageId === imageId &&
+          annotation.categoryId === categoryId,
+      )
+      if (existing >= 0) {
+        const result = applyEdit(state.dataset, state.history, 'remove label', (draft) => {
+          draft.annotations.splice(existing, 1)
+        })
+        return {
+          dataset: result.value,
+          history: result.history,
+          selectedAnnotationIndex: null,
+        }
+      }
+      const result = applyEdit(state.dataset, state.history, 'add label', (draft) => {
+        draft.annotations.push({ type: 'classification', imageId, categoryId })
+      })
+      return {
+        dataset: result.value,
+        history: result.history,
+        selectedAnnotationIndex: result.value.annotations.length - 1,
       }
     }),
 

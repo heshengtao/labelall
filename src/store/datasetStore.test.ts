@@ -94,6 +94,39 @@ describe('annotation editing', () => {
 
     useDatasetStore.getState().deleteAnnotation(0)
     expect(annotations()).toHaveLength(1)
+    // The neighbour stays selected, so Delete does not go grey after one use.
+    expect(useDatasetStore.getState().selectedAnnotationIndex).toBe(0)
+  })
+
+  it('toggles an image-level label instead of stacking duplicates', () => {
+    open()
+    useDatasetStore.getState().toggleClassification(4, 7)
+    expect(annotations()).toHaveLength(1)
+    expect(annotations()[0]).toMatchObject({ type: 'classification', imageId: 4, categoryId: 7 })
+
+    // Clicking again removes it rather than adding a second identical label.
+    useDatasetStore.getState().toggleClassification(4, 7)
+    expect(annotations()).toHaveLength(0)
+  })
+
+  it('keeps a neighbouring selection after deleting so the button stays usable', () => {
+    open()
+    useDatasetStore.getState().addAnnotation(bbox(0, 0))
+    useDatasetStore.getState().addAnnotation(bbox(5, 5))
+    useDatasetStore.getState().addAnnotation(bbox(10, 10))
+
+    useDatasetStore.getState().deleteAnnotation(1)
+    expect(annotations()).toHaveLength(2)
+    expect(useDatasetStore.getState().selectedAnnotationIndex).not.toBeNull()
+
+    useDatasetStore
+      .getState()
+      .deleteAnnotation(useDatasetStore.getState().selectedAnnotationIndex ?? 0)
+    expect(useDatasetStore.getState().selectedAnnotationIndex).not.toBeNull()
+
+    useDatasetStore
+      .getState()
+      .deleteAnnotation(useDatasetStore.getState().selectedAnnotationIndex ?? 0)
     expect(useDatasetStore.getState().selectedAnnotationIndex).toBeNull()
   })
 

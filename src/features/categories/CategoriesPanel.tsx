@@ -100,9 +100,14 @@ export function CategoriesPanel() {
             onKeyDown={(event) => {
               if (event.key === 'Enter') add()
             }}
-            fullWidth
+            sx={{ flex: 1, minWidth: 0 }}
           />
-          <Button variant="contained" startIcon={<AddIcon />} onClick={add}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={add}
+            sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+          >
             {t('common.add')}
           </Button>
         </Stack>
