@@ -1,6 +1,6 @@
 <div align="center">
 
-# LableAll
+# LabelAll
 
 **加载 · 查看 · 标注 常见图片数据集**
 **Load, view and annotate common image datasets**
@@ -23,7 +23,7 @@
 
 ### 这是什么
 
-LableAll 是一个开源的图片数据集工具，用来**加载、查看和标注**市面上常见的图片数据集。
+LabelAll 是一个开源的图片数据集工具，用来**加载、查看和标注**市面上常见的图片数据集。
 
 - **跨平台桌面端**：macOS / Windows / Linux，基于 Tauri 2（Rust + 系统 WebView），安装包体积小
 - **Web 端**：同一套前端代码可直接构建为静态站点，浏览器中打开即用
@@ -126,7 +126,7 @@ pnpm tauri build  # 打包桌面安装包
 
 ### What is this
 
-LableAll is an open-source tool for **loading, viewing and annotating** common image datasets.
+LabelAll is an open-source tool for **loading, viewing and annotating** common image datasets.
 
 - **Cross-platform desktop app** for macOS / Windows / Linux, built on Tauri 2 (Rust + system webview) for small installers
 - **Web build** from the very same frontend source — deploy it as a static site and use it in a browser

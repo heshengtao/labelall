@@ -1,17 +1,17 @@
 [package]
-name = "lableall"
+name = "labelall"
 version = "0.1.0"
 description = "Load, view and annotate common image datasets"
 authors = ["heshengtao"]
 license = "Apache-2.0"
-repository = "https://github.com/heshengtao/lableall"
+repository = "https://github.com/heshengtao/labelall"
 edition = "2021"
 rust-version = "1.77.2"
 
 # The library is what Tauri links against; the binary is a thin wrapper so that
 # the same crate can later be reused for mobile targets.
 [lib]
-name = "lableall_lib"
+name = "labelall_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

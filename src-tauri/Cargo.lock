@@ -2001,7 +2001,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "lableall"
+name = "labelall"
 version = "0.1.0"
 dependencies = [
  "image",

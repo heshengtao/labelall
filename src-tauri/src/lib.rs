@@ -13,5 +13,5 @@ pub fn run() {
             commands::image_dimensions,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running LableAll");
+        .expect("error while running LabelAll");
 }

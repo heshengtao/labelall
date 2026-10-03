@@ -1,5 +1,5 @@
 {
-  "name": "lableall",
+  "name": "labelall",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -9,11 +9,11 @@
   "author": "heshengtao",
   "repository": {
     "type": "git",
-    "url": "https://github.com/heshengtao/lableall.git"
+    "url": "https://github.com/heshengtao/labelall.git"
   },
-  "homepage": "https://github.com/heshengtao/lableall#readme",
+  "homepage": "https://github.com/heshengtao/labelall#readme",
   "bugs": {
-    "url": "https://github.com/heshengtao/lableall/issues"
+    "url": "https://github.com/heshengtao/labelall/issues"
   },
   "keywords": [
     "annotation",

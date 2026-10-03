@@ -19,4 +19,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tooling: oxlint, Prettier, Vitest with Testing Library, GitHub Actions CI.
 - Documentation: README (bilingual), CONTRIBUTING, LICENSE (Apache-2.0).
 
-[Unreleased]: https://github.com/heshengtao/lableall/commits/main
+[Unreleased]: https://github.com/heshengtao/labelall/commits/main

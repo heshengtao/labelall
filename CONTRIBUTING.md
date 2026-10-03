@@ -1,4 +1,4 @@
-# Contributing to LableAll
+# Contributing to LabelAll
 
 Thanks for taking the time to contribute. This document covers the essentials —
 setup, conventions, and how to get a change merged.

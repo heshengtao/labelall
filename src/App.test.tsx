@@ -25,7 +25,7 @@ describe('App', () => {
   it('renders the shell without throwing', () => {
     renderApp()
     expect(screen.getByRole('banner')).toBeInTheDocument()
-    expect(screen.getByText('LableAll')).toBeInTheDocument()
+    expect(screen.getByText('LabelAll')).toBeInTheDocument()
   })
 
   it('shows the welcome call to action', () => {
