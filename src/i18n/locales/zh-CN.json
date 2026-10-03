@@ -161,6 +161,17 @@
     "defaultFormat": "默认导出格式",
     "recent": "最近打开的数据集"
   },
+  "update": {
+    "title": "自动更新",
+    "check": "检查更新",
+    "available": "发现新版本 {{version}}",
+    "current": "已是最新版本",
+    "downloading": "正在下载并安装…",
+    "install": "安装并重启",
+    "later": "稍后",
+    "error": "检查更新失败",
+    "desktopOnly": "仅桌面版支持自动更新"
+  },
   "report": {
     "errorTitle": "导入失败",
     "warningTitle": "已导入，但有提示",

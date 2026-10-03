@@ -161,6 +161,17 @@
     "defaultFormat": "Default export format",
     "recent": "Recent datasets"
   },
+  "update": {
+    "title": "Update",
+    "check": "Check for updates",
+    "available": "Version {{version}} is available",
+    "current": "You are on the latest version",
+    "downloading": "Downloading and installing…",
+    "install": "Install and restart",
+    "later": "Later",
+    "error": "Update check failed",
+    "desktopOnly": "Automatic updates are only available in the desktop app"
+  },
   "report": {
     "errorTitle": "Import failed",
     "warningTitle": "Imported with notes",

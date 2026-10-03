@@ -33,6 +33,7 @@
     "active": true,
     "targets": "all",
     "category": "DeveloperTool",
+    "createUpdaterArtifacts": true,
     "shortDescription": "Load, view and annotate common image datasets",
     "longDescription": "LabelAll is a cross-platform desktop and web tool for loading, viewing and annotating common image dataset formats such as COCO, YOLO, Pascal VOC and ImageFolder/ImageNet.",
     "macOS": {
@@ -45,5 +46,11 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDkwMzAyNThFODQwQkZDQkQKUldTOS9BdUVqaVV3a0V6bnpDbVYwNkdtcldTTHNlVUhRc0RocCtrekszYytFWk9LeDA4UmsvMXcK",
+      "endpoints": ["https://github.com/heshengtao/labelall/releases/latest/download/latest.json"]
+    }
   }
 }

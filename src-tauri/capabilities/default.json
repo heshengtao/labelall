@@ -3,5 +3,11 @@
   "identifier": "default",
   "description": "Default permissions for the LabelAll main window.",
   "windows": ["main"],
-  "permissions": ["core:default", "dialog:default", "opener:default"]
+  "permissions": [
+    "core:default",
+    "dialog:default",
+    "opener:default",
+    "process:allow-restart",
+    "updater:default"
+  ]
 }

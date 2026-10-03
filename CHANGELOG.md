@@ -46,6 +46,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   grew to 21 default colours.
 - The language menu ticks the active language instead of showing an empty icon
   slot.
+- Auto-update: the desktop app checks the latest GitHub release shortly after
+  launch (and on demand from Settings), then downloads, installs and restarts in
+  place. The release workflow signs the update bundles and publishes
+  `latest.json`.
 
 ## [0.1.0] - 2026-10-03
 

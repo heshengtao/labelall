@@ -28,6 +28,12 @@ pnpm tauri build
 
 产物在 `src-tauri/target/release/bundle/` 下。
 
+> 因为开启了自动更新产物，本地打包也需要提供签名密钥，否则会报错：
+
+```bash
+TAURI_SIGNING_PRIVATE_KEY="$(cat ~/.tauri/labelall-updater.key)" pnpm tauri build
+```
+
 ## 三、macOS 需要「私有自签名 key」吗？
 
 **不需要。** macOS 打包**不需要你生成任何自签名私钥**。只有三种情况，选一种即可：
@@ -62,14 +68,39 @@ Gatekeeper 只信任 Apple 签发的 Developer ID 证书。你自己用「钥匙
 **只在你手动导入并信任它的机器上有效**，别人下载后照样被拦，解决不了分发问题。
 所以这条路不用考虑。
 
-### 关于 ExamBot 里的 `TAURI_SIGNING_PRIVATE_KEY`
+### 关于 `TAURI_SIGNING_PRIVATE_KEY`
 
-你在 ExamBot 的 workflow 里看到 `TAURI_SIGNING_PRIVATE_KEY`，它**和 macOS 签名无关**：
-那是 Tauri **应用内自动更新（updater）** 用的 minisign 密钥，用来给更新包签名与校验
-（用 `pnpm tauri signer generate` 生成）。只有启用了 updater 才需要，本项目目前没有开启，
-因此**你不需要提供它**。
+你在 ExamBot 的 workflow 里看到的 `TAURI_SIGNING_PRIVATE_KEY`，**和 macOS 签名无关**：
+它是 Tauri **应用内自动更新（updater）** 用的 minisign 密钥，用来给更新包签名与校验。
 
-## 四、可选：Apple Developer 正式签名与公证
+本项目现已启用自动更新，所以这个密钥**必须配置**（见第四节）；它替代不了 macOS 签名，
+两件事互不影响。
+
+## 四、自动更新（updater）—— 发布前必须配置一次
+
+桌面版已接入 Tauri 自动更新：启动后会静默检查 GitHub Release 上的 `latest.json`，有新版就在应用内提示，一键下载安装并重启（设置面板里也有「检查更新」按钮）。
+
+因为 `bundle.createUpdaterArtifacts` 已开启，**构建时需要更新签名密钥，否则 release 构建会直接失败**。所以发布前请先做两件事：
+
+1. 在仓库 **Settings → Secrets and variables → Actions → New repository secret** 新建
+   `TAURI_SIGNING_PRIVATE_KEY`，内容是私钥文件的全文。密钥本机已经生成好了：
+
+   ```bash
+   cat ~/.tauri/labelall-updater.key
+   ```
+
+   把输出的整段内容粘贴进 secret 即可。当前私钥**没有设密码**，所以
+   `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` 可以不建（若以后给私钥加了密码，则必须同时建这一项）。
+
+2. 确认 `src-tauri/tauri.conf.json` 的 `plugins.updater.pubkey` 与私钥配对 —— **已经帮你填好了**
+   （对应 `~/.tauri/labelall-updater.key.pub`）。以后若重新生成密钥，记得同步更新这里。
+
+配好之后，每次打 tag 的构建都会自动产出**签名过的更新包**和 `latest.json` 并附到 Release 上，已安装的旧版本就能检测并升级。
+
+> 私钥务必保管好：一旦丢失就无法再签出可用的更新包，用户的自动更新会失败，只能手动重装。轮换密钥时重新
+> `pnpm tauri signer generate -w <路径>`，然后同时更新 pubkey 和 secret。
+
+## 五、可选：Apple Developer 正式签名与公证
 
 需要 Apple Developer 账号、Developer ID Application 证书，以及一个 App 专用密码。
 
@@ -110,7 +141,7 @@ Gatekeeper 只信任 Apple 签发的 Developer ID 证书。你自己用「钥匙
    配好之后，macOS 安装包会自动签名并公证，用户双击即可打开；也就可以把 README 里的
    `xattr` 提示删掉。
 
-## 五、可选：Windows 签名
+## 六、可选：Windows 签名
 
 不签名一样能用，只是会弹 SmartScreen 提示。要消除的话需要一张代码签名证书（`.pfx`）。
 
@@ -134,11 +165,12 @@ Gatekeeper 只信任 Apple 签发的 Developer ID 证书。你自己用「钥匙
    WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
    ```
 
-## 六、常见问题
+## 七、常见问题
 
 - **Release 是草稿，没自动公开**：这是有意为之，方便你先检查安装包；确认后手动发布即可。
 - **macOS 用户反馈「App 已损坏」**：属正常现象（未公证），让用户执行 `xattr -cr` 或右键打开；
   想彻底解决就按第四节做正式签名。
 - **忘了加 `contents: write` 权限**：workflow 已经声明了，无需再改。
+- **release 构建报 signing key 相关的错**：说明 `TAURI_SIGNING_PRIVATE_KEY` 还没加到 secrets，见第四节。
 - **只想构建某一个平台**：临时注释掉 `.github/workflows/release.yml` 里 `matrix.include`
   中不需要的行即可。

@@ -39,6 +39,7 @@ import { ImportReportDialog } from '@/features/open/ImportReportDialog'
 import { OpenDialog } from '@/features/open/OpenDialog'
 import { beginOpen, cancelOpen, confirmOpen, openHandle } from '@/features/open/openDatasetFlow'
 import { SettingsDialog } from '@/features/settings/SettingsDialog'
+import { UpdateDialog } from '@/features/update/UpdateDialog'
 import { Viewer } from '@/features/viewer/Viewer'
 import { getDatasetSource } from '@/platform'
 import { detectRuntimeEnv } from '@/platform/detect-env'
@@ -295,6 +296,7 @@ export default function App() {
       <ShortcutsDialog />
       <SettingsDialog />
       <ImportReportDialog />
+      <UpdateDialog />
     </>
   )
 }

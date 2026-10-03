@@ -75,7 +75,11 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Add the code-signing secrets here after following RELEASING.md.
+          # Required for auto-update: signs the bundles and writes latest.json.
+          # The build fails without it, so add the secret before tagging (RELEASING.md).
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Optional Apple code-signing/notarization; add after following RELEASING.md.
         with:
           tagName: ${{ github.ref_name }}
           releaseName: LabelAll ${{ github.ref_name }}

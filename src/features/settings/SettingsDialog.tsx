@@ -1,4 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete'
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt'
 import {
   Button,
   Dialog,
@@ -20,6 +21,7 @@ import type { ExportChoice } from '@/core/formats/losses'
 import { LANGUAGE_STORAGE_KEY, SUPPORTED_LANGUAGES, normalizeLanguage } from '@/i18n'
 import { useSettingsStore } from '@/store/settingsStore'
 import { useUiStore } from '@/store/uiStore'
+import { useUpdateStore } from '@/store/updateStore'
 import { DEFAULT_SEED } from '@/theme/md3'
 
 const EXPORT_FORMATS: ExportChoice[] = ['coco', 'yolo', 'voc', 'imagefolder']
@@ -103,6 +105,20 @@ export function SettingsDialog() {
               </MenuItem>
             ))}
           </TextField>
+
+          <Button
+            size="small"
+            startIcon={<SystemUpdateAltIcon />}
+            onClick={() =>
+              void useUpdateStore
+                .getState()
+                .checkForUpdates()
+                .then(() => setOpen(false))
+            }
+            sx={{ alignSelf: 'flex-start' }}
+          >
+            {t('update.check')}
+          </Button>
 
           {recent.length > 0 ? (
             <Stack spacing={0.5}>
