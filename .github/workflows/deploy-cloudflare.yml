@@ -35,7 +35,24 @@ jobs:
       - name: Build web bundle
         run: pnpm build
 
+      # `secrets` cannot be read in an `if:`, so expose what we need as an output.
+      # Without the credentials this workflow now succeeds quietly instead of
+      # emailing a failure on every push.
+      - name: Check for Cloudflare credentials
+        id: creds
+        run: |
+          if [ -n "${TOKEN}" ] && [ -n "${ACCOUNT}" ]; then
+            echo "have=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "have=false" >> "$GITHUB_OUTPUT"
+            echo "CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID are not set; skipping the deploy (see DEPLOY.md)."
+          fi
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
       - name: Deploy to Cloudflare Pages
+        if: steps.creds.outputs.have == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

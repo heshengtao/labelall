@@ -43,6 +43,7 @@ function CategoryRow({ category, onUpdate, onDelete }: CategoryRowProps) {
           onChange={(color) => onUpdate(category.id, { color })}
           presets={PALETTE}
           columns={CATEGORY_COLUMNS}
+          showPalette
         />
         <TextField
           size="small"

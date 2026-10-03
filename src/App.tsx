@@ -3,6 +3,7 @@ import { useCallback, useRef, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import DatasetOutlinedIcon from '@mui/icons-material/DatasetOutlined'
 import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined'
+import GitHubIcon from '@mui/icons-material/GitHub'
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -43,6 +44,7 @@ import { UpdateDialog } from '@/features/update/UpdateDialog'
 import { Viewer } from '@/features/viewer/Viewer'
 import { getDatasetSource } from '@/platform'
 import { detectRuntimeEnv } from '@/platform/detect-env'
+import { GITHUB_URL, openExternal } from '@/platform/openExternal'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useSettingsStore, type RecentDataset } from '@/store/settingsStore'
 import { useUiStore } from '@/store/uiStore'
@@ -233,6 +235,11 @@ export default function App() {
               {t('actions.openDataset')}
             </Button>
           ) : null}
+          <Tooltip title="GitHub">
+            <IconButton aria-label="GitHub" onClick={() => void openExternal(GITHUB_URL)}>
+              <GitHubIcon />
+            </IconButton>
+          </Tooltip>
           <Tooltip title={t('settings.title')}>
             <IconButton aria-label={t('settings.title')} onClick={() => setSettingsOpen(true)}>
               <SettingsIcon />

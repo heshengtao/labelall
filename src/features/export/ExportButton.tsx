@@ -97,7 +97,8 @@ export function ExportButton() {
       <Dialog open={open} onClose={busy ? undefined : () => setOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{t('export.title')}</DialogTitle>
         <DialogContent>
-          <Stack spacing={2}>
+          {/* A little top padding so the select's floating label is not clipped. */}
+          <Stack spacing={2} sx={{ pt: 1 }}>
             <TextField
               select
               size="small"

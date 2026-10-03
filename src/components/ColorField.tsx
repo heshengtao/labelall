@@ -14,6 +14,8 @@ export interface ColorFieldProps {
   columns?: number
   /** Render as a single swatch that opens a menu, for tight rows. */
   compact?: boolean
+  /** Show the generated palette below the presets. */
+  showPalette?: boolean
 }
 
 function isHex(value: string): boolean {
@@ -68,6 +70,7 @@ export function ColorField({
   presets = SEED_PRESETS,
   columns = SEED_COLUMNS,
   compact = false,
+  showPalette = false,
 }: ColorFieldProps) {
   const { t } = useTranslation()
   const [text, setText] = useState(value)
@@ -102,11 +105,15 @@ export function ColorField({
     <Stack spacing={1.5}>
       <Typography variant="body2">{label}</Typography>
       {grid(presets, columns)}
-      <Divider />
-      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-        {t('settings.palette')}
-      </Typography>
-      {grid(PALETTE_GRID, PALETTE_COLUMNS)}
+      {showPalette ? (
+        <>
+          <Divider />
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            {t('settings.palette')}
+          </Typography>
+          {grid(PALETTE_GRID, PALETTE_COLUMNS)}
+        </>
+      ) : null}
       <TextField
         size="small"
         label={t('settings.hex')}

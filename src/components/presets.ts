@@ -1,16 +1,36 @@
-import { PALETTE } from '@/core/palette'
-
 /** MD3-adjacent seeds, shown first in the accent picker. */
 const MD3_SEEDS = ['#6750a4', '#00696d', '#7d5260', '#386a20', '#8b5000'] as const
 
-/** Accent presets: five MD3 seeds followed by the category palette (26 total). */
-export const SEED_PRESETS: readonly string[] = [...MD3_SEEDS, ...PALETTE]
+/** Accent presets: 26 swatches, laid out as two rows of thirteen. */
+export const SEED_PRESETS: readonly string[] = [
+  ...MD3_SEEDS,
+  '#e5484d',
+  '#0091ff',
+  '#30a46c',
+  '#f76b15',
+  '#8e4ec6',
+  '#e93d82',
+  '#12a594',
+  '#ffb224',
+  '#3e63dd',
+  '#d6409f',
+  '#46a758',
+  '#ff8b3d',
+  '#6e56cf',
+  '#0588f0',
+  '#e54d2e',
+  '#29a383',
+  '#0891b2',
+  '#7c3aed',
+  '#65a30d',
+  '#db2777',
+  '#0f766e',
+]
 
-/** Two full rows of thirteen. */
 export const SEED_COLUMNS = 13
 
-/** Category default colours, laid out seven per row. */
-export const CATEGORY_COLUMNS = 7
+/** Category default colours (the core palette) fill two rows of twelve. */
+export const CATEGORY_COLUMNS = 12
 
 /** Convert HSL (hue in degrees, saturation/lightness 0–1) to `#rrggbb`. */
 export function hslToHex(hue: number, saturation: number, lightness: number): string {

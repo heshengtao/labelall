@@ -7,9 +7,9 @@ import { PALETTE_GRID, SEED_COLUMNS, SEED_PRESETS, hslToHex } from './presets'
 const HEX = /^#[0-9a-f]{6}$/
 
 describe('palettes', () => {
-  it('has 21 category colours', () => {
-    expect(PALETTE).toHaveLength(21)
-    expect(new Set(PALETTE).size).toBe(21)
+  it('has 24 category colours', () => {
+    expect(PALETTE).toHaveLength(24)
+    expect(new Set(PALETTE).size).toBe(24)
   })
 
   it('has 26 accent presets that fill two rows of thirteen', () => {

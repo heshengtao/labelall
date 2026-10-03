@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A Dockerfile and docker-compose for self-hosting the web build, plus a Cloudflare Pages deploy
   workflow; see DEPLOY.md.
 
+### Changed
+
+- The accent-colour picker now shows only the presets, while the category colour picker offers 24
+  defaults (two rows of twelve) followed by the generated palette.
+- Added a GitHub button to the header, and gave the export dialog's format select room for its
+  label.
+
 ## [0.1.2] - 2026-10-03
 
 ### Added

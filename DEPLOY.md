@@ -39,7 +39,15 @@ SPA 回退和静态资源长缓存）。
 
 4. push 到 `main`（或在 Actions 里手动触发），完成后在 Pages 面板即可看到访问地址。
 
-自定义域名在 Pages 项目的 **Custom domains** 里绑定，Cloudflare 会自动签发 HTTPS 证书。
+> 在 secrets 配置好之前，这个 workflow 会**跳过部署并静默成功**，不会再每次推送都失败报警。
+> 配好之后它就会自动部署了。
+
+### 域名
+
+不配置自定义域名时，Cloudflare 会分配一个 `labelall.pages.dev` 的地址，直接可用。想用自己的域名
+（例如 `labelall.superagentparty.com`），在 Pages 项目的 **Custom domains → Set up a custom
+domain** 里填上子域名即可；如果该域名已经托管在同一个 Cloudflare 账号下，DNS 记录会自动添加，
+HTTPS 证书也会自动签发。**这一步是可选的**，只是更好记、更像一个正式产品。
 
 ## 对比
 
