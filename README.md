@@ -79,6 +79,8 @@ LabelAll 是一款**免费开源**的图片数据集工具，帮你打开、浏�
 3. 选中图片，按需新增或修改标注。
 4. 完成后导出为你需要的格式。
 
+> 想先试试？仓库里的 `examples/voc-mini` 是一个只有 3 张图的小型 Pascal VOC 数据集，直接打开即可。
+
 常用快捷键：
 
 | 操作 | 快捷键 |
@@ -177,6 +179,8 @@ who needs to look at or edit a batch of image labels quickly.
 2. The format is detected automatically — confirm and start browsing.
 3. Select an image and add or edit annotations as needed.
 4. Export to the format you want.
+
+> Want to try it first? `examples/voc-mini` in this repository is a three-image Pascal VOC dataset — open it directly.
 
 Common shortcuts:
 

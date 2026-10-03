@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and COCO no longer requires a `categories` array.
 - MD3 colour picker (preset palette + hex field), replacing the native colour
   input in settings and the class panel.
+- A tiny bundled example dataset (`examples/voc-mini`, three real images in the
+  canonical VOC layout) for trying the app, kept valid by a test.
 
 ### Fixed
 
