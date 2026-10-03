@@ -34,6 +34,7 @@ describe('path helpers', () => {
 
   it('resolves the label file for the last /images/ segment', () => {
     expect(imagesPathToLabelsPath('dataset/images/train/a.jpg')).toBe('dataset/labels/train/a.txt')
+    expect(imagesPathToLabelsPath('images/train/a.jpg')).toBe('labels/train/a.txt')
     expect(imagesPathToLabelsPath('a.jpg')).toBe('labels/a.txt')
   })
 })

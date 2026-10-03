@@ -67,5 +67,16 @@ export function createTauriSource(): DatasetSource {
     async getImageUrl(handle, relPath) {
       return convertFileSrc(joinRoot(handle.root, relPath))
     },
+
+    async imageSize(handle, relPath) {
+      try {
+        const dims = await invoke<{ width: number; height: number }>('image_dimensions', {
+          path: joinRoot(handle.root, relPath),
+        })
+        return { width: dims.width, height: dims.height }
+      } catch {
+        return null
+      }
+    },
   }
 }

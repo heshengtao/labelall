@@ -36,4 +36,9 @@ export interface DatasetSource {
   writeTexts(handle: DatasetHandle, files: TextFile[]): Promise<void>
   /** Resolve a URL the UI can put in an `<img src>`. */
   getImageUrl(handle: DatasetHandle, relPath: string): Promise<string>
+  /** Image dimensions, or null when they cannot be read. */
+  imageSize(
+    handle: DatasetHandle,
+    relPath: string,
+  ): Promise<{ width: number; height: number } | null>
 }

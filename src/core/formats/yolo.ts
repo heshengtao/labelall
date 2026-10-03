@@ -1,0 +1,347 @@
+/**
+ * Ultralytics YOLO reader and writer (detect / segment / pose).
+ *
+ * Labels are normalised centre-form boxes (`cls cx cy w h`), or polygon points,
+ * or keypoints, and carry no ids, areas or scores — that is why the loss table
+ * is noisy for YOLO. Reading needs image dimensions to denormalise; the caller
+ * supplies them through `ReadContext.imageSize`.
+ */
+
+import { parse as parseYaml } from 'yaml'
+
+import { bboxArea, bboxFromPoints, bboxToYoloBox, polygonArea, yoloBoxToBBox } from '../geometry'
+import type {
+  Annotation,
+  BBox,
+  Category,
+  DatasetModel,
+  ImageRecord,
+  Keypoint,
+  KeypointSchema,
+  KpVisibility,
+  Polygon,
+} from '../model'
+import { assignCategoryColors } from '../palette'
+import { fileExtension, imagesPathToLabelsPath } from '../path'
+import { IMAGE_EXTENSIONS, type DetectedFile } from './detect'
+import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
+
+export type YoloTask = 'detect' | 'seg' | 'pose'
+
+export interface YoloReadOptions extends ReadContext {
+  files: DetectedFile[]
+}
+
+function readNames(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item))
+  }
+  if (value && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>)
+      .sort((a, b) => Number(a[0]) - Number(b[0]))
+      .map(([, name]) => String(name))
+  }
+  return []
+}
+
+function toVisibility(value: number): KpVisibility {
+  return value === 1 || value === 2 ? value : value > 0 ? 2 : 0
+}
+
+export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
+  const warnings: string[] = []
+  const yamlEntry = options.files.find(
+    (entry) => !entry.isDir && ['.yaml', '.yml'].includes(fileExtension(entry.path)),
+  )
+
+  let names: string[] = []
+  let kptShape: number[] | undefined
+  let kptNames: string[] = []
+  if (yamlEntry) {
+    try {
+      const data = parseYaml(await options.readText(yamlEntry.path)) as Record<
+        string,
+        unknown
+      > | null
+      if (data && typeof data === 'object') {
+        names = readNames(data.names)
+        if (Array.isArray(data.kpt_shape)) {
+          kptShape = data.kpt_shape.map(Number)
+        }
+        if (Array.isArray(data.kpt_names)) {
+          kptNames = data.kpt_names.map(String)
+        }
+      }
+    } catch (error) {
+      warnings.push(`${yamlEntry.path} could not be parsed: ${(error as Error).message}`)
+    }
+  }
+
+  const poseNames =
+    kptNames.length > 0
+      ? kptNames
+      : kptShape
+        ? Array.from({ length: kptShape[0] }, (_, index) => `kp-${index}`)
+        : []
+  const schema: KeypointSchema | undefined = kptShape
+    ? { names: poseNames, dims: kptShape[1] === 2 ? 2 : 3 }
+    : undefined
+
+  const imageFiles = options.files.filter(
+    (entry) => !entry.isDir && IMAGE_EXTENSIONS.has(fileExtension(entry.path)),
+  )
+
+  const images: ImageRecord[] = []
+  const annotations: Annotation[] = []
+  let maxClass = names.length - 1
+
+  for (const image of imageFiles) {
+    const labelPath = imagesPathToLabelsPath(image.path)
+    let text: string | null = null
+    try {
+      text = await options.readText(labelPath)
+    } catch {
+      text = null
+    }
+
+    const imageId = images.length
+    const dims = options.imageSize ? await options.imageSize(image.path) : null
+    images.push({
+      id: imageId,
+      filePath: image.path,
+      width: dims?.width ?? 0,
+      height: dims?.height ?? 0,
+    })
+
+    if (!text || text.trim() === '') {
+      continue
+    }
+    if (!dims) {
+      warnings.push(`Could not determine the size of ${image.path}; its labels were skipped`)
+      continue
+    }
+    const width = dims.width
+    const height = dims.height
+
+    for (const rawLine of text.split(/\r?\n/)) {
+      const line = rawLine.trim()
+      if (line === '') continue
+      const tokens = line.split(/\s+/).map(Number)
+      if (tokens.some((value) => !Number.isFinite(value))) {
+        warnings.push(`${labelPath}: malformed line was skipped`)
+        continue
+      }
+
+      const [classId, ...rest] = tokens
+      maxClass = Math.max(maxClass, classId)
+
+      if (kptShape && rest.length === 4 + kptShape[0] * kptShape[1]) {
+        const [cx, cy, w, h, ...flat] = rest
+        const box = yoloBoxToBBox(cx, cy, w, h, width, height)
+        const stride = kptShape[1]
+        const keypoints: Keypoint[] = []
+        for (let i = 0; i + stride - 1 < flat.length; i += stride) {
+          const name = poseNames[keypoints.length]
+          keypoints.push({
+            x: flat[i] * width,
+            y: flat[i + 1] * height,
+            v: stride === 3 ? toVisibility(flat[i + 2]) : 2,
+            ...(name ? { name } : {}),
+          })
+        }
+        annotations.push({
+          type: 'keypoints',
+          imageId,
+          categoryId: classId,
+          bbox: box,
+          keypoints,
+          numKeypoints: keypoints.filter((keypoint) => keypoint.v > 0).length,
+          area: bboxArea(box),
+        })
+        continue
+      }
+
+      if (rest.length === 4) {
+        const [cx, cy, w, h] = rest
+        const box = yoloBoxToBBox(cx, cy, w, h, width, height)
+        annotations.push({
+          type: 'bbox',
+          imageId,
+          categoryId: classId,
+          bbox: box,
+          area: bboxArea(box),
+        })
+        continue
+      }
+
+      if (rest.length >= 6 && rest.length % 2 === 0) {
+        const polygon: Polygon = []
+        for (let i = 0; i < rest.length; i += 2) {
+          polygon.push({ x: rest[i] * width, y: rest[i + 1] * height })
+        }
+        annotations.push({
+          type: 'polygon',
+          imageId,
+          categoryId: classId,
+          polygons: [polygon],
+          bbox: bboxFromPoints(polygon),
+          area: polygonArea(polygon),
+        })
+        continue
+      }
+
+      warnings.push(`${labelPath}: unrecognised label line was skipped`)
+    }
+  }
+
+  const categories: Category[] = []
+  for (let id = 0; id <= maxClass; id += 1) {
+    categories.push({
+      id,
+      name: names[id] ?? `class-${id}`,
+      ...(schema ? { keypointSchema: schema } : {}),
+    })
+  }
+
+  const sourceFormat = schema
+    ? 'yolo-pose'
+    : annotations.some((annotation) => annotation.type === 'polygon')
+      ? 'yolo-seg'
+      : 'yolo'
+
+  const dataset: DatasetModel = {
+    sourceFormat,
+    root: options.root,
+    images,
+    categories: assignCategoryColors(categories),
+    annotations,
+    classNames: categories.map((category) => category.name),
+  }
+
+  return { dataset, warnings }
+}
+
+function boxOf(annotation: Annotation): BBox | undefined {
+  if (annotation.type === 'bbox') return annotation.bbox
+  if (annotation.type === 'polygon' || annotation.type === 'mask') return annotation.bbox
+  if (annotation.type === 'keypoints') return annotation.bbox
+  return undefined
+}
+
+function formatYaml(names: string[], schema: KeypointSchema | undefined): string {
+  const lines = ['path: .', 'names:']
+  names.forEach((name, index) => {
+    lines.push(`  ${index}: ${name}`)
+  })
+  if (schema) {
+    lines.push(`kpt_shape: [${schema.names.length}, ${schema.dims}]`)
+    if (schema.flipIdx) {
+      lines.push(`flip_idx: [${schema.flipIdx.join(', ')}]`)
+    }
+  }
+  return `${lines.join('\n')}\n`
+}
+
+/** Serialise a dataset to YOLO label files plus a `data.yaml`. */
+export function writeYolo(dataset: DatasetModel, task: YoloTask): WriteResult {
+  const files: OutputFile[] = []
+  const warnings: string[] = []
+
+  const categories = [...dataset.categories].sort((a, b) => a.id - b.id)
+  const classIndex = new Map(categories.map((category, index) => [category.id, index]))
+  const names = categories.map((category) => category.name)
+  const schema = categories.find((category) => category.keypointSchema)?.keypointSchema
+
+  for (const image of dataset.images) {
+    if (image.width <= 0 || image.height <= 0) {
+      warnings.push(`Skipped ${image.filePath}: image size is unknown, so it cannot be normalised`)
+      continue
+    }
+    const items = dataset.annotations.filter((annotation) => annotation.imageId === image.id)
+    const lines: string[] = []
+
+    for (const annotation of items) {
+      const classId = classIndex.get(annotation.categoryId)
+      if (classId === undefined) {
+        continue
+      }
+
+      if (task === 'pose' && annotation.type === 'keypoints' && schema) {
+        const box = bboxToYoloBox(annotation.bbox, image.width, image.height)
+        const parts = [classId, box.xCenter, box.yCenter, box.width, box.height].map(round)
+        schema.names.forEach((_, index) => {
+          const keypoint = annotation.keypoints[index]
+          if (!keypoint) {
+            parts.push(0, 0, 0)
+            return
+          }
+          parts.push(round(keypoint.x / image.width), round(keypoint.y / image.height), keypoint.v)
+        })
+        lines.push(parts.join(' '))
+        continue
+      }
+
+      if (task === 'seg' && annotation.type === 'polygon') {
+        for (const polygon of annotation.polygons) {
+          const parts = [
+            classId,
+            ...polygon.flatMap((point) => [
+              round(point.x / image.width),
+              round(point.y / image.height),
+            ]),
+          ]
+          lines.push(parts.join(' '))
+        }
+        continue
+      }
+
+      const box = boxOf(annotation)
+      if (!box) {
+        warnings.push(`Annotation of type "${annotation.type}" was skipped in YOLO output`)
+        continue
+      }
+      const normalised = bboxToYoloBox(box, image.width, image.height)
+
+      if (task === 'seg') {
+        const corners = [
+          { x: box.x, y: box.y },
+          { x: box.x + box.width, y: box.y },
+          { x: box.x + box.width, y: box.y + box.height },
+          { x: box.x, y: box.y + box.height },
+        ]
+        const parts = [
+          classId,
+          ...corners.flatMap((point) => [
+            round(point.x / image.width),
+            round(point.y / image.height),
+          ]),
+        ]
+        lines.push(parts.join(' '))
+        continue
+      }
+
+      lines.push(
+        [classId, normalised.xCenter, normalised.yCenter, normalised.width, normalised.height]
+          .map(round)
+          .join(' '),
+      )
+    }
+
+    if (lines.length > 0) {
+      files.push({
+        path: imagesPathToLabelsPath(image.filePath),
+        contents: `${lines.join('\n')}\n`,
+      })
+    }
+  }
+
+  files.push({
+    path: 'data.yaml',
+    contents: formatYaml(names, task === 'pose' ? schema : undefined),
+  })
+  return { files, warnings }
+}
+
+function round(value: number): number {
+  return Math.round(value * 1e6) / 1e6
+}

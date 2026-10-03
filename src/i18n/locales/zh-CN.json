@@ -131,5 +131,19 @@
     "fit": "适应窗口",
     "pan": "平移（或中键拖拽）",
     "help": "显示帮助 / 取消"
+  },
+  "export": {
+    "title": "导出",
+    "format": "格式",
+    "hint": "文件写入数据集内的 {{path}}，不会改动原始文件。",
+    "losses": "以下内容无法完整表示：",
+    "noLosses": "该格式可以完整表示当前数据集。",
+    "confirm": "导出",
+    "done": "已导出 {{count}} 个文件（{{format}}）",
+    "readOnly": "当前浏览器仅支持只读打开",
+    "coco": "COCO",
+    "yolo": "YOLO（自动任务）",
+    "voc": "Pascal VOC",
+    "imagefolder": "分类文件夹"
   }
 }

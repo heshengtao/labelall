@@ -6,6 +6,11 @@ export interface ReadContext {
   root: string
   /** Read a text file, path relative to the dataset root. */
   readText: (relPath: string) => Promise<string>
+  /**
+   * Image dimensions, for formats that store normalised coordinates (YOLO).
+   * Optional because formats that carry their own sizes (COCO, VOC) never call it.
+   */
+  imageSize?: (relPath: string) => Promise<{ width: number; height: number } | null>
 }
 
 /**

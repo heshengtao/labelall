@@ -56,11 +56,16 @@ export function replaceExtension(path: string, extension: string): string {
 export function imagesPathToLabelsPath(imagePath: string, labelDir = 'labels'): string {
   const marker = '/images/'
   const index = imagePath.lastIndexOf(marker)
-  if (index === -1) {
-    return replaceExtension(joinPath(labelDir, fileBasename(imagePath)), '.txt')
+  if (index !== -1) {
+    return replaceExtension(
+      `${imagePath.slice(0, index)}/${labelDir}/${imagePath.slice(index + marker.length)}`,
+      '.txt',
+    )
   }
-  return replaceExtension(
-    `${imagePath.slice(0, index)}/${labelDir}/${imagePath.slice(index + marker.length)}`,
-    '.txt',
-  )
+  // The images directory can also sit at the dataset root, where there is no
+  // leading separator to match.
+  if (imagePath.startsWith('images/')) {
+    return replaceExtension(`${labelDir}/${imagePath.slice('images/'.length)}`, '.txt')
+  }
+  return replaceExtension(joinPath(labelDir, fileBasename(imagePath)), '.txt')
 }

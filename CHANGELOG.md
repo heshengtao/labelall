@@ -38,6 +38,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Class management panel (add / rename / recolour / delete) and a keyboard
   shortcut reference.
 - Undo/redo backed by immer patches, with Cmd/Ctrl+Z and Shift+Cmd/Ctrl+Z.
+- YOLO (detect / segment / pose) and Pascal VOC readers and writers, plus COCO
+  and ImageFolder writers, all with round-trip tests.
+- Export dialog that lists the exact data a target format cannot represent, and
+  writes into `export/<format>/` without touching the originals.
+- Image-dimension plumbing so normalised formats (YOLO) can be read in the
+  worker, on both desktop and web.
 
 ### Changed
 

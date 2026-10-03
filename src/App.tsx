@@ -32,6 +32,7 @@ import { IMAGE_EXTENSIONS } from '@/core/formats/detect'
 import type { DatasetModel } from '@/core/model'
 import { fileExtension } from '@/core/path'
 import { CategoriesPanel } from '@/features/categories/CategoriesPanel'
+import { ExportButton } from '@/features/export/ExportButton'
 import { ShortcutsDialog } from '@/features/help/ShortcutsDialog'
 import { ImageList } from '@/features/imagelist/ImageList'
 import { OpenDialog } from '@/features/open/OpenDialog'
@@ -68,6 +69,7 @@ function DatasetHeader({ name, dataset, warnings }: DatasetHeaderProps) {
           })}
         </Typography>
         <Box sx={{ flex: 1 }} />
+        <ExportButton />
         <ToggleButtonGroup
           size="small"
           exclusive

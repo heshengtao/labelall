@@ -27,7 +27,7 @@ import type {
 } from '../model'
 import { assignCategoryColors } from '../palette'
 import { fileBasename, joinPath } from '../path'
-import type { ReadContext, ReadResult } from './types'
+import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
 
 interface RawCocoImage {
   id: number
@@ -344,4 +344,111 @@ export async function readCoco(options: CocoReadOptions): Promise<ReadResult> {
   }
 
   return { dataset, warnings }
+}
+
+function bboxArray(box: BBox): number[] {
+  return [box.x, box.y, box.width, box.height]
+}
+
+export interface CocoWriteOptions {
+  /** Where to write the JSON, relative to the output root. */
+  path?: string
+}
+
+/** Serialise a dataset back to a single COCO JSON file. */
+export function writeCoco(dataset: DatasetModel, options: CocoWriteOptions = {}): WriteResult {
+  const warnings: string[] = []
+  const path = options.path ?? 'annotations/instances.json'
+
+  const categories = dataset.categories.map((category) => ({
+    id: category.id,
+    name: category.name,
+    ...(category.supercategory ? { supercategory: category.supercategory } : {}),
+    ...(category.keypointSchema
+      ? {
+          keypoints: category.keypointSchema.names,
+          ...(category.keypointSchema.skeleton
+            ? { skeleton: category.keypointSchema.skeleton }
+            : {}),
+        }
+      : {}),
+  }))
+
+  const images = dataset.images.map((image) => ({
+    id: image.id,
+    file_name: image.filePath,
+    width: image.width,
+    height: image.height,
+  }))
+
+  const annotations: Record<string, unknown>[] = []
+  for (const annotation of dataset.annotations) {
+    if (annotation.type === 'classification') {
+      warnings.push('Image-level class labels are skipped in COCO output')
+      continue
+    }
+
+    const common = {
+      ...(annotation.id !== undefined ? { id: annotation.id } : {}),
+      image_id: annotation.imageId,
+      category_id: annotation.categoryId,
+      ...(annotation.score !== undefined ? { score: annotation.score } : {}),
+      ...(annotation.attributes ? { attributes: annotation.attributes } : {}),
+      ...(annotation.flags?.iscrowd ? { iscrowd: 1 } : {}),
+    }
+
+    if (annotation.type === 'bbox') {
+      annotations.push({
+        ...common,
+        bbox: bboxArray(annotation.bbox),
+        ...(annotation.area !== undefined ? { area: annotation.area } : {}),
+      })
+      continue
+    }
+
+    if (annotation.type === 'polygon') {
+      annotations.push({
+        ...common,
+        segmentation: annotation.polygons.map((polygon) =>
+          polygon.flatMap((point) => [point.x, point.y]),
+        ),
+        ...(annotation.bbox ? { bbox: bboxArray(annotation.bbox) } : {}),
+        ...(annotation.area !== undefined ? { area: annotation.area } : {}),
+      })
+      continue
+    }
+
+    if (annotation.type === 'mask') {
+      const segmentation =
+        annotation.mask.encoding === 'rle'
+          ? { size: annotation.mask.size, counts: annotation.mask.counts }
+          : undefined
+      annotations.push({
+        ...common,
+        ...(segmentation ? { segmentation } : {}),
+        ...(annotation.bbox ? { bbox: bboxArray(annotation.bbox) } : {}),
+        ...(annotation.area !== undefined ? { area: annotation.area } : {}),
+      })
+      continue
+    }
+
+    annotations.push({
+      ...common,
+      bbox: bboxArray(annotation.bbox),
+      keypoints: annotation.keypoints.flatMap((keypoint) => [keypoint.x, keypoint.y, keypoint.v]),
+      num_keypoints: annotation.numKeypoints,
+      ...(annotation.area !== undefined ? { area: annotation.area } : {}),
+    })
+  }
+
+  const payload = {
+    info: dataset.info ?? { description: 'Exported by LabelAll' },
+    ...(dataset.licenses ? { licenses: dataset.licenses } : {}),
+    images,
+    annotations,
+    categories,
+  }
+
+  const files: OutputFile[] = [{ path, contents: `${JSON.stringify(payload, null, 2)}\n` }]
+  return { files, warnings }
 }

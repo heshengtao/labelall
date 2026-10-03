@@ -43,9 +43,31 @@ describe('parseDataset', () => {
   })
 
   it('reports formats that have no reader yet instead of pretending', async () => {
-    expect(READABLE_FORMATS.has('voc')).toBe(false)
+    expect(READABLE_FORMATS.has('other')).toBe(false)
     await expect(
-      parseDataset({ format: 'voc', files: [] }, { root: 'x', readText: async () => '' }),
+      parseDataset({ format: 'other', files: [] }, { root: 'x', readText: async () => '' }),
     ).rejects.toThrow(/not implemented yet/)
+  })
+
+  it('parses a VOC listing', async () => {
+    const { dataset } = await parseDataset(
+      { format: 'voc', files: scanFixture('voc') },
+      { root: 'voc', readText: fixtureReader('voc') },
+    )
+    expect(dataset.sourceFormat).toBe('voc')
+    expect(dataset.annotations).toHaveLength(1)
+  })
+
+  it('parses a YOLO listing, denormalising with image sizes', async () => {
+    const { dataset } = await parseDataset(
+      { format: 'yolo', files: scanFixture('yolo') },
+      {
+        root: 'yolo',
+        readText: fixtureReader('yolo'),
+        imageSize: async () => ({ width: 640, height: 480 }),
+      },
+    )
+    expect(dataset.classNames).toEqual(['cat', 'dog'])
+    expect(dataset.annotations).toHaveLength(1)
   })
 })

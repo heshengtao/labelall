@@ -8,6 +8,7 @@
 
 import { parse as parseYaml } from 'yaml'
 
+import type { VocBoxPolicy } from '../geometry'
 import type { SourceFormat } from '../model'
 import { fileDirname, fileExtension } from '../path'
 
@@ -37,6 +38,8 @@ export interface DatasetParams {
   imageDir?: string
   /** Split inferred from the file or directory name (train/val/test). */
   split?: string
+  /** VOC: how `xmax`/`ymax` are interpreted. */
+  boxPolicy?: VocBoxPolicy
 }
 
 export interface DetectionCandidate {

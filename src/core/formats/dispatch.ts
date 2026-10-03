@@ -13,12 +13,18 @@ import type { DatasetParams, DetectedFile } from './detect'
 import { readImageFolder } from './imagefolder'
 import { readLabelmeDataset } from './labelme'
 import type { ReadContext, ReadResult } from './types'
+import { readVoc } from './voc'
+import { readYolo } from './yolo'
 
 /** Formats that have a reader today; the rest arrive in later milestones. */
 export const READABLE_FORMATS: ReadonlySet<SourceFormat> = new Set<SourceFormat>([
   'coco',
   'imagefolder',
   'labelme',
+  'voc',
+  'yolo',
+  'yolo-seg',
+  'yolo-pose',
 ])
 
 export interface ParseRequest {
@@ -56,6 +62,24 @@ export async function parseDataset(request: ParseRequest, ctx: ReadContext): Pro
         readText: ctx.readText,
         annotationPaths: params?.annotationPaths ?? [],
         ...(params?.imageDir ? { imageDir: params.imageDir } : {}),
+      })
+
+    case 'voc':
+      return readVoc({
+        root: ctx.root,
+        readText: ctx.readText,
+        files,
+        ...(params?.boxPolicy ? { boxPolicy: params.boxPolicy } : {}),
+      })
+
+    case 'yolo':
+    case 'yolo-seg':
+    case 'yolo-pose':
+      return readYolo({
+        root: ctx.root,
+        readText: ctx.readText,
+        files,
+        ...(ctx.imageSize ? { imageSize: ctx.imageSize } : {}),
       })
 
     default:

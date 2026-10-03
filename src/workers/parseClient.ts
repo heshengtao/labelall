@@ -31,6 +31,7 @@ export interface ParseService {
 
 type FromWorker =
   | { type: 'read'; id: number; callId: number; path: string }
+  | { type: 'size'; id: number; callId: number; path: string }
   | { type: 'progress'; id: number; value: number }
   | { type: 'detect-result'; id: number; candidates: DetectionCandidate[] }
   | { type: 'parse-result'; id: number; dataset: DatasetModel; warnings: string[] }
@@ -67,6 +68,28 @@ export function createWorkerParseService(source: DatasetSource): ParseService {
         (error: unknown) =>
           worker.postMessage({
             type: 'read-error',
+            callId: message.callId,
+            message: error instanceof Error ? error.message : String(error),
+          }),
+      )
+      return
+    }
+
+    if (message.type === 'size') {
+      const handle = handles.get(message.id)
+      if (!handle) {
+        worker.postMessage({
+          type: 'size-error',
+          callId: message.callId,
+          message: 'the request is no longer active',
+        })
+        return
+      }
+      source.imageSize(handle, message.path).then(
+        (size) => worker.postMessage({ type: 'size-result', callId: message.callId, size }),
+        (error: unknown) =>
+          worker.postMessage({
+            type: 'size-error',
             callId: message.callId,
             message: error instanceof Error ? error.message : String(error),
           }),

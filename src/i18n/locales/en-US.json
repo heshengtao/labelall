@@ -131,5 +131,19 @@
     "fit": "Fit to window",
     "pan": "Pan (or middle-drag)",
     "help": "Show this help / cancel"
+  },
+  "export": {
+    "title": "Export",
+    "format": "Format",
+    "hint": "Files are written to {{path}} inside the dataset; originals are left untouched.",
+    "losses": "Some data cannot be represented:",
+    "noLosses": "This format can represent the whole dataset.",
+    "confirm": "Export",
+    "done": "Exported {{count}} file(s) as {{format}}",
+    "readOnly": "This browser can only open datasets read-only",
+    "coco": "COCO",
+    "yolo": "YOLO (auto task)",
+    "voc": "Pascal VOC",
+    "imagefolder": "ImageFolder"
   }
 }

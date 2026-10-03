@@ -34,9 +34,9 @@ LabelAll 是一个开源的图片数据集工具，用来**加载、查看和标
 
 | 格式 | 检测特征 | 读取 | 写入 | 说明 |
 | --- | :---: | :---: | :---: | --- |
-| **COCO** (json) | `*.json` 含 `images`/`annotations`/`categories` | ✅ | 🚧 | 含多边形与 RLE 分割、关键点、`iscrowd` |
-| **YOLO** (txt + yaml) | 同级 `images/` + `labels/`，`*.yaml` 含 `names:` | 🚧 | 🚧 | 检测 / 分割 / 姿态三种任务 |
-| **Pascal VOC** (xml) | `Annotations/*.xml` + `JPEGImages/` | 🚧 | 🚧 | 1 基闭区间坐标，可配置换算策略 |
+| **COCO** (json) | `*.json` 含 `images`/`annotations`/`categories` | ✅ | ✅ | 含多边形与 RLE 分割、关键点、`iscrowd` |
+| **YOLO** (txt + yaml) | 同级 `images/` + `labels/`，`*.yaml` 含 `names:` | ✅ | ✅ | 检测 / 分割 / 姿态三种任务 |
+| **Pascal VOC** (xml) | `Annotations/*.xml` + `JPEGImages/` | ✅ | ✅ | 1 基闭区间坐标，可配置换算策略 |
 | **分类文件夹 / ImageNet** | 类名子目录，无标注文件 | ✅ | 🚧 | 目录名字典序即类别顺序 |
 | **labelme** (json) | `*.json` 含 `shapes`/`imagePath` | ✅ | — | 便于与 labelme 互通 |
 
@@ -111,7 +111,7 @@ pnpm tauri build  # 打包桌面安装包
 - [x] **M2** 平台抽象、打开数据集、图片列表
 - [x] **M3** 查看器（缩放平移、四类标注叠加）
 - [x] **M4** 标注编辑与类别管理、撤销重做
-- [ ] **M5** YOLO / VOC 读写、保存与导出、往返测试
+- [x] **M5** YOLO / VOC 读写、保存与导出、往返测试
 - [ ] **M6** 打磨、Web 部署、文档与示例数据
 - [ ] **M7** 发布 v0.1.0（三平台安装包）
 
@@ -137,9 +137,9 @@ LabelAll is an open-source tool for **loading, viewing and annotating** common i
 
 | Format | Detection signal | Read | Write | Notes |
 | --- | :---: | :---: | :---: | --- |
-| **COCO** (json) | `*.json` with `images`/`annotations`/`categories` | ✅ | 🚧 | Polygon and RLE segmentation, keypoints, `iscrowd` |
-| **YOLO** (txt + yaml) | sibling `images/` + `labels/`, `*.yaml` with `names:` | 🚧 | 🚧 | Detect / segment / pose tasks |
-| **Pascal VOC** (xml) | `Annotations/*.xml` + `JPEGImages/` | 🚧 | 🚧 | 1-based inclusive boxes, conversion policy configurable |
+| **COCO** (json) | `*.json` with `images`/`annotations`/`categories` | ✅ | ✅ | Polygon and RLE segmentation, keypoints, `iscrowd` |
+| **YOLO** (txt + yaml) | sibling `images/` + `labels/`, `*.yaml` with `names:` | ✅ | ✅ | Detect / segment / pose tasks |
+| **Pascal VOC** (xml) | `Annotations/*.xml` + `JPEGImages/` | ✅ | ✅ | 1-based inclusive boxes, conversion policy configurable |
 | **Classification / ImageNet** | class-named subdirectories, no annotation files | ✅ | 🚧 | Lexicographic directory order defines class ids |
 | **labelme** (json) | `*.json` with `shapes`/`imagePath` | ✅ | — | Interop with labelme |
 
@@ -187,7 +187,7 @@ pnpm tauri build  # desktop installers
 - [x] **M2** Platform abstraction, dataset opening, image list
 - [x] **M3** Viewer (zoom/pan, overlays for all four annotation types)
 - [x] **M4** Annotation editing, category management, undo/redo
-- [ ] **M5** YOLO / VOC readers and writers, save & export, round-trip tests
+- [x] **M5** YOLO / VOC readers and writers, save & export, round-trip tests
 - [ ] **M6** Polish, web deployment, docs and sample data
 - [ ] **M7** Release v0.1.0 (installers for three platforms)
 

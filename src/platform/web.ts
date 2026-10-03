@@ -254,5 +254,32 @@ export function createWebSource(): DatasetSource {
       }
       return blobUrlFor(`${handle.id}:${relPath}`, file)
     },
+
+    async imageSize(handle, relPath) {
+      const entry = stored.get(handle.id)
+      if (!entry) {
+        return null
+      }
+      const file =
+        entry.kind === 'input' ? entry.files.get(relPath) : await readFsFile(entry.dir, relPath)
+      if (!file) {
+        return null
+      }
+      return readImageSize(file)
+    },
+  }
+}
+
+async function readImageSize(file: File): Promise<{ width: number; height: number } | null> {
+  if (typeof createImageBitmap !== 'function') {
+    return null
+  }
+  try {
+    const bitmap = await createImageBitmap(file)
+    const size = { width: bitmap.width, height: bitmap.height }
+    bitmap.close()
+    return size
+  } catch {
+    return null
   }
 }
