@@ -15,6 +15,7 @@ import {
 import { useTranslation } from 'react-i18next'
 
 import { ColorFieldWithReset } from '@/components/ColorField'
+import { SEED_COLUMNS, SEED_PRESETS } from '@/components/presets'
 import type { ExportChoice } from '@/core/formats/losses'
 import { LANGUAGE_STORAGE_KEY, SUPPORTED_LANGUAGES, normalizeLanguage } from '@/i18n'
 import { useSettingsStore } from '@/store/settingsStore'
@@ -52,6 +53,8 @@ export function SettingsDialog() {
             onChange={setSeed}
             onReset={() => setSeed(DEFAULT_SEED)}
             resetLabel={t('settings.reset')}
+            presets={SEED_PRESETS}
+            columns={SEED_COLUMNS}
           />
 
           <TextField

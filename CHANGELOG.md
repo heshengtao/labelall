@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Annotation names are drawn as filled category-coloured chips with white text,
   the way annotation tools usually label them.
 - Double-clicking a thumbnail in the grid opens that image in the viewer.
+- The colour picker gained a generated palette (twelve hues × four tones), and
+  the accent presets are now 26 swatches filling two rows; the category palette
+  grew to 21 default colours.
+- The language menu ticks the active language instead of showing an empty icon
+  slot.
 
 ## [0.1.0] - 2026-10-03
 

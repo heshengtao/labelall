@@ -23,6 +23,11 @@ export const PALETTE = [
   '#0588f0',
   '#e54d2e',
   '#29a383',
+  '#0891b2',
+  '#7c3aed',
+  '#65a30d',
+  '#db2777',
+  '#0f766e',
 ] as const
 
 export function colorForIndex(index: number): string {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { assignCategoryColors, colorForIndex } from './palette'
+import { PALETTE, assignCategoryColors, colorForIndex } from './palette'
 
 const HEX = /^#[0-9a-f]{6}$/i
 
@@ -13,7 +13,8 @@ describe('colorForIndex', () => {
 
   it('handles negative and out-of-range indices', () => {
     expect(colorForIndex(-1)).toMatch(HEX)
-    expect(colorForIndex(16)).toBe(colorForIndex(0))
+    expect(colorForIndex(PALETTE.length)).toBe(colorForIndex(0))
+    expect(colorForIndex(-1)).toBe(colorForIndex(PALETTE.length - 1))
   })
 })
 

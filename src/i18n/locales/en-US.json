@@ -155,6 +155,7 @@
   "settings": {
     "title": "Settings",
     "seed": "Accent colour",
+    "palette": "Palette",
     "hex": "Hex",
     "reset": "Reset",
     "defaultFormat": "Default export format",

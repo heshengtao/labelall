@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import CheckIcon from '@mui/icons-material/Check'
 import LanguageIcon from '@mui/icons-material/Language'
 import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useTranslation } from 'react-i18next'
@@ -49,7 +50,7 @@ export function LanguageToggle() {
               setAnchorEl(null)
             }}
           >
-            <ListItemIcon />
+            <ListItemIcon>{lng === current ? <CheckIcon fontSize="small" /> : null}</ListItemIcon>
             <ListItemText>{t(LANGUAGE_LABEL_KEY[lng])}</ListItemText>
           </MenuItem>
         ))}

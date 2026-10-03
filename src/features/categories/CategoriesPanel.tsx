@@ -16,7 +16,9 @@ import {
 import { useTranslation } from 'react-i18next'
 
 import { ColorField } from '@/components/ColorField'
+import { CATEGORY_COLUMNS } from '@/components/presets'
 import type { Category } from '@/core/model'
+import { PALETTE } from '@/core/palette'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useUiStore } from '@/store/uiStore'
 
@@ -39,6 +41,8 @@ function CategoryRow({ category, onUpdate, onDelete }: CategoryRowProps) {
           label={t('categories.colour')}
           value={category.color ?? '#888888'}
           onChange={(color) => onUpdate(category.id, { color })}
+          presets={PALETTE}
+          columns={CATEGORY_COLUMNS}
         />
         <TextField
           size="small"
