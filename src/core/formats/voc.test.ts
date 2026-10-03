@@ -48,6 +48,19 @@ describe('readVoc', () => {
     }
   })
 
+  it('reads a dataset with non-ASCII folder and file names', async () => {
+    const { dataset, warnings } = await readVoc({
+      root: 'voc-cn',
+      readText: fixtureReader('voc-cn'),
+      files: scanFixture('voc-cn'),
+    })
+    expect(dataset.images).toHaveLength(2)
+    // Class ids follow the (path-sorted) listing, so compare as a set.
+    expect([...(dataset.classNames ?? [])].sort()).toEqual(['跌落式熔断器', '横担'].sort())
+    expect(dataset.annotations).toHaveLength(2)
+    expect(warnings).toEqual([])
+  })
+
   it('round-trips through the writer without moving the box', async () => {
     const first = await readVoc({
       root: 'voc',

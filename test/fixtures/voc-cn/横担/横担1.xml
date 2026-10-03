@@ -1,0 +1,18 @@
+<annotation>
+  <folder>横担</folder>
+  <filename>横担1.jpg</filename>
+  <size>
+    <width>200</width>
+    <height>100</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>横担</name>
+    <bndbox>
+      <xmin>1</xmin>
+      <ymin>1</ymin>
+      <xmax>199</xmax>
+      <ymax>99</ymax>
+    </bndbox>
+  </object>
+</annotation>

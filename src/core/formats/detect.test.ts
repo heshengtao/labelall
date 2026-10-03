@@ -27,6 +27,12 @@ describe('detectFormat', () => {
     expect(candidates.some((candidate) => candidate.format === 'imagefolder')).toBe(true)
   })
 
+  it('handles class folders and files with non-ASCII names', async () => {
+    const candidates = await detect('voc-cn')
+    expect(candidates[0]?.format).toBe('voc')
+    expect(candidates.some((candidate) => candidate.format === 'imagefolder')).toBe(true)
+  })
+
   it('detects YOLO from images/ + labels/ and the class names in data.yaml', async () => {
     const candidates = await detect('yolo')
     expect(candidates[0]).toMatchObject({ format: 'yolo', confidence: 1 })

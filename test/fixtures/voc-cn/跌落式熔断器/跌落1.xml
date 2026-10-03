@@ -1,0 +1,18 @@
+<annotation>
+  <folder>跌落式熔断器</folder>
+  <filename>跌落1.jpg</filename>
+  <size>
+    <width>120</width>
+    <height>90</height>
+    <depth>3</depth>
+  </size>
+  <object>
+    <name>跌落式熔断器</name>
+    <bndbox>
+      <xmin>10</xmin>
+      <ymin>10</ymin>
+      <xmax>60</xmax>
+      <ymax>70</ymax>
+    </bndbox>
+  </object>
+</annotation>
