@@ -26,6 +26,8 @@ interface DatasetState {
   warnings: string[]
   pending: PendingOpen | null
   currentImageId: number | null
+  /** Currently highlighted annotation, or null. */
+  selectedAnnotationIndex: number | null
 
   setStatus(status: OpenStatus): void
   setProgress(progress: number): void
@@ -33,6 +35,8 @@ interface DatasetState {
   setPending(pending: PendingOpen | null): void
   setDataset(handle: DatasetHandle, dataset: DatasetModel, warnings: string[]): void
   selectImage(imageId: number | null): void
+  /** Highlight an annotation by its index within the image's annotation list. */
+  selectAnnotation(index: number | null): void
   close(): void
 }
 
@@ -45,6 +49,7 @@ const initialState = {
   warnings: [] as string[],
   pending: null,
   currentImageId: null,
+  selectedAnnotationIndex: null,
 }
 
 export const useDatasetStore = create<DatasetState>((set) => ({
@@ -61,9 +66,12 @@ export const useDatasetStore = create<DatasetState>((set) => ({
       dataset,
       warnings,
       currentImageId: dataset.images[0]?.id ?? null,
+      selectedAnnotationIndex: null,
     }),
 
-  selectImage: (imageId) => set({ currentImageId: imageId }),
+  selectImage: (imageId) => set({ currentImageId: imageId, selectedAnnotationIndex: null }),
+
+  selectAnnotation: (index) => set({ selectedAnnotationIndex: index }),
 
   close: () => set({ ...initialState }),
 }))

@@ -3,6 +3,8 @@ import { useCallback, useRef, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import DatasetOutlinedIcon from '@mui/icons-material/DatasetOutlined'
 import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined'
+import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined'
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import {
   Alert,
   AppBar,
@@ -14,6 +16,8 @@ import {
   LinearProgress,
   Snackbar,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
   Toolbar,
   Tooltip,
   Typography,
@@ -30,9 +34,11 @@ import { fileExtension } from '@/core/path'
 import { ImageList } from '@/features/imagelist/ImageList'
 import { OpenDialog } from '@/features/open/OpenDialog'
 import { beginOpen, cancelOpen, confirmOpen } from '@/features/open/openDatasetFlow'
+import { Viewer } from '@/features/viewer/Viewer'
 import { getDatasetSource } from '@/platform'
 import { detectRuntimeEnv } from '@/platform/detect-env'
 import { useDatasetStore } from '@/store/datasetStore'
+import { useUiStore } from '@/store/uiStore'
 import type { ParseService } from '@/workers/parseClient'
 
 interface DatasetHeaderProps {
@@ -43,9 +49,12 @@ interface DatasetHeaderProps {
 
 function DatasetHeader({ name, dataset, warnings }: DatasetHeaderProps) {
   const { t } = useTranslation()
+  const viewMode = useUiStore((state) => state.viewMode)
+  const setViewMode = useUiStore((state) => state.setViewMode)
+
   return (
     <Stack spacing={1} sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
-      <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
           {name}
         </Typography>
@@ -56,6 +65,24 @@ function DatasetHeader({ name, dataset, warnings }: DatasetHeaderProps) {
             annotations: dataset.annotations.length,
           })}
         </Typography>
+        <Box sx={{ flex: 1 }} />
+        <ToggleButtonGroup
+          size="small"
+          exclusive
+          value={viewMode}
+          onChange={(_, value) => value && setViewMode(value)}
+        >
+          <ToggleButton value="grid" aria-label={t('viewer.grid')}>
+            <Tooltip title={t('viewer.grid')}>
+              <GridViewOutlinedIcon fontSize="small" />
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton value="viewer" aria-label={t('viewer.canvas')}>
+            <Tooltip title={t('viewer.canvas')}>
+              <ImageOutlinedIcon fontSize="small" />
+            </Tooltip>
+          </ToggleButton>
+        </ToggleButtonGroup>
       </Stack>
       {warnings.length > 0 ? (
         <Alert severity="warning">
@@ -84,6 +111,7 @@ export default function App() {
   const setError = useDatasetStore((state) => state.setError)
   const setStatus = useDatasetStore((state) => state.setStatus)
   const close = useDatasetStore((state) => state.close)
+  const viewMode = useUiStore((state) => state.viewMode)
 
   // The worker (and the parse service) are created on first use so the module
   // is never loaded — and no worker is spawned — until the user opens a dataset.
@@ -186,12 +214,16 @@ export default function App() {
         {dataset && handle ? (
           <Stack sx={{ flex: 1, minHeight: 0 }}>
             <DatasetHeader name={handle.displayName} dataset={dataset} warnings={warnings} />
-            <ImageList
-              dataset={dataset}
-              selectedId={currentImageId}
-              onSelect={selectImage}
-              resolveImageUrl={resolveImageUrl}
-            />
+            {viewMode === 'viewer' ? (
+              <Viewer dataset={dataset} resolveImageUrl={resolveImageUrl} />
+            ) : (
+              <ImageList
+                dataset={dataset}
+                selectedId={currentImageId}
+                onSelect={selectImage}
+                resolveImageUrl={resolveImageUrl}
+              />
+            )}
           </Stack>
         ) : (
           <Stack sx={{ flex: 1 }}>

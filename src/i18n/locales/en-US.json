@@ -77,5 +77,20 @@
     "allCategories": "All classes",
     "empty": "No images match the current filters",
     "shown": "{{shown}} / {{total}} images"
+  },
+  "viewer": {
+    "grid": "Grid",
+    "canvas": "Viewer",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fit": "Fit to window",
+    "prev": "Previous image",
+    "next": "Next image",
+    "filmstrip": "Image filmstrip",
+    "noImage": "No image selected",
+    "layerBbox": "Boxes",
+    "layerPolygon": "Polygons",
+    "layerKeypoint": "Keypoints",
+    "layerMask": "Masks"
   }
 }

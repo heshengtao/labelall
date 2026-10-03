@@ -28,6 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   explicit confirmation step before parsing.
 - Parsing runs in a Web Worker, streaming file reads back to the main thread.
 - Virtualised thumbnail image list with split/class filters and filename search.
+- Konva viewer: wheel zoom anchored at the cursor, space/middle-drag pan, fit and
+  1:1 controls, and keyboard navigation (←/→ images, +/- zoom, 0 fit).
+- Overlays for boxes, polygons, keypoints (with skeletons) and crowd masks,
+  coloured per category, with click/hover selection and per-layer visibility.
+- Bottom filmstrip for stepping through nearby images.
 
 ### Changed
 
