@@ -67,6 +67,12 @@ export function AnnotateToolbar() {
     return null
   }
 
+  // Drawing needs a target class; default to the first one so a new box is never
+  // silently dropped just because nothing was chosen yet.
+  if (activeCategoryId === null && dataset.categories.length > 0) {
+    setActiveCategory(dataset.categories[0].id)
+  }
+
   const hasSelection = selectedIndex !== null
   const canLabel = activeCategoryId !== null && currentImageId !== null
   const activeSchema =
