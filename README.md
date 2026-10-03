@@ -97,6 +97,9 @@ LabelAll 是一款**免费开源**的图片数据集工具，帮你打开、浏�
 
 前往 [Releases](../../releases) 下载对应系统的安装包（macOS / Windows / Linux）。
 
+> **macOS 首次打开提示**：安装包未做 Apple 公证。首次打开若提示「已损坏」或「无法验证开发者」，
+> 请在终端执行 `xattr -cr /Applications/LabelAll.app` 后再打开；也可以右键点击 App，选择「打开」。
+
 ### 已知限制
 
 - 面向约 5 万张图片、标注文件不超过 100 MB 的数据集；更大规模暂不保证流畅。
@@ -190,6 +193,10 @@ Common shortcuts:
 ### Download
 
 Grab the installer for your system from the [Releases](../../releases) page (macOS / Windows / Linux).
+
+> **First launch on macOS**: the build is not notarized. If macOS says the app is “damaged” or cannot
+> verify the developer, run `xattr -cr /Applications/LabelAll.app` in Terminal, then open it — or
+> right-click the app and choose “Open”.
 
 ### Known limitations
 

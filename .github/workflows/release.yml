@@ -1,8 +1,9 @@
 name: Release
 
 # Push a version tag (e.g. v0.1.0) to build installers for all platforms and
-# draft a GitHub release. See RELEASING.md for how to cut a release and how to
-# add optional code-signing secrets.
+# draft a GitHub release. No signing keys are required: the macOS build is
+# ad-hoc signed (bundle.macOS.signingIdentity = "-"). See RELEASING.md for how to
+# cut a release, and for the optional Apple Developer signing/notarization.
 on:
   push:
     tags:
@@ -78,7 +79,18 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: LabelAll ${{ github.ref_name }}
-          releaseBody: See CHANGELOG.md for what changed in this release.
+          releaseBody: |
+            See CHANGELOG.md for what changed in this release.
+
+            ### macOS first launch
+
+            The macOS build is ad-hoc signed (not notarized), so macOS quarantines apps
+            downloaded from the internet. If you see “App is damaged” or “cannot verify
+            the developer”, run this in Terminal, then open the app normally:
+
+            ```bash
+            xattr -cr /Applications/LabelAll.app
+            ```
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
