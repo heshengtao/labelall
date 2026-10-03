@@ -15,8 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Translated READMEs for all ten languages, with a language switcher at the top of each.
 - An MD3 right-click menu in the viewer (duplicate or delete an annotation; fit or deselect on the
   canvas) replacing the webview's own context menu.
-- A Dockerfile and docker-compose for self-hosting the web build, plus a Cloudflare Pages deploy
-  workflow; see DEPLOY.md.
+- A Dockerfile and docker-compose for self-hosting the web build, and a workflow that publishes a
+  multi-arch image (amd64 + arm64) to Docker Hub on a version tag; see DEPLOY.md.
 
 ### Changed
 
