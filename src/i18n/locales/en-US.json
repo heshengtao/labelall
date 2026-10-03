@@ -114,6 +114,7 @@
     "name": "Name",
     "supercategory": "Supercategory",
     "newCategory": "New class",
+    "colour": "Colour",
     "delete": "Delete class"
   },
   "shortcuts": {
@@ -151,8 +152,15 @@
   "settings": {
     "title": "Settings",
     "seed": "Accent colour",
+    "hex": "Hex",
     "reset": "Reset",
     "defaultFormat": "Default export format",
     "recent": "Recent datasets"
+  },
+  "report": {
+    "errorTitle": "Import failed",
+    "warningTitle": "Imported with notes",
+    "errorHint": "This dataset could not be read. Check that you picked the right folder and that its files are complete, then try again.",
+    "warningHint": "The dataset loaded, but the following was skipped or interpreted loosely:"
   }
 }

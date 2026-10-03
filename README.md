@@ -30,6 +30,7 @@ LabelAll 是一款**免费开源**的图片数据集工具，帮你打开、浏�
 **打开即用**
 
 - 放进文件夹就能用：自动识别数据集格式，不需要手工选择或配置。
+- 宽容读取：个别损坏、缺图或格式不规范的文件会被跳过并汇总提示，不会让整个数据集打不开。
 - 成千上万张图片的缩略图列表，滚动即时加载，查找和筛选都很快。
 - 可按划分（train / val / test）、类别筛选，也能按文件名搜索。
 
@@ -125,6 +126,8 @@ who needs to look at or edit a batch of image labels quickly.
 **Open and go**
 
 - Drop in a folder: the dataset format is detected automatically — no manual setup.
+- Forgiving reading: broken, missing or non-standard files are skipped and summarised in a
+  dialog, so one bad file never blocks the whole dataset.
 - A thumbnail list that stays smooth with tens of thousands of images, with quick search.
 - Filter by split (train / val / test) or by class, and search by file name.
 

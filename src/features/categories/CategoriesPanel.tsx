@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
+import { ColorField } from '@/components/ColorField'
 import type { Category } from '@/core/model'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useUiStore } from '@/store/uiStore'
@@ -29,26 +30,15 @@ function CategoryRow({ category, onUpdate, onDelete }: CategoryRowProps) {
   const { t } = useTranslation()
   const [name, setName] = useState(category.name)
   const [supercategory, setSupercategory] = useState(category.supercategory ?? '')
-  const [color, setColor] = useState(category.color ?? '#888888')
 
   return (
     <Stack spacing={1} sx={{ py: 1 }}>
       <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-        <Box
-          component="input"
-          type="color"
-          value={color}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => setColor(event.target.value)}
-          onBlur={() => color !== category.color && onUpdate(category.id, { color })}
-          sx={{
-            width: 32,
-            height: 32,
-            p: 0,
-            border: 'none',
-            borderRadius: 1,
-            bgcolor: 'transparent',
-            cursor: 'pointer',
-          }}
+        <ColorField
+          compact
+          label={t('categories.colour')}
+          value={category.color ?? '#888888'}
+          onChange={(color) => onUpdate(category.id, { color })}
         />
         <TextField
           size="small"

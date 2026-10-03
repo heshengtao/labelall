@@ -53,6 +53,17 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
   const warnings: string[] = []
   const policy = options.boxPolicy ?? DEFAULT_VOC_BOX_POLICY
 
+  // Index the images first so an XML-free folder can still be opened as images.
+  const imageFiles = options.files.filter(
+    (entry) => !entry.isDir && IMAGE_EXTENSIONS.has(fileExtension(entry.path)),
+  )
+  const imageByBasename = new Map<string, string>()
+  const imageByDirStem = new Map<string, string>()
+  for (const image of imageFiles) {
+    imageByBasename.set(fileBasename(image.path).toLowerCase(), image.path)
+    imageByDirStem.set(`${fileDirname(image.path)}\u0000${fileStem(image.path)}`, image.path)
+  }
+
   const inAnnotations = options.files.filter(
     (entry) =>
       !entry.isDir &&
@@ -65,20 +76,25 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
       : options.files.filter((entry) => !entry.isDir && fileExtension(entry.path) === '.xml')
 
   if (targets.length === 0) {
-    throw new Error('No Pascal VOC annotation XML files were found')
-  }
-
-  // Index the images so each XML can be matched to the file it actually
-  // describes — whether they live in JPEGImages/ or side by side in a class
-  // folder, and whether the XML stores a bare name or a full path.
-  const imageFiles = options.files.filter(
-    (entry) => !entry.isDir && IMAGE_EXTENSIONS.has(fileExtension(entry.path)),
-  )
-  const imageByBasename = new Map<string, string>()
-  const imageByDirStem = new Map<string, string>()
-  for (const image of imageFiles) {
-    imageByBasename.set(fileBasename(image.path).toLowerCase(), image.path)
-    imageByDirStem.set(`${fileDirname(image.path)}\u0000${fileStem(image.path)}`, image.path)
+    warnings.push(
+      'No Pascal VOC XML annotations were found, so the images were loaded without boxes.',
+    )
+    return {
+      dataset: {
+        sourceFormat: 'voc',
+        root: options.root,
+        images: imageFiles.map((entry, index) => ({
+          id: index,
+          filePath: entry.path,
+          fileName: fileBasename(entry.path),
+          width: 0,
+          height: 0,
+        })),
+        categories: [],
+        annotations: [],
+      },
+      warnings,
+    }
   }
 
   const categories: Category[] = []

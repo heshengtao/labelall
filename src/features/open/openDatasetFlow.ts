@@ -41,8 +41,8 @@ async function scanAndDetect(
     store.setProgress(1)
   } catch (error) {
     if (!aborted(generation)) {
-      store.setStatus('error')
-      store.setError(errorMessage(error))
+      store.setStatus('idle')
+      store.setReport({ severity: 'error', messages: [errorMessage(error)] })
     }
   }
 }
@@ -50,14 +50,14 @@ async function scanAndDetect(
 /** Pick a folder, scan it and detect its format(s). */
 export async function beginOpen(source: DatasetSource, parseService: ParseService): Promise<void> {
   const store = useDatasetStore.getState()
-  store.setError(null)
+  store.setReport(null)
 
   let handle: DatasetHandle | null
   try {
     handle = await source.pickDataset()
   } catch (error) {
-    store.setStatus('error')
-    store.setError(errorMessage(error))
+    store.setStatus('idle')
+    store.setReport({ severity: 'error', messages: [errorMessage(error)] })
     return
   }
   if (!handle) {
@@ -75,7 +75,7 @@ export async function openHandle(
   handle: DatasetHandle,
 ): Promise<void> {
   const store = useDatasetStore.getState()
-  store.setError(null)
+  store.setReport(null)
   await scanAndDetect(source, parseService, handle, store.generation)
 }
 
@@ -109,10 +109,14 @@ export async function confirmOpen(
     store.setPending(null)
     store.setStatus('idle')
     store.setProgress(1)
+    // A lenient import that skipped something explains itself in a dialog.
+    store.setReport(
+      result.warnings.length > 0 ? { severity: 'warning', messages: result.warnings } : null,
+    )
   } catch (error) {
     if (!aborted(generation)) {
-      store.setStatus('error')
-      store.setError(errorMessage(error))
+      store.setStatus('idle')
+      store.setReport({ severity: 'error', messages: [errorMessage(error)] })
     }
   }
 }

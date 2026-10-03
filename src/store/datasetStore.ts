@@ -11,6 +11,15 @@ import { applyEdit, emptyHistory, redoEdit, undoEdit, type History } from './his
 
 export type OpenStatus = 'idle' | 'scanning' | 'detecting' | 'ready' | 'parsing' | 'error'
 
+/**
+ * Problems surfaced after an import attempt: either a failure, or the list of
+ * things a lenient reader skipped. Shown in an MD3 dialog by the UI.
+ */
+export interface ImportReport {
+  severity: 'warning' | 'error'
+  messages: string[]
+}
+
 /** A dataset that has been detected but not yet parsed. */
 export interface PendingOpen {
   handle: DatasetHandle
@@ -23,8 +32,8 @@ interface DatasetState {
   status: OpenStatus
   /** 0–1, only meaningful while scanning/detecting/parsing. */
   progress: number
-  /** Human-readable failure from the last open attempt. */
-  error: string | null
+  /** Problems from the last import attempt, shown in a dialog. */
+  report: ImportReport | null
 
   handle: DatasetHandle | null
   dataset: DatasetModel | null
@@ -40,7 +49,7 @@ interface DatasetState {
 
   setStatus(status: OpenStatus): void
   setProgress(progress: number): void
-  setError(error: string | null): void
+  setReport(report: ImportReport | null): void
   setPending(pending: PendingOpen | null): void
   setDataset(handle: DatasetHandle, dataset: DatasetModel, warnings: string[]): void
   selectImage(imageId: number | null): void
@@ -69,7 +78,7 @@ interface DatasetState {
 const initialState = {
   status: 'idle' as OpenStatus,
   progress: 0,
-  error: null,
+  report: null as ImportReport | null,
   handle: null,
   dataset: null,
   warnings: [] as string[],
@@ -85,7 +94,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
 
   setStatus: (status) => set({ status }),
   setProgress: (progress) => set({ progress }),
-  setError: (error) => set({ error }),
+  setReport: (report) => set({ report }),
   setPending: (pending) => set({ pending }),
 
   setDataset: (handle, dataset, warnings) =>

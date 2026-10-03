@@ -6,7 +6,7 @@
  * dataset always looks the same across sessions. Colours are chosen to stay
  * legible on both light and dark MD3 surfaces.
  */
-const PALETTE = [
+export const PALETTE = [
   '#e5484d',
   '#0091ff',
   '#30a46c',

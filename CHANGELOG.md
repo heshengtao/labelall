@@ -9,9 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Lenient import for every format: readers load what they can and report what
+  they skipped instead of refusing to open the dataset, and the import problems
+  (missing or unreadable files included) are shown in an MD3 dialog.
 - Tolerant VOC detection: XML annotations that sit next to their images (often
   grouped in class folders) are now recognised, and offered alongside the
   classification-folder reading of the same dataset.
+- YOLO detection also accepts label `.txt` files sitting next to their images,
+  and COCO no longer requires a `categories` array.
+- MD3 colour picker (preset palette + hex field), replacing the native colour
+  input in settings and the class panel.
 
 ### Fixed
 

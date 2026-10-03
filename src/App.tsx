@@ -15,7 +15,6 @@ import {
   CssBaseline,
   IconButton,
   LinearProgress,
-  Snackbar,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
@@ -36,6 +35,7 @@ import { CategoriesPanel } from '@/features/categories/CategoriesPanel'
 import { ExportButton } from '@/features/export/ExportButton'
 import { ShortcutsDialog } from '@/features/help/ShortcutsDialog'
 import { ImageList } from '@/features/imagelist/ImageList'
+import { ImportReportDialog } from '@/features/open/ImportReportDialog'
 import { OpenDialog } from '@/features/open/OpenDialog'
 import { beginOpen, cancelOpen, confirmOpen, openHandle } from '@/features/open/openDatasetFlow'
 import { SettingsDialog } from '@/features/settings/SettingsDialog'
@@ -108,15 +108,12 @@ export default function App() {
 
   const status = useDatasetStore((state) => state.status)
   const progress = useDatasetStore((state) => state.progress)
-  const error = useDatasetStore((state) => state.error)
   const handle = useDatasetStore((state) => state.handle)
   const dataset = useDatasetStore((state) => state.dataset)
   const warnings = useDatasetStore((state) => state.warnings)
   const pending = useDatasetStore((state) => state.pending)
   const currentImageId = useDatasetStore((state) => state.currentImageId)
   const selectImage = useDatasetStore((state) => state.selectImage)
-  const setError = useDatasetStore((state) => state.setError)
-  const setStatus = useDatasetStore((state) => state.setStatus)
   const close = useDatasetStore((state) => state.close)
   const viewMode = useUiStore((state) => state.viewMode)
   const setSettingsOpen = useUiStore((state) => state.setSettingsOpen)
@@ -297,26 +294,7 @@ export default function App() {
       <CategoriesPanel />
       <ShortcutsDialog />
       <SettingsDialog />
-
-      <Snackbar
-        open={error !== null}
-        autoHideDuration={6000}
-        onClose={() => {
-          setError(null)
-          setStatus('idle')
-        }}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          severity="error"
-          onClose={() => {
-            setError(null)
-            setStatus('idle')
-          }}
-        >
-          {error ?? ''}
-        </Alert>
-      </Snackbar>
+      <ImportReportDialog />
     </>
   )
 }

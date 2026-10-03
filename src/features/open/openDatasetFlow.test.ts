@@ -50,12 +50,12 @@ describe('beginOpen', () => {
     expect(state.status).toBe('idle')
   })
 
-  it('records an error when scanning fails', async () => {
+  it('reports a scan failure in the import report', async () => {
     const source = fakeSource({ scan: async () => Promise.reject(new Error('boom')) })
     await beginOpen(source, fakeParseService())
     const state = useDatasetStore.getState()
-    expect(state.status).toBe('error')
-    expect(state.error).toBe('boom')
+    expect(state.status).toBe('idle')
+    expect(state.report).toEqual({ severity: 'error', messages: ['boom'] })
   })
 })
 
@@ -87,8 +87,29 @@ describe('confirmOpen', () => {
     if (!candidate) throw new Error('expected a candidate')
 
     await confirmOpen(service, candidate)
-    expect(useDatasetStore.getState().status).toBe('error')
-    expect(useDatasetStore.getState().error).toBe('bad json')
+    expect(useDatasetStore.getState().status).toBe('idle')
+    expect(useDatasetStore.getState().report).toEqual({
+      severity: 'error',
+      messages: ['bad json'],
+    })
+  })
+
+  it('surfaces a lenient import as a warning report', async () => {
+    const service = fakeParseService({
+      parse: async () => ({
+        dataset: createEmptyDataset('x', 'coco'),
+        warnings: ['skipped 2 files'],
+      }),
+    })
+    await beginOpen(fakeSource(), service)
+    const candidate = useDatasetStore.getState().pending?.candidates[0]
+    if (!candidate) throw new Error('expected a candidate')
+
+    await confirmOpen(service, candidate)
+    expect(useDatasetStore.getState().report).toEqual({
+      severity: 'warning',
+      messages: ['skipped 2 files'],
+    })
   })
 })
 

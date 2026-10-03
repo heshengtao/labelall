@@ -125,7 +125,17 @@ export async function readLabelme(options: LabelmeReadOptions): Promise<ReadResu
   const raw = JSON.parse(await options.readText(annotationPath)) as RawLabelme
 
   if (typeof raw.imagePath !== 'string' || raw.imagePath.length === 0) {
-    throw new Error(`${annotationPath} is not a labelme file: missing the "imagePath" string`)
+    warnings.push(`${annotationPath} has no "imagePath" and was skipped`)
+    return {
+      dataset: {
+        sourceFormat: 'labelme',
+        root: options.root,
+        images: [],
+        categories: [],
+        annotations: [],
+      },
+      warnings,
+    }
   }
   if (!Array.isArray(raw.shapes)) {
     warn('labelme file has no "shapes" array; loaded the image only')
@@ -217,6 +227,9 @@ export async function readLabelmeDataset(options: LabelmeDatasetReadOptions): Pr
     }
     for (const warning of result.warnings) {
       warnings.push(`${annotationPath}: ${warning}`)
+    }
+    if (result.dataset.images.length === 0) {
+      continue
     }
 
     const localCategoryIds = new Map<number, number>()

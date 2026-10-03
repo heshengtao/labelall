@@ -114,6 +114,7 @@
     "name": "名称",
     "supercategory": "父类",
     "newCategory": "新建类别",
+    "colour": "颜色",
     "delete": "删除类别"
   },
   "shortcuts": {
@@ -151,8 +152,15 @@
   "settings": {
     "title": "设置",
     "seed": "主题色",
+    "hex": "颜色值",
     "reset": "重置",
     "defaultFormat": "默认导出格式",
     "recent": "最近打开的数据集"
+  },
+  "report": {
+    "errorTitle": "导入失败",
+    "warningTitle": "已导入，但有提示",
+    "errorHint": "无法读取这个数据集。请确认选择的是正确的文件夹，且文件完整，然后重试。",
+    "warningHint": "数据集已载入，但以下内容被跳过或被宽松处理："
   }
 }

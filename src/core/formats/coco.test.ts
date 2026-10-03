@@ -90,13 +90,13 @@ describe('readCoco', () => {
     expect(warnings.join('\n')).toContain('unknown category 77')
   })
 
-  it('warns but keeps going when a JSON file is not COCO', async () => {
-    await expect(
-      readCoco({
-        root: 'x',
-        readText: async () => '{"foo":1}',
-        annotationPath: 'bad.json',
-      }),
-    ).rejects.toThrow(/missing the "images" array/)
+  it('loads nothing but warns when a JSON file is not COCO', async () => {
+    const { dataset, warnings } = await readCoco({
+      root: 'x',
+      readText: async () => '{"foo":1}',
+      annotationPath: 'bad.json',
+    })
+    expect(dataset.images).toHaveLength(0)
+    expect(warnings.join('\n')).toContain('images')
   })
 })

@@ -1,6 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -15,6 +14,7 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
+import { ColorFieldWithReset } from '@/components/ColorField'
 import type { ExportChoice } from '@/core/formats/losses'
 import { LANGUAGE_STORAGE_KEY, SUPPORTED_LANGUAGES, normalizeLanguage } from '@/i18n'
 import { useSettingsStore } from '@/store/settingsStore'
@@ -46,21 +46,13 @@ export function SettingsDialog() {
       <DialogTitle>{t('settings.title')}</DialogTitle>
       <DialogContent>
         <Stack spacing={2.5} sx={{ pt: 1 }}>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography variant="body2" sx={{ flex: 1 }}>
-              {t('settings.seed')}
-            </Typography>
-            <Box
-              component="input"
-              type="color"
-              value={seed}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSeed(event.target.value)}
-              sx={{ width: 40, height: 32, p: 0, border: 'none', bgcolor: 'transparent' }}
-            />
-            <Button size="small" onClick={() => setSeed(DEFAULT_SEED)}>
-              {t('settings.reset')}
-            </Button>
-          </Stack>
+          <ColorFieldWithReset
+            label={t('settings.seed')}
+            value={seed}
+            onChange={setSeed}
+            onReset={() => setSeed(DEFAULT_SEED)}
+            resetLabel={t('settings.reset')}
+          />
 
           <TextField
             select

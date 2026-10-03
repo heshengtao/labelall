@@ -127,10 +127,8 @@ async function probeJson(ctx: DetectContext, path: string): Promise<JsonShape> {
     const data: unknown = JSON.parse(text)
     if (data && typeof data === 'object') {
       const record = data as Record<string, unknown>
-      shape.isCoco =
-        Array.isArray(record.images) &&
-        Array.isArray(record.annotations) &&
-        Array.isArray(record.categories)
+      // `categories` is optional in practice; the reader tolerates its absence.
+      shape.isCoco = Array.isArray(record.images) && Array.isArray(record.annotations)
       shape.isLabelme =
         Array.isArray(record.shapes) && typeof record.imagePath === 'string' && !shape.isCoco
     }
@@ -252,6 +250,11 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
   // ---- YOLO ----------------------------------------------------------------
   const hasImagesDir = dirs.has('images') || [...dirs].some((dir) => dir.endsWith('/images'))
   const hasLabelsDir = dirs.has('labels') || [...dirs].some((dir) => dir.endsWith('/labels'))
+  // A .txt next to an image with the same stem is a YOLO label even without a
+  // canonical images/ + labels/ pair.
+  const pairedTxts = files.filter(
+    (entry) => fileExtension(entry.path) === '.txt' && hasSiblingImage(entry.path, imageStemsByDir),
+  )
   const yoloProbes = await Promise.all(
     yamlFiles
       .filter((entry) => entry.size <= MAX_PROBE_BYTES)
@@ -268,6 +271,12 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
       reason: yoloYaml
         ? `Ultralytics YOLO layout with class names from ${yoloYaml.entry.path}`
         : 'Parallel images/ and labels/ directories',
+    })
+  } else if (pairedTxts.length > 0 && images.length > 0) {
+    candidates.push({
+      format: 'yolo',
+      confidence: 0.6,
+      reason: `${pairedTxts.length} label .txt file(s) next to their images`,
     })
   } else if (labelTxtFiles.length > 0 && images.length > 0) {
     candidates.push({

@@ -179,7 +179,17 @@ export async function readCoco(options: CocoReadOptions): Promise<ReadResult> {
   const raw = JSON.parse(await options.readText(annotationPath)) as RawCoco
 
   if (!Array.isArray(raw.images)) {
-    throw new Error(`${annotationPath} is not a COCO file: missing the "images" array`)
+    warnings.push(`${annotationPath} has no "images" array, so no images were loaded`)
+    return {
+      dataset: {
+        sourceFormat: 'coco',
+        root: options.root,
+        images: [],
+        categories: [],
+        annotations: [],
+      },
+      warnings,
+    }
   }
   const rawAnnotations = Array.isArray(raw.annotations) ? raw.annotations : []
   if (!Array.isArray(raw.annotations)) {

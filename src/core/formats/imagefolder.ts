@@ -78,7 +78,17 @@ export async function readImageFolder(options: ImageFolderReadOptions): Promise<
   const imageFiles = options.files.filter((entry) => !entry.isDir && isImage(entry.path))
 
   if (imageFiles.length === 0) {
-    throw new Error('No image files found in the classification dataset')
+    warnings.push('No image files were found in this folder.')
+    return {
+      dataset: {
+        sourceFormat: 'imagefolder',
+        root: options.root,
+        images: [],
+        categories: [],
+        annotations: [],
+      },
+      warnings,
+    }
   }
 
   // Resolve the class directory (and split) for each image.

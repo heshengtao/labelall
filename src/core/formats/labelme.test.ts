@@ -37,9 +37,13 @@ describe('readLabelme', () => {
     expect(warnings[0]).toContain('"line"')
   })
 
-  it('rejects files that are not labelme JSON', async () => {
-    await expect(
-      readLabelme({ root: 'x', readText: async () => '{}', annotationPath: 'bad.json' }),
-    ).rejects.toThrow(/missing the "imagePath" string/)
+  it('skips files that are not labelme JSON instead of failing', async () => {
+    const { dataset, warnings } = await readLabelme({
+      root: 'x',
+      readText: async () => '{}',
+      annotationPath: 'bad.json',
+    })
+    expect(dataset.images).toHaveLength(0)
+    expect(warnings.join('\n')).toContain('imagePath')
   })
 })
