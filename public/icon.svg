@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="LabelAll">
+  <title>LabelAll</title>
+  <rect width="1024" height="1024" rx="232" fill="#6750A4"/>
+
+  <!-- Scan brackets -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="64" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M266 412 V322 a56 56 0 0 1 56-56 h90"/>
+    <path d="M612 266 h90 a56 56 0 0 1 56 56 v90"/>
+    <path d="M758 612 v90 a56 56 0 0 1-56 56 h-90"/>
+    <path d="M412 758 h-90 a56 56 0 0 1-56-56 v-90"/>
+  </g>
+
+  <!-- Label tab -->
+  <rect x="336" y="330" width="176" height="60" rx="30" fill="#D0BCFF"/>
+
+  <!-- Annotation box -->
+  <rect x="336" y="402" width="352" height="252" rx="36" fill="none" stroke="#D0BCFF" stroke-width="40"/>
+
+  <!-- Keypoint -->
+  <circle cx="512" cy="528" r="48" fill="#FFFFFF"/>
+</svg>

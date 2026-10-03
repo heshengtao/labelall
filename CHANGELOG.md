@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-03
+
 ### Added
 
 - Ten interface languages — Simplified and Traditional Chinese, English, Japanese, Korean,
@@ -24,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   defaults (two rows of twelve) followed by the generated palette.
 - Added a GitHub button to the header, and gave the export dialog's format select room for its
   label.
+- The web build now uses the desktop app's icon (favicon, Apple touch icon and theme colour).
 
 ## [0.1.2] - 2026-10-03
 
@@ -129,7 +132,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/heshengtao/labelall/releases/tag/v0.1.3
 [0.1.2]: https://github.com/heshengtao/labelall/releases/tag/v0.1.2
 [0.1.1]: https://github.com/heshengtao/labelall/releases/tag/v0.1.1
 [0.1.0]: https://github.com/heshengtao/labelall/releases/tag/v0.1.0
