@@ -1,35 +1,32 @@
 import { useEffect, useState } from 'react'
 
-import { useResolvedUrl } from '@/features/viewer/useLoadedImage'
-
-import { getThumbnail } from './thumbnail'
+import { getThumbnail, type ThumbnailRenderer } from './thumbnail'
 
 /** Resolve a dataset image to a downscaled, cached thumbnail URL. */
 export function useThumbnail(
-  resolveImageUrl: (relPath: string) => Promise<string>,
+  resolveThumbnail: ThumbnailRenderer,
   relPath: string | null,
   maxEdge: number,
 ): string | null {
-  const baseUrl = useResolvedUrl(resolveImageUrl, relPath)
   const [url, setUrl] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!baseUrl || !relPath) {
+    if (!relPath) {
       return
     }
     let cancelled = false
-    getThumbnail(relPath, baseUrl, maxEdge).then(
+    getThumbnail(relPath, maxEdge, resolveThumbnail).then(
       (value) => {
         if (!cancelled) setUrl(value)
       },
       () => {
-        if (!cancelled) setUrl(baseUrl)
+        if (!cancelled) setUrl(null)
       },
     )
     return () => {
       cancelled = true
     }
-  }, [baseUrl, relPath, maxEdge])
+  }, [relPath, maxEdge, resolveThumbnail])
 
   return url
 }

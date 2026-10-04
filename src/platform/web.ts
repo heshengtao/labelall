@@ -1,7 +1,13 @@
 import { FILE_READ_CONCURRENCY, mapLimit } from '@/core/concurrency'
 import type { DetectedFile } from '@/core/formats/detect'
 import { joinPath } from '@/core/path'
-import { EXPORT_DIR, type DatasetHandle, type DatasetSource, type TextFile } from './types'
+import {
+  EXPORT_DIR,
+  type DatasetHandle,
+  type DatasetSource,
+  type TextFile,
+  type Thumbnail,
+} from './types'
 
 // --- Minimal File System Access API typings ---------------------------------
 // `showDirectoryPicker` and `createWritable` are still not in lib.dom, and we
@@ -303,6 +309,19 @@ export function createWebSource(): DatasetSource {
       return blobUrlFor(`${handle.id}:${relPath}`, file)
     },
 
+    async thumbnail(handle, relPath, maxEdge): Promise<Thumbnail> {
+      const entry = stored.get(handle.id)
+      if (!entry) {
+        throw new Error('the dataset is no longer available; open it again')
+      }
+      const file =
+        entry.kind === 'input' ? entry.files.get(relPath) : await readFsFile(entry.dir, relPath)
+      if (!file) {
+        throw new Error(`image not found: ${relPath}`)
+      }
+      return downscaleFile(file, maxEdge)
+    },
+
     async imageSize(handle, relPath) {
       const entry = stored.get(handle.id)
       if (!entry) {
@@ -329,5 +348,43 @@ async function readImageSize(file: File): Promise<{ width: number; height: numbe
     return size
   } catch {
     return null
+  }
+}
+
+/**
+ * Decode `file` down to a small JPEG object URL, or fall back to an object URL
+ * of the original when the canvas APIs are unavailable. Either way the returned
+ * URL owns a resource that the caller must `revoke`.
+ */
+async function downscaleFile(file: File, maxEdge: number): Promise<Thumbnail> {
+  const original = (): Thumbnail => {
+    const url = URL.createObjectURL(file)
+    return { url, revoke: () => URL.revokeObjectURL(url) }
+  }
+  if (typeof createImageBitmap !== 'function' || typeof document === 'undefined') {
+    return original()
+  }
+  try {
+    const bitmap = await createImageBitmap(file, { resizeWidth: maxEdge, resizeQuality: 'high' })
+    const canvas = document.createElement('canvas')
+    canvas.width = bitmap.width
+    canvas.height = bitmap.height
+    const context = canvas.getContext('2d')
+    if (!context) {
+      bitmap.close()
+      return original()
+    }
+    context.drawImage(bitmap, 0, 0)
+    bitmap.close()
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob((value) => resolve(value), 'image/jpeg', 0.7),
+    )
+    if (!blob) {
+      return original()
+    }
+    const url = URL.createObjectURL(blob)
+    return { url, revoke: () => URL.revokeObjectURL(url) }
+  } catch {
+    return original()
   }
 }

@@ -21,6 +21,7 @@ function fakeSource(overrides: Partial<DatasetSource> = {}): DatasetSource {
     }),
     copyImages: async () => {},
     getImageUrl: async () => 'blob:x',
+    thumbnail: async () => ({ url: 'blob:x' }),
     imageSize: async () => null,
     ...overrides,
   }

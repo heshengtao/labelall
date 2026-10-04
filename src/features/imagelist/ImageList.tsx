@@ -9,19 +9,20 @@ import { useUiStore } from '@/store/uiStore'
 import { ImageCell } from './ImageCell'
 import { VirtualGrid } from './VirtualGrid'
 import { collectSplits, filterImages } from './grid'
+import type { ThumbnailRenderer } from './thumbnail'
 
 export interface ImageListProps {
   dataset: DatasetModel
   selectedId: number | null
   onSelect: (imageId: number) => void
-  resolveImageUrl: (relPath: string) => Promise<string>
+  resolveThumbnail: ThumbnailRenderer
 }
 
 const ROW_HEIGHT = 158
 const MIN_COLUMN_WIDTH = 168
 const GAP = 12
 
-export function ImageList({ dataset, selectedId, onSelect, resolveImageUrl }: ImageListProps) {
+export function ImageList({ dataset, selectedId, onSelect, resolveThumbnail }: ImageListProps) {
   const { t } = useTranslation()
   const setViewMode = useUiStore((state) => state.setViewMode)
   const [split, setSplit] = useState<string>('all')
@@ -113,7 +114,7 @@ export function ImageList({ dataset, selectedId, onSelect, resolveImageUrl }: Im
                 onSelect(imageId)
                 setViewMode('viewer')
               }}
-              resolveImageUrl={resolveImageUrl}
+              resolveThumbnail={resolveThumbnail}
             />
           )}
         />

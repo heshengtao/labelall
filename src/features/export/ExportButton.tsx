@@ -120,18 +120,31 @@ export function ExportButton() {
     [dataset],
   )
 
-  if (!dataset || !handle || !filtered) {
+  const source = getDatasetSource()
+  const format = useMemo(
+    () => (filtered ? resolveExportFormat(filtered, choice) : null),
+    [filtered, choice],
+  )
+  const target = useMemo(
+    () => (handle && format ? source.exportTarget(handle, format) : null),
+    [source, handle, format],
+  )
+  const losses = useMemo(
+    () => (filtered && format ? collectLosses(filtered, format) : []),
+    [filtered, format],
+  )
+  const selectedCategories = useMemo(
+    () => (dataset ? dataset.categories.filter((category) => selected.has(category.id)) : []),
+    [dataset, selected],
+  )
+
+  if (!dataset || !handle || !filtered || !format || !target) {
     return null
   }
 
-  const source = getDatasetSource()
-  const format = resolveExportFormat(filtered, choice)
-  const target = source.exportTarget(handle, format)
-  const losses = collectLosses(filtered, format)
   const hasClasses = dataset.categories.length > 0
   const noClassesSelected = hasClasses && selected.size === 0
   const canExport = !noClassesSelected && filtered.images.length > 0
-  const selectedCategories = dataset.categories.filter((category) => selected.has(category.id))
 
   const openDialog = (): void => {
     const preferred = useSettingsStore.getState().defaultExportFormat

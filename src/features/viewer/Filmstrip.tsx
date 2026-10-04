@@ -4,6 +4,7 @@ import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
 import type { ImageRecord } from '@/core/model'
+import type { ThumbnailRenderer } from '@/features/imagelist/thumbnail'
 import { useThumbnail } from '@/features/imagelist/useThumbnail'
 
 /** The 64px strip only needs a small decode. */
@@ -13,11 +14,11 @@ interface FilmstripThumbProps {
   image: ImageRecord
   active: boolean
   onClick: () => void
-  resolveImageUrl: (relPath: string) => Promise<string>
+  resolveThumbnail: ThumbnailRenderer
 }
 
-function FilmstripThumb({ image, active, onClick, resolveImageUrl }: FilmstripThumbProps) {
-  const url = useThumbnail(resolveImageUrl, image.filePath, THUMBNAIL_EDGE)
+function FilmstripThumb({ image, active, onClick, resolveThumbnail }: FilmstripThumbProps) {
+  const url = useThumbnail(resolveThumbnail, image.filePath, THUMBNAIL_EDGE)
 
   // Scroll the thumbnail into view when it becomes active. A ref callback
   // (rather than an effect) keeps this a pure post-commit side effect.
@@ -65,14 +66,14 @@ function FilmstripThumb({ image, active, onClick, resolveImageUrl }: FilmstripTh
 export interface FilmstripProps {
   images: ImageRecord[]
   currentIndex: number
-  resolveImageUrl: (relPath: string) => Promise<string>
+  resolveThumbnail: ThumbnailRenderer
   onSelect: (index: number) => void
 }
 
 /** Only the images around the current one are mounted, so huge sets stay cheap. */
 const WINDOW = 20
 
-export function Filmstrip({ images, currentIndex, resolveImageUrl, onSelect }: FilmstripProps) {
+export function Filmstrip({ images, currentIndex, resolveThumbnail, onSelect }: FilmstripProps) {
   const { t } = useTranslation()
 
   const start = Math.max(0, currentIndex - WINDOW)
@@ -99,7 +100,7 @@ export function Filmstrip({ images, currentIndex, resolveImageUrl, onSelect }: F
             image={image}
             active={index === currentIndex}
             onClick={() => onSelect(index)}
-            resolveImageUrl={resolveImageUrl}
+            resolveThumbnail={resolveThumbnail}
           />
         )
       })}

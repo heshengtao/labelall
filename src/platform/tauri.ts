@@ -1,9 +1,21 @@
 import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 import { open } from '@tauri-apps/plugin-dialog'
 
-import { FILE_READ_CONCURRENCY, mapLimit } from '@/core/concurrency'
+import { mapLimit } from '@/core/concurrency'
 import type { DetectedFile } from '@/core/formats/detect'
-import { EXPORT_DIR, type DatasetHandle, type DatasetSource, type TextFile } from './types'
+import {
+  EXPORT_DIR,
+  type DatasetHandle,
+  type DatasetSource,
+  type TextFile,
+  type Thumbnail,
+} from './types'
+
+/**
+ * Copying a large dataset is disk-bound rather than latency-bound, so a narrower
+ * window than the 32-way file reads keeps the disk from thrashing.
+ */
+const COPY_CONCURRENCY = 8
 
 interface ScanEntry {
   relPath: string
@@ -85,7 +97,7 @@ export function createTauriSource(): DatasetSource {
 
     async copyImages(handle, relPaths, destPrefix, onProgress) {
       let copied = 0
-      await mapLimit(relPaths, FILE_READ_CONCURRENCY, async (relPath) => {
+      await mapLimit(relPaths, COPY_CONCURRENCY, async (relPath) => {
         await invoke('copy_file', {
           from: joinRoot(handle.root, relPath),
           to: joinRoot(handle.root, `${destPrefix}/${relPath}`),
@@ -97,6 +109,20 @@ export function createTauriSource(): DatasetSource {
 
     async getImageUrl(handle, relPath) {
       return convertFileSrc(joinRoot(handle.root, relPath))
+    },
+
+    async thumbnail(handle, relPath, maxEdge): Promise<Thumbnail> {
+      try {
+        const bytes = await invoke<ArrayBuffer>('read_thumbnail', {
+          path: joinRoot(handle.root, relPath),
+          maxEdge,
+        })
+        const url = URL.createObjectURL(new Blob([bytes], { type: 'image/jpeg' }))
+        return { url, revoke: () => URL.revokeObjectURL(url) }
+      } catch {
+        // Fall back to the original so an image still shows, even if it is larger.
+        return { url: convertFileSrc(joinRoot(handle.root, relPath)) }
+      }
     },
 
     async imageSize(handle, relPath) {

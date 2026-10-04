@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-10-04
+
+### Changed
+
+- Opening a large dataset no longer freezes the window: every filesystem command
+  now runs off the UI thread, so scanning, parsing and the per-image lookups of
+  VOC / YOLO / labelme imports stay responsive.
+- Thumbnails in the grid and filmstrip are now decoded natively on the desktop
+  build and only the small JPEG crosses into the webview, so a 2,500-image
+  dataset no longer blanks its tiles or exhausts memory on low-RAM machines.
+- Exporting with the images bundled in is much less laggy: progress is reported
+  in ~1% steps instead of once per image, the dialog no longer recomputes its
+  preview on every update, and copying uses a narrower window so the disk is not
+  thrashed.
+
+### Fixed
+
+- Thumbnails could fall back to displaying full-resolution originals, which made
+  the grid and filmstrip unusable on machines with little memory.
+
 ## [0.1.7] - 2026-10-04
 
 ### Added
@@ -185,7 +205,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/heshengtao/labelall/releases/tag/v0.1.8
 [0.1.7]: https://github.com/heshengtao/labelall/releases/tag/v0.1.7
 [0.1.6]: https://github.com/heshengtao/labelall/releases/tag/v0.1.6
 [0.1.5]: https://github.com/heshengtao/labelall/releases/tag/v0.1.5

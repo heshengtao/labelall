@@ -18,6 +18,13 @@ export interface DatasetHandle {
 /** Name of the folder exports are collected into, next to the dataset. */
 export const EXPORT_DIR = 'LabelAll_export'
 
+/** A downscaled image the UI can put in an `<img src>`. */
+export interface Thumbnail {
+  url: string
+  /** Frees the underlying resource when the thumbnail is evicted from the cache. */
+  revoke?: () => void
+}
+
 export interface ExportTarget {
   /**
    * Dataset-relative prefix exported files are written under. May start with
@@ -62,6 +69,12 @@ export interface DatasetSource {
   ): Promise<void>
   /** Resolve a URL the UI can put in an `<img src>`. */
   getImageUrl(handle: DatasetHandle, relPath: string): Promise<string>
+  /**
+   * Resolve a thumbnail no larger than `maxEdge` on its longest side. The
+   * desktop build downscales natively so the webview never decodes an original,
+   * full-resolution photo just to draw a small tile.
+   */
+  thumbnail(handle: DatasetHandle, relPath: string, maxEdge: number): Promise<Thumbnail>
   /** Image dimensions, or null when they cannot be read. */
   imageSize(
     handle: DatasetHandle,

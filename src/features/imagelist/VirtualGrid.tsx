@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { type ReactNode, type UIEvent, useEffect, useRef, useState } from 'react'
 
 import { Box } from '@mui/material'
 
@@ -32,6 +32,29 @@ export function VirtualGrid<T>({
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
   const [scrollTop, setScrollTop] = useState(0)
+
+  // Scroll events can fire faster than the display refreshes; coalesce them to
+  // one state update per frame so scrolling a big grid stays smooth.
+  const scrollTopRef = useRef(0)
+  const frameRef = useRef<number | null>(null)
+  const onScroll = (event: UIEvent<HTMLDivElement>): void => {
+    scrollTopRef.current = event.currentTarget.scrollTop
+    if (frameRef.current !== null) {
+      return
+    }
+    frameRef.current = requestAnimationFrame(() => {
+      frameRef.current = null
+      setScrollTop(scrollTopRef.current)
+    })
+  }
+  useEffect(
+    () => () => {
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current)
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     const element = containerRef.current
@@ -74,7 +97,7 @@ export function VirtualGrid<T>({
     <Box
       ref={containerRef}
       data-testid="virtual-grid"
-      onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
+      onScroll={onScroll}
       sx={{ flex: 1, overflowY: 'auto', position: 'relative' }}
     >
       <Box sx={{ height: gridWindow.totalHeight, position: 'relative' }}>

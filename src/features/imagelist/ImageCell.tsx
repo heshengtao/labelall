@@ -3,6 +3,7 @@ import { Box, Card, Chip, Stack, Typography } from '@mui/material'
 import type { ImageRecord } from '@/core/model'
 
 import { useThumbnail } from './useThumbnail'
+import type { ThumbnailRenderer } from './thumbnail'
 
 /** Decoded at 2× the 120px preview box so it stays sharp on HiDPI screens. */
 const THUMBNAIL_EDGE = 320
@@ -13,11 +14,11 @@ export interface ImageCellProps {
   onSelect: (imageId: number) => void
   /** Double-click: open this image in the viewer. */
   onOpen: (imageId: number) => void
-  resolveImageUrl: (relPath: string) => Promise<string>
+  resolveThumbnail: ThumbnailRenderer
 }
 
-export function ImageCell({ image, selected, onSelect, onOpen, resolveImageUrl }: ImageCellProps) {
-  const url = useThumbnail(resolveImageUrl, image.filePath, THUMBNAIL_EDGE)
+export function ImageCell({ image, selected, onSelect, onOpen, resolveThumbnail }: ImageCellProps) {
+  const url = useThumbnail(resolveThumbnail, image.filePath, THUMBNAIL_EDGE)
 
   return (
     <Card
@@ -46,7 +47,7 @@ export function ImageCell({ image, selected, onSelect, onOpen, resolveImageUrl }
             component="img"
             src={url}
             alt={image.fileName ?? image.filePath}
-            loading="lazy"
+            decoding="async"
             sx={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
           />
         ) : null}

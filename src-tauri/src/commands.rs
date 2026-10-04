@@ -79,7 +79,7 @@ fn to_forward_slashes(path: &Path) -> String {
 /// `convertFileSrc` may serve images from it. Granting access here — rather than
 /// with a blanket `"**"` scope in the config — means only folders the user
 /// explicitly opened become readable.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn scan_dataset(app: AppHandle, root: String) -> Result<DatasetScan, CommandError> {
     let root_path = PathBuf::from(&root);
     if !root_path.is_dir() {
@@ -119,12 +119,12 @@ pub fn scan_dataset(app: AppHandle, root: String) -> Result<DatasetScan, Command
     })
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_text_file(path: String) -> Result<String, CommandError> {
     Ok(std::fs::read_to_string(path)?)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn write_text_file(path: String, contents: String) -> Result<(), CommandError> {
     if let Some(parent) = Path::new(&path).parent() {
         std::fs::create_dir_all(parent)?;
@@ -135,7 +135,7 @@ pub fn write_text_file(path: String, contents: String) -> Result<(), CommandErro
 
 /// Write many files at once — used when exporting YOLO/VOC datasets, where one
 /// file is produced per image.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn write_text_files(files: Vec<TextFile>) -> Result<(), CommandError> {
     files
         .par_iter()
@@ -151,7 +151,7 @@ pub fn write_text_files(files: Vec<TextFile>) -> Result<(), CommandError> {
 
 /// Copy one file, creating the destination's parent directories. Used to bundle
 /// the images into an exported dataset without pulling their bytes into the UI.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn copy_file(from: String, to: String) -> Result<(), CommandError> {
     if let Some(parent) = Path::new(&to).parent() {
         std::fs::create_dir_all(parent)?;
@@ -160,7 +160,7 @@ pub fn copy_file(from: String, to: String) -> Result<(), CommandError> {
     Ok(())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn ensure_dir(path: String) -> Result<(), CommandError> {
     std::fs::create_dir_all(path)?;
     Ok(())
@@ -168,8 +168,23 @@ pub fn ensure_dir(path: String) -> Result<(), CommandError> {
 
 /// Read just the header of an image to get its dimensions. Cheap enough to call
 /// for datasets that provide no width/height metadata (e.g. ImageFolder).
-#[tauri::command]
+#[tauri::command(async)]
 pub fn image_dimensions(path: String) -> Result<ImageDims, CommandError> {
     let (width, height) = image::image_dimensions(&path)?;
     Ok(ImageDims { width, height })
+}
+
+/// Downscale an image and return it as JPEG bytes.
+///
+/// The webview never has to decode a full-resolution photo to draw a grid or
+/// filmstrip tile: the decode and resize happen here and only the small JPEG
+/// crosses the IPC boundary.
+#[tauri::command(async)]
+pub fn read_thumbnail(path: String, max_edge: u32) -> Result<tauri::ipc::Response, CommandError> {
+    let image = image::open(&path)?;
+    let thumb = image.thumbnail(max_edge.max(1), max_edge.max(1));
+    let mut bytes = Vec::new();
+    let mut cursor = std::io::Cursor::new(&mut bytes);
+    thumb.write_to(&mut cursor, image::ImageFormat::Jpeg)?;
+    Ok(tauri::ipc::Response::new(bytes))
 }

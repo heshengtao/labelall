@@ -40,6 +40,7 @@ pub fn run() {
             commands::copy_file,
             commands::ensure_dir,
             commands::image_dimensions,
+            commands::read_thumbnail,
         ])
         .run(tauri::generate_context!())
         .expect("error while running LabelAll");

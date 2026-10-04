@@ -23,6 +23,7 @@ import { bboxArea, bboxFromPoints, bboxFromPolygons, polygonArea } from '@/core/
 import type { BBox, DatasetModel, Point, Polygon } from '@/core/model'
 import { AnnotateToolbar } from '@/features/annotate/AnnotateToolbar'
 import { useEditorShortcuts } from '@/features/annotate/useEditorShortcuts'
+import type { ThumbnailRenderer } from '@/features/imagelist/thumbnail'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useUiStore } from '@/store/uiStore'
 
@@ -43,9 +44,10 @@ const LAYER_LABEL_KEYS = {
 export interface ViewerProps {
   dataset: DatasetModel
   resolveImageUrl: (relPath: string) => Promise<string>
+  resolveThumbnail: ThumbnailRenderer
 }
 
-export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
+export function Viewer({ dataset, resolveImageUrl, resolveThumbnail }: ViewerProps) {
   const { t } = useTranslation()
   const currentImageId = useDatasetStore((state) => state.currentImageId)
   const selectImage = useDatasetStore((state) => state.selectImage)
@@ -340,7 +342,7 @@ export function Viewer({ dataset, resolveImageUrl }: ViewerProps) {
       <Filmstrip
         images={dataset.images}
         currentIndex={index}
-        resolveImageUrl={resolveImageUrl}
+        resolveThumbnail={resolveThumbnail}
         onSelect={(target) => selectImage(dataset.images[target].id)}
       />
     </Stack>

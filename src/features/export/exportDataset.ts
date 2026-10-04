@@ -17,6 +17,26 @@ export interface ExportOutcome {
 }
 
 /**
+ * Collapse a flood of progress callbacks — one per copied image — into at most
+ * one per whole percentage point, so the dialog is not re-rendered thousands of
+ * times while an export runs.
+ */
+function createProgressReporter(onProgress?: (value: number) => void): (value: number) => void {
+  let last = -1
+  return (value) => {
+    if (!onProgress) {
+      return
+    }
+    const percent = Math.round(Math.min(1, Math.max(0, value)) * 100)
+    if (percent === last) {
+      return
+    }
+    last = percent
+    onProgress(percent / 100)
+  }
+}
+
+/**
  * Write a dataset out in another format.
  *
  * The destination comes from the platform (`source.exportTarget`): desktop puts
@@ -38,21 +58,20 @@ export async function exportDataset(
 ): Promise<ExportOutcome> {
   const result = writeDataset(dataset, format)
   const prefix = source.exportTarget(handle, format).prefix
+  const report = createProgressReporter(options.onProgress)
 
-  options.onProgress?.(0.05)
+  report(0.05)
   await source.writeTexts(
     handle,
     result.files.map((file) => ({ path: `${prefix}/${file.path}`, contents: file.contents })),
   )
-  options.onProgress?.(0.1)
+  report(0.1)
 
   const paths = options.copyImages ? dataset.images.map((image) => image.filePath) : []
   if (paths.length > 0) {
-    await source.copyImages(handle, paths, prefix, (value) =>
-      options.onProgress?.(0.1 + value * 0.9),
-    )
+    await source.copyImages(handle, paths, prefix, (value) => report(0.1 + value * 0.9))
   } else {
-    options.onProgress?.(1)
+    report(1)
   }
 
   return { files: result.files.length, images: paths.length, warnings: result.warnings }

@@ -217,6 +217,16 @@ export default function App() {
     [handle],
   )
 
+  const resolveThumbnail = useCallback(
+    (relPath: string, maxEdge: number) => {
+      if (!handle) {
+        return Promise.reject(new Error('no dataset is open'))
+      }
+      return getDatasetSource().thumbnail(handle, relPath, maxEdge)
+    },
+    [handle],
+  )
+
   const working = status === 'scanning' || status === 'detecting' || status === 'parsing'
   const imageCount = pending
     ? pending.files.filter(
@@ -303,13 +313,17 @@ export default function App() {
           <Stack sx={{ flex: 1, minHeight: 0 }}>
             <DatasetHeader name={handle.displayName} dataset={dataset} warnings={warnings} />
             {viewMode === 'viewer' ? (
-              <Viewer dataset={dataset} resolveImageUrl={resolveImageUrl} />
+              <Viewer
+                dataset={dataset}
+                resolveImageUrl={resolveImageUrl}
+                resolveThumbnail={resolveThumbnail}
+              />
             ) : (
               <ImageList
                 dataset={dataset}
                 selectedId={currentImageId}
                 onSelect={selectImage}
-                resolveImageUrl={resolveImageUrl}
+                resolveThumbnail={resolveThumbnail}
               />
             )}
           </Stack>
