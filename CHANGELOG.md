@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-04
+
+### Added
+
+- A per-class legend under the dataset header shows each class's colour and how
+  many annotations it holds.
+- The viewer remembers where you were in each dataset: reopening a dataset
+  returns to the same image, and the image counter is now an input you can type a
+  number into to jump straight to an image.
+- Recent-dataset chips on the home screen each have an X to drop that entry from
+  history.
+
+### Changed
+
+- Tool shortcuts are now `V` / `B` / `N` / `M`; nudging the selected annotation
+  uses `W` / `A` / `S` / `D` (`Shift` for 10px); the arrow keys step between
+  images (`←`/`→`) and cycle the active class (`↑`/`↓`).
+- Drawing, moving, resizing and nudging a box, polygon or keypoint is clamped to
+  the image, snapping to the edge instead of spilling outside it.
+- The class-manager and keyboard-shortcuts buttons in the annotation toolbar now
+  carry text labels, and the recently-opened list moved off the Settings dialog.
+
 ## [0.2.0] - 2026-10-04
 
 ### Added
@@ -236,7 +258,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/heshengtao/labelall/releases/tag/v0.3.0
 [0.2.0]: https://github.com/heshengtao/labelall/releases/tag/v0.2.0
 [0.1.8]: https://github.com/heshengtao/labelall/releases/tag/v0.1.8
 [0.1.7]: https://github.com/heshengtao/labelall/releases/tag/v0.1.7
