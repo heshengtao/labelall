@@ -165,7 +165,10 @@
     "preview": "{{images}} images · {{annotations}} annotations",
     "noClasses": "Select at least one class",
     "noImages": "No images match the current selection",
-    "classesTruncated": "Showing the first {{shown}} of {{total}} classes — type to narrow."
+    "classesTruncated": "Showing the first {{shown}} of {{total}} classes — type to narrow.",
+    "copyImages": "Copy images into the export folder",
+    "exporting": "Exporting…",
+    "doneWithImages": "Exported {{files}} file(s) and {{images}} image(s) as {{format}}"
   },
   "settings": {
     "title": "Settings",

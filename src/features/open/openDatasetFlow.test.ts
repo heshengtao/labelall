@@ -19,6 +19,7 @@ function fakeSource(overrides: Partial<DatasetSource> = {}): DatasetSource {
       prefix: `LabelAll_export/${format}`,
       displayPath: `LabelAll_export/${format}`,
     }),
+    copyImages: async () => {},
     getImageUrl: async () => 'blob:x',
     imageSize: async () => null,
     ...overrides,

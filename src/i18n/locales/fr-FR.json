@@ -165,7 +165,10 @@
     "preview": "{{images}} images · {{annotations}} annotations",
     "noClasses": "Sélectionnez au moins une classe",
     "noImages": "Aucune image ne correspond à la sélection actuelle",
-    "classesTruncated": "Affichage des {{shown}} premières classes sur {{total}} ; saisissez pour filtrer."
+    "classesTruncated": "Affichage des {{shown}} premières classes sur {{total}} ; saisissez pour filtrer.",
+    "copyImages": "Copier les images dans le dossier d'export",
+    "exporting": "Exportation…",
+    "doneWithImages": "{{files}} fichier(s) et {{images}} image(s) exportés en {{format}}"
   },
   "settings": {
     "title": "Paramètres",

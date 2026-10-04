@@ -165,7 +165,10 @@
     "preview": "{{images}} 枚の画像 · {{annotations}} 件のアノテーション",
     "noClasses": "少なくとも1つのクラスを選択してください",
     "noImages": "現在の選択に一致する画像がありません",
-    "classesTruncated": "{{total}} クラス中、先頭 {{shown}} 件を表示中。入力で絞り込めます。"
+    "classesTruncated": "{{total}} クラス中、先頭 {{shown}} 件を表示中。入力で絞り込めます。",
+    "copyImages": "画像を出力フォルダにコピー",
+    "exporting": "エクスポート中…",
+    "doneWithImages": "{{format}} として {{files}} ファイルと {{images}} 画像をエクスポートしました"
   },
   "settings": {
     "title": "設定",

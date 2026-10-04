@@ -1,3 +1,4 @@
+import { FILE_READ_CONCURRENCY, mapLimit } from '@/core/concurrency'
 import type { DetectedFile } from '@/core/formats/detect'
 import { joinPath } from '@/core/path'
 import { EXPORT_DIR, type DatasetHandle, type DatasetSource, type TextFile } from './types'
@@ -7,7 +8,7 @@ import { EXPORT_DIR, type DatasetHandle, type DatasetSource, type TextFile } fro
 // only need a small slice of the API, so declare just that instead of pulling in
 // another dependency.
 interface FsWritable {
-  write(data: string): Promise<void>
+  write(data: string | Blob): Promise<void>
   close(): Promise<void>
 }
 interface FsFileHandle {
@@ -260,6 +261,33 @@ export function createWebSource(): DatasetSource {
       // nests inside it — under the same name the desktop build uses.
       const prefix = `${EXPORT_DIR}/${format}`
       return { prefix, displayPath: joinPath(handle.displayName, prefix) }
+    },
+
+    async copyImages(handle, relPaths, destPrefix, onProgress) {
+      const entry = stored.get(handle.id)
+      if (!entry) {
+        throw new Error('the dataset is no longer available; open it again')
+      }
+      if (entry.kind === 'input') {
+        throw new Error('this browser can only open datasets read-only')
+      }
+      let copied = 0
+      await mapLimit(relPaths, FILE_READ_CONCURRENCY, async (relPath) => {
+        const source = await readFsFile(entry.dir, relPath)
+        const segments = `${destPrefix}/${relPath}`.split('/')
+        const name = segments.pop()
+        if (!name) {
+          return
+        }
+        const dir = await resolveDirectory(entry.dir, segments, true)
+        const fileHandle = await dir.getFileHandle(name, { create: true })
+        const writable = await fileHandle.createWritable()
+        // Stream the file straight through instead of buffering it in memory.
+        await writable.write(source)
+        await writable.close()
+        copied += 1
+        onProgress?.(copied / Math.max(1, relPaths.length))
+      })
     },
 
     async getImageUrl(handle, relPath): Promise<string> {

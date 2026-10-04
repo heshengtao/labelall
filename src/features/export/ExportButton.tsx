@@ -16,6 +16,7 @@ import {
   Divider,
   FormControlLabel,
   IconButton,
+  LinearProgress,
   List,
   ListItem,
   ListItemText,
@@ -80,6 +81,7 @@ async function copyText(text: string): Promise<void> {
 
 interface ExportResult {
   count: number
+  images: number
   format: ExportFormat
   path: string
 }
@@ -96,6 +98,8 @@ export function ExportButton() {
   const [choice, setChoice] = useState<ExportChoice>('coco')
   const [selected, setSelected] = useState<ReadonlySet<number>>(new Set())
   const [keepUnmatched, setKeepUnmatched] = useState(false)
+  const [keepImages, setKeepImages] = useState(true)
+  const [progress, setProgress] = useState(0)
 
   // A dataset with no classes has nothing to filter, so it is exported as-is.
   const filtered = useMemo(() => {
@@ -136,6 +140,7 @@ export function ExportButton() {
     setKeepUnmatched(false)
     setError(null)
     setCopied(false)
+    setProgress(0)
     setOpen(true)
   }
 
@@ -150,12 +155,17 @@ export function ExportButton() {
   const run = async (): Promise<void> => {
     setBusy(true)
     setError(null)
+    setProgress(0)
     try {
-      const result = await exportDataset(source, handle, filtered, format)
+      const result = await exportDataset(source, handle, filtered, format, {
+        copyImages: keepImages,
+        onProgress: setProgress,
+      })
       setOpen(false)
       setCopied(false)
       setDone({
         count: result.files,
+        images: result.images,
         format,
         path: target.displayPath,
       })
@@ -184,6 +194,14 @@ export function ExportButton() {
       <Dialog open={open} onClose={busy ? undefined : () => setOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{t('export.title')}</DialogTitle>
         <DialogContent>
+          {busy ? (
+            <Box sx={{ pb: 2 }}>
+              <Typography variant="body2" sx={{ mb: 0.5 }}>
+                {t('export.exporting')}
+              </Typography>
+              <LinearProgress variant="determinate" value={Math.round(progress * 100)} />
+            </Box>
+          ) : null}
           {/* A little top padding so the select's floating label is not clipped. */}
           <Stack spacing={2} sx={{ pt: 1 }}>
             <TextField
@@ -299,6 +317,17 @@ export function ExportButton() {
               </>
             ) : null}
 
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={keepImages}
+                  onChange={(event) => setKeepImages(event.target.checked)}
+                />
+              }
+              label={<Typography variant="body2">{t('export.copyImages')}</Typography>}
+            />
+
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {t('export.hint', { path: target.displayPath })}
             </Typography>
@@ -342,7 +371,13 @@ export function ExportButton() {
           done ? (
             <Box sx={{ minWidth: 0 }}>
               <Typography variant="body2">
-                {t('export.done', { count: done.count, format: done.format })}
+                {done.images > 0
+                  ? t('export.doneWithImages', {
+                      files: done.count,
+                      images: done.images,
+                      format: done.format,
+                    })
+                  : t('export.done', { count: done.count, format: done.format })}
               </Typography>
               <Typography
                 variant="caption"

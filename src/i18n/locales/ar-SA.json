@@ -165,7 +165,10 @@
     "preview": "{{images}} صورة · {{annotations}} تعليق",
     "noClasses": "اختر فئة واحدة على الأقل",
     "noImages": "لا توجد صور مطابقة للتحديد الحالي",
-    "classesTruncated": "يتم عرض أول {{shown}} من {{total}} فئة؛ اكتب للتصفية."
+    "classesTruncated": "يتم عرض أول {{shown}} من {{total}} فئة؛ اكتب للتصفية.",
+    "copyImages": "نسخ الصور إلى مجلد التصدير",
+    "exporting": "جارٍ التصدير…",
+    "doneWithImages": "تم تصدير {{files}} ملف و{{images}} صورة بصيغة {{format}}"
   },
   "settings": {
     "title": "الإعدادات",

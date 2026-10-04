@@ -37,6 +37,7 @@ pub fn run() {
             commands::read_text_file,
             commands::write_text_file,
             commands::write_text_files,
+            commands::copy_file,
             commands::ensure_dir,
             commands::image_dimensions,
         ])

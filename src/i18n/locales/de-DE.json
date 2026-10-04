@@ -165,7 +165,10 @@
     "preview": "{{images}} Bilder · {{annotations}} Annotationen",
     "noClasses": "Wähle mindestens eine Klasse aus",
     "noImages": "Keine Bilder passen zur aktuellen Auswahl",
-    "classesTruncated": "Es werden die ersten {{shown}} von {{total}} Klassen angezeigt; zum Eingrenzen tippen."
+    "classesTruncated": "Es werden die ersten {{shown}} von {{total}} Klassen angezeigt; zum Eingrenzen tippen.",
+    "copyImages": "Bilder in den Exportordner kopieren",
+    "exporting": "Exportiere…",
+    "doneWithImages": "{{files}} Datei(en) und {{images}} Bild(er) als {{format}} exportiert"
   },
   "settings": {
     "title": "Einstellungen",

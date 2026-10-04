@@ -165,7 +165,10 @@
     "preview": "{{images}} 張圖片 · {{annotations}} 條標註",
     "noClasses": "請至少選擇一個類別",
     "noImages": "目前選擇沒有符合的圖片",
-    "classesTruncated": "僅顯示前 {{shown}} / {{total}} 個類別，輸入可篩選。"
+    "classesTruncated": "僅顯示前 {{shown}} / {{total}} 個類別，輸入可篩選。",
+    "copyImages": "複製圖片到匯出目錄",
+    "exporting": "正在匯出…",
+    "doneWithImages": "已匯出 {{format}}：{{files}} 個檔案、{{images}} 張圖片"
   },
   "settings": {
     "title": "設定",

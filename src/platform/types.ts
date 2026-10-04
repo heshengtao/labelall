@@ -49,6 +49,17 @@ export interface DatasetSource {
   writeTexts(handle: DatasetHandle, files: TextFile[]): Promise<void>
   /** Where a format's export is written, for both the writer and the UI. */
   exportTarget(handle: DatasetHandle, format: string): ExportTarget
+  /**
+   * Copy dataset-relative image files into `destPrefix` (also dataset-relative,
+   * possibly starting with `..` on desktop), preserving their directory
+   * structure, so an export can be a self-contained folder. Reports 0–1 progress.
+   */
+  copyImages(
+    handle: DatasetHandle,
+    relPaths: string[],
+    destPrefix: string,
+    onProgress?: (value: number) => void,
+  ): Promise<void>
   /** Resolve a URL the UI can put in an `<img src>`. */
   getImageUrl(handle: DatasetHandle, relPath: string): Promise<string>
   /** Image dimensions, or null when they cannot be read. */

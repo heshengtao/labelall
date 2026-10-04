@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-10-04
+
+### Added
+
+- Export can bundle the images into the export folder (on by default), so the
+  result is a self-contained dataset you can use directly. The switch can be
+  turned off to write only the annotation files.
+- The export dialog shows a progress bar while it writes the annotation files
+  and copies the images.
+
 ## [0.1.6] - 2026-10-04
 
 ### Added
@@ -175,7 +185,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/heshengtao/labelall/releases/tag/v0.1.7
 [0.1.6]: https://github.com/heshengtao/labelall/releases/tag/v0.1.6
 [0.1.5]: https://github.com/heshengtao/labelall/releases/tag/v0.1.5
 [0.1.4]: https://github.com/heshengtao/labelall/releases/tag/v0.1.4

@@ -149,6 +149,17 @@ pub fn write_text_files(files: Vec<TextFile>) -> Result<(), CommandError> {
     Ok(())
 }
 
+/// Copy one file, creating the destination's parent directories. Used to bundle
+/// the images into an exported dataset without pulling their bytes into the UI.
+#[tauri::command]
+pub fn copy_file(from: String, to: String) -> Result<(), CommandError> {
+    if let Some(parent) = Path::new(&to).parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    std::fs::copy(from, to)?;
+    Ok(())
+}
+
 #[tauri::command]
 pub fn ensure_dir(path: String) -> Result<(), CommandError> {
     std::fs::create_dir_all(path)?;

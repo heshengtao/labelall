@@ -1,6 +1,7 @@
 import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 import { open } from '@tauri-apps/plugin-dialog'
 
+import { FILE_READ_CONCURRENCY, mapLimit } from '@/core/concurrency'
 import type { DetectedFile } from '@/core/formats/detect'
 import { EXPORT_DIR, type DatasetHandle, type DatasetSource, type TextFile } from './types'
 
@@ -80,6 +81,18 @@ export function createTauriSource(): DatasetSource {
         prefix: `../${EXPORT_DIR}/${format}`,
         displayPath: [parent, EXPORT_DIR, format].filter(Boolean).join(separator),
       }
+    },
+
+    async copyImages(handle, relPaths, destPrefix, onProgress) {
+      let copied = 0
+      await mapLimit(relPaths, FILE_READ_CONCURRENCY, async (relPath) => {
+        await invoke('copy_file', {
+          from: joinRoot(handle.root, relPath),
+          to: joinRoot(handle.root, `${destPrefix}/${relPath}`),
+        })
+        copied += 1
+        onProgress?.(copied / Math.max(1, relPaths.length))
+      })
     },
 
     async getImageUrl(handle, relPath) {
