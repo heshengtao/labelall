@@ -15,6 +15,19 @@ export interface DatasetHandle {
   displayName: string
 }
 
+/** Name of the folder exports are collected into, next to the dataset. */
+export const EXPORT_DIR = 'LabelAll_export'
+
+export interface ExportTarget {
+  /**
+   * Dataset-relative prefix exported files are written under. May start with
+   * `..` on desktop, where the target sits outside the dataset root.
+   */
+  prefix: string
+  /** Absolute, copyable directory shown in the UI. */
+  displayPath: string
+}
+
 /**
  * Everything the UI needs from the host environment.
  *
@@ -34,6 +47,8 @@ export interface DatasetSource {
   readText(handle: DatasetHandle, relPath: string): Promise<string>
   /** Write several text files at once. Throws when `canWrite` is false. */
   writeTexts(handle: DatasetHandle, files: TextFile[]): Promise<void>
+  /** Where a format's export is written, for both the writer and the UI. */
+  exportTarget(handle: DatasetHandle, format: string): ExportTarget
   /** Resolve a URL the UI can put in an `<img src>`. */
   getImageUrl(handle: DatasetHandle, relPath: string): Promise<string>
   /** Image dimensions, or null when they cannot be read. */

@@ -21,7 +21,9 @@
     "next": "Siguiente",
     "yes": "Sí",
     "no": "No",
-    "comingSoon": "Esta función aún está en desarrollo"
+    "comingSoon": "Esta función aún está en desarrollo",
+    "copyPath": "Copiar ruta",
+    "copied": "Copiado"
   },
   "actions": {
     "openDataset": "Abrir dataset",
@@ -145,7 +147,7 @@
   "export": {
     "title": "Exportar",
     "format": "Formato",
-    "hint": "Los archivos se escriben en {{path}} dentro del dataset; los originales no se tocan.",
+    "hint": "Los archivos se escriben en {{path}}; el dataset original no se toca.",
     "losses": "Hay datos que no se pueden representar:",
     "noLosses": "Este formato puede representar todo el dataset.",
     "confirm": "Exportar",
@@ -154,7 +156,16 @@
     "coco": "COCO",
     "yolo": "YOLO (tarea automática)",
     "voc": "Pascal VOC",
-    "imagefolder": "ImageFolder"
+    "imagefolder": "ImageFolder",
+    "classes": "Clases",
+    "selectAll": "Seleccionar todo",
+    "selectNone": "Limpiar",
+    "keepUnmatched": "Conservar las imágenes sin estas clases como muestras negativas",
+    "selectedCount": "{{selected}} / {{total}} clases seleccionadas",
+    "preview": "{{images}} imágenes · {{annotations}} anotaciones",
+    "noClasses": "Selecciona al menos una clase",
+    "noImages": "Ninguna imagen coincide con la selección actual",
+    "classesTruncated": "Mostrando las primeras {{shown}} de {{total}} clases; escribe para filtrar."
   },
   "settings": {
     "title": "Ajustes",

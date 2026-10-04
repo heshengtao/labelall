@@ -4,8 +4,10 @@ import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
 import type { ImageRecord } from '@/core/model'
+import { useThumbnail } from '@/features/imagelist/useThumbnail'
 
-import { useResolvedUrl } from './useLoadedImage'
+/** The 64px strip only needs a small decode. */
+const THUMBNAIL_EDGE = 128
 
 interface FilmstripThumbProps {
   image: ImageRecord
@@ -15,7 +17,7 @@ interface FilmstripThumbProps {
 }
 
 function FilmstripThumb({ image, active, onClick, resolveImageUrl }: FilmstripThumbProps) {
-  const url = useResolvedUrl(resolveImageUrl, image.filePath)
+  const url = useThumbnail(resolveImageUrl, image.filePath, THUMBNAIL_EDGE)
 
   // Scroll the thumbnail into view when it becomes active. A ref callback
   // (rather than an effect) keeps this a pure post-commit side effect.

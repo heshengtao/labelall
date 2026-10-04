@@ -122,7 +122,12 @@ async function runDetect(message: DetectMessage): Promise<void> {
 async function runParse(message: ParseMessage): Promise<void> {
   try {
     scope.postMessage({ type: 'progress', id: message.id, value: 0 })
-    const result = await parseDataset(message.request, { root: message.root, readText, imageSize })
+    const result = await parseDataset(message.request, {
+      root: message.root,
+      readText,
+      imageSize,
+      onProgress: (value) => scope.postMessage({ type: 'progress', id: message.id, value }),
+    })
     scope.postMessage({ type: 'progress', id: message.id, value: 1 })
     scope.postMessage({
       type: 'parse-result',

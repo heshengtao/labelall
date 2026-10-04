@@ -11,6 +11,11 @@ export interface ReadContext {
    * Optional because formats that carry their own sizes (COCO, VOC) never call it.
    */
   imageSize?: (relPath: string) => Promise<{ width: number; height: number } | null>
+  /**
+   * 0–1 progress of the read, so the UI progress bar can advance while a large
+   * multi-file dataset is being parsed.
+   */
+  onProgress?: (value: number) => void
 }
 
 /**

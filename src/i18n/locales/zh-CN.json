@@ -21,7 +21,9 @@
     "next": "下一步",
     "yes": "是",
     "no": "否",
-    "comingSoon": "该功能还在开发中"
+    "comingSoon": "该功能还在开发中",
+    "copyPath": "复制路径",
+    "copied": "已复制"
   },
   "actions": {
     "openDataset": "打开数据集",
@@ -145,7 +147,7 @@
   "export": {
     "title": "导出",
     "format": "格式",
-    "hint": "文件写入数据集内的 {{path}}，不会改动原始文件。",
+    "hint": "文件写入 {{path}}，原始数据集不受影响。",
     "losses": "以下内容无法完整表示：",
     "noLosses": "该格式可以完整表示当前数据集。",
     "confirm": "导出",
@@ -154,7 +156,16 @@
     "coco": "COCO",
     "yolo": "YOLO（自动任务）",
     "voc": "Pascal VOC",
-    "imagefolder": "分类文件夹"
+    "imagefolder": "分类文件夹",
+    "classes": "类别",
+    "selectAll": "全选",
+    "selectNone": "清空",
+    "keepUnmatched": "保留不含所选类别的图片作为负样本",
+    "selectedCount": "已选 {{selected}} / {{total}} 个类别",
+    "preview": "{{images}} 张图片 · {{annotations}} 条标注",
+    "noClasses": "请至少选择一个类别",
+    "noImages": "当前选择没有匹配的图片",
+    "classesTruncated": "仅显示前 {{shown}} / {{total}} 个类别，输入可筛选。"
   },
   "settings": {
     "title": "设置",

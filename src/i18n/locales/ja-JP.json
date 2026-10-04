@@ -21,7 +21,9 @@
     "next": "次へ",
     "yes": "はい",
     "no": "いいえ",
-    "comingSoon": "この機能は開発中です"
+    "comingSoon": "この機能は開発中です",
+    "copyPath": "パスをコピー",
+    "copied": "コピーしました"
   },
   "actions": {
     "openDataset": "データセットを開く",
@@ -145,7 +147,7 @@
   "export": {
     "title": "エクスポート",
     "format": "形式",
-    "hint": "ファイルはデータセット内の {{path}} に書き出されます。元のファイルは変更しません。",
+    "hint": "ファイルは {{path}} に書き出されます。元のデータセットは変更しません。",
     "losses": "表現できない内容：",
     "noLosses": "この形式はデータセット全体を表現できます。",
     "confirm": "エクスポート",
@@ -154,7 +156,16 @@
     "coco": "COCO",
     "yolo": "YOLO（自動タスク）",
     "voc": "Pascal VOC",
-    "imagefolder": "分類フォルダ"
+    "imagefolder": "分類フォルダ",
+    "classes": "クラス",
+    "selectAll": "すべて選択",
+    "selectNone": "クリア",
+    "keepUnmatched": "選択したクラスを含まない画像をネガティブサンプルとして保持",
+    "selectedCount": "{{selected}} / {{total}} クラスを選択",
+    "preview": "{{images}} 枚の画像 · {{annotations}} 件のアノテーション",
+    "noClasses": "少なくとも1つのクラスを選択してください",
+    "noImages": "現在の選択に一致する画像がありません",
+    "classesTruncated": "{{total}} クラス中、先頭 {{shown}} 件を表示中。入力で絞り込めます。"
   },
   "settings": {
     "title": "設定",

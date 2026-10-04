@@ -2,7 +2,7 @@ import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 import { open } from '@tauri-apps/plugin-dialog'
 
 import type { DetectedFile } from '@/core/formats/detect'
-import type { DatasetHandle, DatasetSource, TextFile } from './types'
+import { EXPORT_DIR, type DatasetHandle, type DatasetSource, type TextFile } from './types'
 
 interface ScanEntry {
   relPath: string
@@ -27,6 +27,15 @@ function joinRoot(root: string, relPath: string): string {
 
 function basename(path: string): string {
   return path.split(/[\\/]/).filter(Boolean).pop() ?? path
+}
+
+/** Split a path into its parent directory and the separator it uses. */
+function splitParent(path: string): { parent: string; separator: string } {
+  const separator = path.includes('\\') ? '\\' : '/'
+  const trimmed = path.replace(/[\\/]+$/, '')
+  const slash = Math.max(trimmed.lastIndexOf('/'), trimmed.lastIndexOf('\\'))
+  const parent = slash < 0 ? '' : slash === 0 ? separator : trimmed.slice(0, slash)
+  return { parent, separator }
 }
 
 export function createTauriSource(): DatasetSource {
@@ -62,6 +71,15 @@ export function createTauriSource(): DatasetSource {
           contents: file.contents,
         })),
       })
+    },
+
+    exportTarget(handle, format) {
+      const { parent, separator } = splitParent(handle.root)
+      return {
+        // `..` keeps the contract dataset-relative; Rust resolves it against the root.
+        prefix: `../${EXPORT_DIR}/${format}`,
+        displayPath: [parent, EXPORT_DIR, format].filter(Boolean).join(separator),
+      }
     },
 
     async getImageUrl(handle, relPath) {

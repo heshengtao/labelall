@@ -176,7 +176,11 @@ export async function readCoco(options: CocoReadOptions): Promise<ReadResult> {
     warnings.push(message)
   }
 
-  const raw = JSON.parse(await options.readText(annotationPath)) as RawCoco
+  options.onProgress?.(0.1)
+  const text = await options.readText(annotationPath)
+  options.onProgress?.(0.5)
+  const raw = JSON.parse(text) as RawCoco
+  options.onProgress?.(0.8)
 
   if (!Array.isArray(raw.images)) {
     warnings.push(`${annotationPath} has no "images" array, so no images were loaded`)

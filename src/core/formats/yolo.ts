@@ -9,6 +9,7 @@
 
 import { parse as parseYaml } from 'yaml'
 
+import { FILE_READ_CONCURRENCY, mapLimit } from '../concurrency'
 import { bboxArea, bboxFromPoints, bboxToYoloBox, polygonArea, yoloBoxToBBox } from '../geometry'
 import type {
   Annotation,
@@ -91,37 +92,65 @@ export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
     (entry) => !entry.isDir && IMAGE_EXTENSIONS.has(fileExtension(entry.path)),
   )
 
+  // Labels are one small file per image, so read them with bounded concurrency
+  // instead of paying a full round-trip per file in sequence.
+  options.onProgress?.(0)
+  const total = imageFiles.length
+  let labelsRead = 0
+  const labelTexts = await mapLimit(imageFiles, FILE_READ_CONCURRENCY, async (image) => {
+    let text: string | null = null
+    try {
+      text = await options.readText(imagesPathToLabelsPath(image.path))
+    } catch {
+      text = null
+    }
+    labelsRead += 1
+    options.onProgress?.((labelsRead / Math.max(1, total)) * 0.5)
+    return text
+  })
+
+  // Only images that carry labels need their size — YOLO stores normalised
+  // coordinates — so unlabelled images skip that round-trip entirely.
+  const dims: ({ width: number; height: number } | null)[] = new Array(total).fill(null)
+  if (options.imageSize) {
+    const labelled = imageFiles
+      .map((image, index) => ({ image, index }))
+      .filter((entry) => (labelTexts[entry.index] ?? '').trim() !== '')
+    let sized = 0
+    await mapLimit(labelled, FILE_READ_CONCURRENCY, async (entry) => {
+      dims[entry.index] = await options.imageSize!(entry.image.path)
+      sized += 1
+      options.onProgress?.(0.5 + (sized / Math.max(1, labelled.length)) * 0.5)
+    })
+  } else {
+    options.onProgress?.(1)
+  }
+
   const images: ImageRecord[] = []
   const annotations: Annotation[] = []
   let maxClass = names.length - 1
 
-  for (const image of imageFiles) {
+  for (let imageId = 0; imageId < total; imageId += 1) {
+    const image = imageFiles[imageId]
     const labelPath = imagesPathToLabelsPath(image.path)
-    let text: string | null = null
-    try {
-      text = await options.readText(labelPath)
-    } catch {
-      text = null
-    }
-
-    const imageId = images.length
-    const dims = options.imageSize ? await options.imageSize(image.path) : null
+    const text = labelTexts[imageId]
+    const size = dims[imageId]
     images.push({
       id: imageId,
       filePath: image.path,
-      width: dims?.width ?? 0,
-      height: dims?.height ?? 0,
+      width: size?.width ?? 0,
+      height: size?.height ?? 0,
     })
 
     if (!text || text.trim() === '') {
       continue
     }
-    if (!dims) {
+    if (!size) {
       warnings.push(`Could not determine the size of ${image.path}; its labels were skipped`)
       continue
     }
-    const width = dims.width
-    const height = dims.height
+    const width = size.width
+    const height = size.height
 
     for (const rawLine of text.split(/\r?\n/)) {
       const line = rawLine.trim()

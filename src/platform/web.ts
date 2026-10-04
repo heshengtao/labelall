@@ -1,5 +1,6 @@
 import type { DetectedFile } from '@/core/formats/detect'
-import type { DatasetHandle, DatasetSource, TextFile } from './types'
+import { joinPath } from '@/core/path'
+import { EXPORT_DIR, type DatasetHandle, type DatasetSource, type TextFile } from './types'
 
 // --- Minimal File System Access API typings ---------------------------------
 // `showDirectoryPicker` and `createWritable` are still not in lib.dom, and we
@@ -252,6 +253,13 @@ export function createWebSource(): DatasetSource {
         await writable.write(file.contents)
         await writable.close()
       }
+    },
+
+    exportTarget(handle, format) {
+      // A browser cannot reach a sibling of the picked folder, so the export
+      // nests inside it — under the same name the desktop build uses.
+      const prefix = `${EXPORT_DIR}/${format}`
+      return { prefix, displayPath: joinPath(handle.displayName, prefix) }
     },
 
     async getImageUrl(handle, relPath): Promise<string> {

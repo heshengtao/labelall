@@ -21,7 +21,9 @@
     "next": "Next",
     "yes": "Yes",
     "no": "No",
-    "comingSoon": "This feature is still under development"
+    "comingSoon": "This feature is still under development",
+    "copyPath": "Copy path",
+    "copied": "Copied"
   },
   "actions": {
     "openDataset": "Open dataset",
@@ -145,7 +147,7 @@
   "export": {
     "title": "Export",
     "format": "Format",
-    "hint": "Files are written to {{path}} inside the dataset; originals are left untouched.",
+    "hint": "Files are written to {{path}}; the original dataset is left untouched.",
     "losses": "Some data cannot be represented:",
     "noLosses": "This format can represent the whole dataset.",
     "confirm": "Export",
@@ -154,7 +156,16 @@
     "coco": "COCO",
     "yolo": "YOLO (auto task)",
     "voc": "Pascal VOC",
-    "imagefolder": "ImageFolder"
+    "imagefolder": "ImageFolder",
+    "classes": "Classes",
+    "selectAll": "Select all",
+    "selectNone": "Clear",
+    "keepUnmatched": "Keep images without these classes as negative samples",
+    "selectedCount": "{{selected}} / {{total}} classes selected",
+    "preview": "{{images}} images · {{annotations}} annotations",
+    "noClasses": "Select at least one class",
+    "noImages": "No images match the current selection",
+    "classesTruncated": "Showing the first {{shown}} of {{total}} classes — type to narrow."
   },
   "settings": {
     "title": "Settings",

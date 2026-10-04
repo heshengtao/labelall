@@ -9,6 +9,7 @@
 
 import { XMLBuilder, XMLParser } from 'fast-xml-parser'
 
+import { FILE_READ_CONCURRENCY, mapLimit } from '../concurrency'
 import {
   bboxArea,
   bboxToVocBox,
@@ -102,17 +103,31 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
   const images: ImageRecord[] = []
   const annotations: Annotation[] = []
 
-  for (const target of targets) {
-    let parsed: { annotation?: Record<string, unknown> }
+  // Read and parse every XML with bounded concurrency, then process in order so
+  // category and image ids stay deterministic.
+  options.onProgress?.(0)
+  let read = 0
+  const parsedTargets = await mapLimit(targets, FILE_READ_CONCURRENCY, async (target) => {
+    let node: Record<string, unknown> | undefined
+    let error: string | null = null
     try {
-      parsed = parser.parse(await options.readText(target.path)) as {
+      const parsed = parser.parse(await options.readText(target.path)) as {
         annotation?: Record<string, unknown>
       }
-    } catch (error) {
-      warnings.push(`${target.path} could not be parsed: ${(error as Error).message}`)
+      node = parsed.annotation
+    } catch (cause) {
+      error = (cause as Error).message
+    }
+    read += 1
+    options.onProgress?.((read / Math.max(1, targets.length)) * 0.6)
+    return { target, node, error }
+  })
+
+  for (const { target, node, error } of parsedTargets) {
+    if (error !== null) {
+      warnings.push(`${target.path} could not be parsed: ${error}`)
       continue
     }
-    const node = parsed.annotation
     if (!node) {
       warnings.push(`${target.path} has no <annotation> root and was skipped`)
       continue

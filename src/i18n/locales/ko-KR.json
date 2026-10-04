@@ -21,7 +21,9 @@
     "next": "다음",
     "yes": "예",
     "no": "아니요",
-    "comingSoon": "이 기능은 아직 개발 중입니다"
+    "comingSoon": "이 기능은 아직 개발 중입니다",
+    "copyPath": "경로 복사",
+    "copied": "복사됨"
   },
   "actions": {
     "openDataset": "데이터셋 열기",
@@ -145,7 +147,7 @@
   "export": {
     "title": "내보내기",
     "format": "형식",
-    "hint": "파일은 데이터셋 안의 {{path}}에 기록되며 원본은 그대로 둡니다.",
+    "hint": "파일은 {{path}}에 기록되며 원본 데이터셋은 그대로 둡니다.",
     "losses": "표현할 수 없는 내용:",
     "noLosses": "이 형식은 데이터셋 전체를 표현할 수 있습니다.",
     "confirm": "내보내기",
@@ -154,7 +156,16 @@
     "coco": "COCO",
     "yolo": "YOLO(자동 작업)",
     "voc": "Pascal VOC",
-    "imagefolder": "분류 폴더"
+    "imagefolder": "분류 폴더",
+    "classes": "클래스",
+    "selectAll": "전체 선택",
+    "selectNone": "지우기",
+    "keepUnmatched": "선택한 클래스가 없는 이미지를 네거티브 샘플로 유지",
+    "selectedCount": "{{selected}} / {{total}}개 클래스 선택됨",
+    "preview": "이미지 {{images}}개 · 어노테이션 {{annotations}}개",
+    "noClasses": "클래스를 하나 이상 선택하세요",
+    "noImages": "현재 선택과 일치하는 이미지가 없습니다",
+    "classesTruncated": "{{total}}개 클래스 중 처음 {{shown}}개만 표시됩니다. 입력하여 좁히세요."
   },
   "settings": {
     "title": "설정",

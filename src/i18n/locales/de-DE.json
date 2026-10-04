@@ -21,7 +21,9 @@
     "next": "Weiter",
     "yes": "Ja",
     "no": "Nein",
-    "comingSoon": "Diese Funktion ist noch in Entwicklung"
+    "comingSoon": "Diese Funktion ist noch in Entwicklung",
+    "copyPath": "Pfad kopieren",
+    "copied": "Kopiert"
   },
   "actions": {
     "openDataset": "Datensatz öffnen",
@@ -145,7 +147,7 @@
   "export": {
     "title": "Exportieren",
     "format": "Format",
-    "hint": "Die Dateien werden in {{path}} im Datensatz geschrieben; die Originale bleiben unverändert.",
+    "hint": "Die Dateien werden in {{path}} geschrieben; der ursprüngliche Datensatz bleibt unverändert.",
     "losses": "Manche Daten können nicht dargestellt werden:",
     "noLosses": "Dieses Format kann den gesamten Datensatz darstellen.",
     "confirm": "Exportieren",
@@ -154,7 +156,16 @@
     "coco": "COCO",
     "yolo": "YOLO (automatische Aufgabe)",
     "voc": "Pascal VOC",
-    "imagefolder": "ImageFolder"
+    "imagefolder": "ImageFolder",
+    "classes": "Klassen",
+    "selectAll": "Alle auswählen",
+    "selectNone": "Leeren",
+    "keepUnmatched": "Bilder ohne diese Klassen als Negativbeispiele behalten",
+    "selectedCount": "{{selected}} / {{total}} Klassen ausgewählt",
+    "preview": "{{images}} Bilder · {{annotations}} Annotationen",
+    "noClasses": "Wähle mindestens eine Klasse aus",
+    "noImages": "Keine Bilder passen zur aktuellen Auswahl",
+    "classesTruncated": "Es werden die ersten {{shown}} von {{total}} Klassen angezeigt; zum Eingrenzen tippen."
   },
   "settings": {
     "title": "Einstellungen",

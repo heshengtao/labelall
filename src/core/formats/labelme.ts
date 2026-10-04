@@ -11,6 +11,7 @@
  * the order labelme itself lists the shapes in.
  */
 
+import { FILE_READ_CONCURRENCY, mapLimit } from '../concurrency'
 import { bboxFromCorners, bboxFromPolygons, polygonsArea } from '../geometry'
 import type { Annotation, Category, DatasetModel, ImageRecord, Polygon } from '../model'
 import { assignCategoryColors } from '../palette'
@@ -115,14 +116,22 @@ function shapeToAnnotation(
   return null
 }
 
-export async function readLabelme(options: LabelmeReadOptions): Promise<ReadResult> {
+export interface LabelmeParseOptions {
+  root: string
+  annotationPath: string
+  imageDir?: string
+  split?: string
+}
+
+/** Parse a labelme JSON that has already been read from disk. */
+export function parseLabelme(text: string, options: LabelmeParseOptions): ReadResult {
   const { annotationPath, imageDir = '', split } = options
   const warnings: string[] = []
   const warn = (message: string): void => {
     warnings.push(message)
   }
 
-  const raw = JSON.parse(await options.readText(annotationPath)) as RawLabelme
+  const raw = JSON.parse(text) as RawLabelme
 
   if (typeof raw.imagePath !== 'string' || raw.imagePath.length === 0) {
     warnings.push(`${annotationPath} has no "imagePath" and was skipped`)
@@ -191,6 +200,10 @@ export async function readLabelme(options: LabelmeReadOptions): Promise<ReadResu
   return { dataset, warnings }
 }
 
+export async function readLabelme(options: LabelmeReadOptions): Promise<ReadResult> {
+  return parseLabelme(await options.readText(options.annotationPath), options)
+}
+
 export interface LabelmeDatasetReadOptions extends ReadContext {
   /** labelme JSON files to merge, in the order they should appear. */
   annotationPaths: string[]
@@ -212,12 +225,36 @@ export async function readLabelmeDataset(options: LabelmeDatasetReadOptions): Pr
   const images: ImageRecord[] = []
   const annotations: Annotation[] = []
 
-  for (const annotationPath of options.annotationPaths) {
+  // labelme writes one JSON per image, so read them with bounded concurrency and
+  // merge in order afterwards — that keeps category ids in first-appearance order.
+  const paths = options.annotationPaths
+  options.onProgress?.(0)
+  let read = 0
+  const reads = await mapLimit(paths, FILE_READ_CONCURRENCY, async (annotationPath) => {
+    const tick = (): void => {
+      read += 1
+      options.onProgress?.((read / Math.max(1, paths.length)) * 0.8)
+    }
+    try {
+      const text = await options.readText(annotationPath)
+      tick()
+      return { annotationPath, text, error: null as string | null }
+    } catch (cause) {
+      tick()
+      return { annotationPath, text: null, error: (cause as Error).message }
+    }
+  })
+
+  for (const entry of reads) {
+    const { annotationPath } = entry
+    if (entry.text === null) {
+      warnings.push(`${annotationPath} could not be read as labelme: ${entry.error}`)
+      continue
+    }
     let result: ReadResult
     try {
-      result = await readLabelme({
+      result = parseLabelme(entry.text, {
         root: options.root,
-        readText: options.readText,
         annotationPath,
         ...(options.imageDir ? { imageDir: options.imageDir } : {}),
       })

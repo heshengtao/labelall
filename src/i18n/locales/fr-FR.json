@@ -21,7 +21,9 @@
     "next": "Suivant",
     "yes": "Oui",
     "no": "Non",
-    "comingSoon": "Cette fonctionnalité est encore en développement"
+    "comingSoon": "Cette fonctionnalité est encore en développement",
+    "copyPath": "Copier le chemin",
+    "copied": "Copié"
   },
   "actions": {
     "openDataset": "Ouvrir un jeu de données",
@@ -145,7 +147,7 @@
   "export": {
     "title": "Exporter",
     "format": "Format",
-    "hint": "Les fichiers sont écrits dans {{path}} à l'intérieur du jeu de données ; les originaux ne sont pas modifiés.",
+    "hint": "Les fichiers sont écrits dans {{path}} ; le jeu de données d'origine n'est pas modifié.",
     "losses": "Certaines données ne peuvent pas être représentées :",
     "noLosses": "Ce format peut représenter tout le jeu de données.",
     "confirm": "Exporter",
@@ -154,7 +156,16 @@
     "coco": "COCO",
     "yolo": "YOLO (tâche automatique)",
     "voc": "Pascal VOC",
-    "imagefolder": "ImageFolder"
+    "imagefolder": "ImageFolder",
+    "classes": "Classes",
+    "selectAll": "Tout sélectionner",
+    "selectNone": "Effacer",
+    "keepUnmatched": "Conserver les images sans ces classes comme échantillons négatifs",
+    "selectedCount": "{{selected}} / {{total}} classes sélectionnées",
+    "preview": "{{images}} images · {{annotations}} annotations",
+    "noClasses": "Sélectionnez au moins une classe",
+    "noImages": "Aucune image ne correspond à la sélection actuelle",
+    "classesTruncated": "Affichage des {{shown}} premières classes sur {{total}} ; saisissez pour filtrer."
   },
   "settings": {
     "title": "Paramètres",

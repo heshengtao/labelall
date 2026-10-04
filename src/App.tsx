@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import CloseIcon from '@mui/icons-material/Close'
 import DatasetOutlinedIcon from '@mui/icons-material/DatasetOutlined'
@@ -37,6 +37,7 @@ import { CategoriesPanel } from '@/features/categories/CategoriesPanel'
 import { ExportButton } from '@/features/export/ExportButton'
 import { ShortcutsDialog } from '@/features/help/ShortcutsDialog'
 import { ImageList } from '@/features/imagelist/ImageList'
+import { clearThumbnailCache } from '@/features/imagelist/thumbnail'
 import { ImportReportDialog } from '@/features/open/ImportReportDialog'
 import { OpenDialog } from '@/features/open/OpenDialog'
 import { beginOpen, cancelOpen, confirmOpen, openHandle } from '@/features/open/openDatasetFlow'
@@ -139,6 +140,14 @@ export default function App() {
   const legalRoute = useLegalStore((state) => state.route)
   const demoSite = isDemoSite()
   useLegalHash()
+
+  // Thumbnails are keyed by dataset-relative path, so drop the cache whenever a
+  // different dataset is opened.
+  useEffect(() => {
+    if (handle?.id) {
+      clearThumbnailCache()
+    }
+  }, [handle?.id])
 
   // The worker (and the parse service) are created on first use so the module
   // is never loaded — and no worker is spawned — until the user opens a dataset.

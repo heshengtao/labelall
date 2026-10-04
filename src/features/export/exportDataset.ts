@@ -11,9 +11,10 @@ export interface ExportOutcome {
 /**
  * Write a dataset out in another format.
  *
- * Files land in `export/<format>/` inside the opened dataset rather than next to
- * the originals: export never overwrites the user's data, and the same code path
- * works for both Tauri and the browser's File System Access API.
+ * The destination comes from the platform (`source.exportTarget`): desktop puts
+ * it in a `LabelAll_export` folder beside the dataset, the browser nests it in
+ * the picked folder. Either way the originals are never overwritten, and the
+ * same code path serves both builds.
  */
 export async function exportDataset(
   source: DatasetSource,
@@ -22,10 +23,10 @@ export async function exportDataset(
   format: ExportFormat,
 ): Promise<ExportOutcome> {
   const result = writeDataset(dataset, format)
-  const prefix = `export/${format}/`
+  const prefix = source.exportTarget(handle, format).prefix
   await source.writeTexts(
     handle,
-    result.files.map((file) => ({ path: `${prefix}${file.path}`, contents: file.contents })),
+    result.files.map((file) => ({ path: `${prefix}/${file.path}`, contents: file.contents })),
   )
   return { files: result.files.length, warnings: result.warnings }
 }

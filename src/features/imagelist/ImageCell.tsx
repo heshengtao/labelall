@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
-
 import { Box, Card, Chip, Stack, Typography } from '@mui/material'
 
 import type { ImageRecord } from '@/core/model'
+
+import { useThumbnail } from './useThumbnail'
+
+/** Decoded at 2× the 120px preview box so it stays sharp on HiDPI screens. */
+const THUMBNAIL_EDGE = 320
 
 export interface ImageCellProps {
   image: ImageRecord
@@ -14,22 +17,7 @@ export interface ImageCellProps {
 }
 
 export function ImageCell({ image, selected, onSelect, onOpen, resolveImageUrl }: ImageCellProps) {
-  const [url, setUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-    resolveImageUrl(image.filePath).then(
-      (value) => {
-        if (!cancelled) setUrl(value)
-      },
-      () => {
-        if (!cancelled) setUrl(null)
-      },
-    )
-    return () => {
-      cancelled = true
-    }
-  }, [image.filePath, resolveImageUrl])
+  const url = useThumbnail(resolveImageUrl, image.filePath, THUMBNAIL_EDGE)
 
   return (
     <Card

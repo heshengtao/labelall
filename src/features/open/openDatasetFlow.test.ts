@@ -15,6 +15,10 @@ function fakeSource(overrides: Partial<DatasetSource> = {}): DatasetSource {
     scan: async () => [{ path: 'a.jpg', isDir: false, size: 1 }],
     readText: async () => '',
     writeTexts: async () => {},
+    exportTarget: (_handle, format) => ({
+      prefix: `LabelAll_export/${format}`,
+      displayPath: `LabelAll_export/${format}`,
+    }),
     getImageUrl: async () => 'blob:x',
     imageSize: async () => null,
     ...overrides,

@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-10-04
+
+### Added
+
+- Pick which classes to export: the export dialog now has a searchable
+  multi-select, and the exported dataset contains only the selected classes and
+  their annotations. Images without any selected class can optionally be kept as
+  negative samples.
+- Exports land in a `LabelAll_export/<format>/` folder **next to** the dataset
+  instead of inside it, and the completion toast shows the full path with a
+  one-click copy button.
+
+### Changed
+
+- Opening large VOC / YOLO / labelme datasets is much faster: annotation files
+  are read with bounded concurrency instead of one at a time, and YOLO no longer
+  looks up image sizes for images that carry no labels.
+- The parse progress bar now advances while a multi-file dataset is read, instead
+  of jumping from 0 to 100.
+- The image grid and filmstrip load downscaled, cached thumbnails with bounded
+  concurrency, keeping decode cost and memory low on large datasets.
+
 ## [0.1.5] - 2026-10-04
 
 ### Added
@@ -153,7 +175,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/heshengtao/labelall/releases/tag/v0.1.6
 [0.1.5]: https://github.com/heshengtao/labelall/releases/tag/v0.1.5
 [0.1.4]: https://github.com/heshengtao/labelall/releases/tag/v0.1.4
 [0.1.3]: https://github.com/heshengtao/labelall/releases/tag/v0.1.3
