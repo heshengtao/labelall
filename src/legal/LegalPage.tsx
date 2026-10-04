@@ -50,7 +50,7 @@ export function LegalPage() {
   const document = key && loaded?.key === key ? loaded.document : null
 
   return (
-    <Box sx={{ flex: 1, overflowY: 'auto' }}>
+    <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
       <Container maxWidth="md" sx={{ py: 3 }}>
         <Button size="small" startIcon={<ArrowBackIcon />} onClick={leaveLegal} sx={{ mb: 2 }}>
           {t('legal.back')}

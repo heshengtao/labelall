@@ -44,7 +44,6 @@ import { SettingsDialog } from '@/features/settings/SettingsDialog'
 import { UpdateDialog } from '@/features/update/UpdateDialog'
 import { Viewer } from '@/features/viewer/Viewer'
 import { ConsentBanner } from '@/legal/ConsentBanner'
-import { LegalFooter } from '@/legal/LegalFooter'
 import { LegalPage } from '@/legal/LegalPage'
 import { useLegalHash } from '@/legal/useLegalHash'
 import { getDatasetSource } from '@/platform'
@@ -317,7 +316,6 @@ export default function App() {
         )}
       </Box>
 
-      {demoSite ? <LegalFooter /> : null}
       {demoSite ? <ConsentBanner /> : null}
 
       <OpenDialog

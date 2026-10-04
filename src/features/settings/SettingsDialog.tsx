@@ -25,6 +25,8 @@ import {
   SUPPORTED_LANGUAGES,
   normalizeLanguage,
 } from '@/i18n'
+import { navigateToLegal } from '@/legal/route'
+import { isDemoSite } from '@/platform/demoSite'
 import { useSettingsStore } from '@/store/settingsStore'
 import { useUiStore } from '@/store/uiStore'
 import { useUpdateStore } from '@/store/updateStore'
@@ -48,6 +50,7 @@ export function SettingsDialog() {
   const colorScheme = useColorScheme()
   const mode = colorScheme?.mode ?? 'system'
   const language = normalizeLanguage(i18n.resolvedLanguage ?? i18n.language)
+  const demoSite = isDemoSite()
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
@@ -128,6 +131,29 @@ export function SettingsDialog() {
               {t('settings.version', { version: APP_VERSION })}
             </Typography>
           </Stack>
+
+          {demoSite ? (
+            <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+              <Button
+                size="small"
+                onClick={() => {
+                  navigateToLegal('privacy')
+                  setOpen(false)
+                }}
+              >
+                {t('legal.privacy')}
+              </Button>
+              <Button
+                size="small"
+                onClick={() => {
+                  navigateToLegal('terms')
+                  setOpen(false)
+                }}
+              >
+                {t('legal.terms')}
+              </Button>
+            </Stack>
+          ) : null}
 
           {recent.length > 0 ? (
             <Stack spacing={0.5}>

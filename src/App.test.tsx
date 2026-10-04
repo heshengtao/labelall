@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import App from './App'
+import { useLegalStore } from './store/legalStore'
 import { createAppTheme } from './theme/createAppTheme'
 
 const theme = createAppTheme()
@@ -50,11 +51,28 @@ describe('App', () => {
     renderApp()
 
     expect(screen.getByText(/never uploaded/)).toBeInTheDocument()
-    // The banner and the persistent footer each offer the policy links.
-    expect(screen.getAllByRole('button', { name: 'Terms of Service' })).toHaveLength(2)
+    expect(screen.getByRole('button', { name: 'Terms of Service' })).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Got it' }))
 
     expect(screen.queryByText(/never uploaded/)).not.toBeInTheDocument()
+  })
+
+  it('opens the legal pages from Settings', async () => {
+    vi.stubEnv('VITE_FORCE_LEGAL', '1')
+    window.location.hash = ''
+    // Dismissed here rather than by clicking, so the notice's own links cannot
+    // shadow the Settings entry and the test does not depend on ordering.
+    useLegalStore.setState({ noticeOpen: false, route: null })
+    renderApp()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Settings' }))
+
+    expect(screen.getByRole('button', { name: 'Privacy Policy' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Terms of Service' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Privacy Policy' }))
+
+    expect(window.location.hash).toBe('#/privacy')
   })
 })

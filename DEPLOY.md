@@ -53,12 +53,43 @@ SPA 回退和静态资源长缓存）。
 
 > 没有配置 `DOCKERHUB_TOKEN` 时，这个 workflow 会**跳过推送并静默成功**，不会让 tag 构建失败。
 
+## 方式三：部署演示站到 Cloudflare Pages
+
+演示站 <https://labelall.superagentparty.com/> 由 Cloudflare Pages 的 `labelall` 项目托管。
+
+> ⚠️ 这个项目**没有连接 Git**（`npx wrangler pages project list` 里 Git Provider 显示为 `No`），
+> 所以 **`git push` 不会触发部署**，必须手动执行下面的命令。
+
+第一次使用先登录一次（浏览器 OAuth，账号需有 `Pages: Edit` 权限）：
+
+```bash
+npx wrangler login
+```
+
+之后每次发布：
+
+```bash
+pnpm build
+npx wrangler pages deploy dist --project-name=labelall --branch=main --commit-dirty=true
+```
+
+- `--branch=main` 与项目的生产分支一致，因此发布到生产域名；命令结束时会打印一个
+  `https://<hash>.labelall.pages.dev` 的预览地址。
+- `--commit-dirty=true` 跳过「工作区有未提交改动」的确认提示（`dist/` 本身在 `.gitignore` 里）。
+- 部署完用真实域名复核一下新包是否生效：
+
+  ```bash
+  curl -s https://labelall.superagentparty.com/ | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js'
+  ```
+
+换成别的账号或项目时，只要改 `--project-name` 即可。
+
 ## 其它托管方式
 
 | 方式 | 适合 | 备注 |
 | --- | --- | --- |
 | **Docker Hub + Docker** | 自建 / 内网 / 想要镜像 | 见上；镜像只是静态托管 |
-| **Cloudflare Pages / Netlify / Vercel** | 公网访问 | 直接部署 `dist/`，自动 HTTPS；CF Pages 可用 project name 加 `--project-name` |
+| **Cloudflare Pages / Netlify / Vercel** | 公网访问 | 直接部署 `dist/`，自动 HTTPS；本项目的演示站见上文「方式三」 |
 | **GitHub Pages** | 仓库 Pages 未被占用时 | 需要 `VITE_BASE=/<repo>/`；本项目已移除该配置，如需可加回 |
 
 > 无论哪种方式，公网访问都必须是 HTTPS，否则浏览器不会允许打开本地文件夹。
@@ -67,7 +98,7 @@ SPA 回退和静态资源长缓存）。
 
 公开演示站（`labelall.superagentparty.com`）会显示一条存储提示横幅，并提供
 **隐私政策**（`#/privacy`）与**用户协议**（`#/terms`）页面。它只是说明性的：应用本身不写
-Cookie，也绝不上传数据集。
+Cookie，也绝不上传数据集。关掉横幅后，仍可从**设置**里重新打开这两个页面。
 
 自托管部署默认**不显示**。如果你也想在自己的站点上打开，构建时设置环境变量即可：
 
