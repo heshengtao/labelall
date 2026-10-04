@@ -128,7 +128,14 @@ async function collectFsFiles(
 }
 
 // --- Legacy fallback: <input webkitdirectory> -------------------------------
-function pickWithInput(): Promise<Map<string, File> | null> {
+interface InputPick {
+  /** Name of the folder the user picked, used as the dataset display name. */
+  name: string
+  /** Files keyed by their path relative to that folder. */
+  files: Map<string, File>
+}
+
+function pickWithInput(): Promise<InputPick | null> {
   return new Promise((resolve) => {
     const input = document.createElement('input')
     input.type = 'file'
@@ -146,15 +153,21 @@ function pickWithInput(): Promise<Map<string, File> | null> {
           return
         }
         const files = new Map<string, File>()
+        let name = ''
         for (const file of list) {
           const segments = (file.webkitRelativePath || file.name).split('/')
-          segments.shift() // drop the picked root folder name
+          // The first segment is the picked root folder; it is dropped from the
+          // relative paths but kept as the dataset's display name.
+          if (!name) {
+            name = segments[0] ?? ''
+          }
+          segments.shift()
           const path = segments.join('/')
           if (path) {
             files.set(path, file)
           }
         }
-        resolve(files)
+        resolve({ name, files })
       },
       { once: true },
     )
@@ -183,13 +196,12 @@ export function createWebSource(): DatasetSource {
         return { id, root: '', displayName: dir.name }
       }
 
-      const files = await pickWithInput()
-      if (!files) {
+      const picked = await pickWithInput()
+      if (!picked) {
         return null
       }
-      stored.set(id, { kind: 'input', files })
-      const first = [...files.keys()][0] ?? 'dataset'
-      return { id, root: '', displayName: first.split('/')[0] }
+      stored.set(id, { kind: 'input', files: picked.files })
+      return { id, root: '', displayName: picked.name || 'dataset' }
     },
 
     async scan(handle): Promise<DetectedFile[]> {

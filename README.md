@@ -1,50 +1,56 @@
-<div align="center">
-
-# LabelAll
-
-**Load, view and annotate common image datasets**
-
-Opening and labelling an image dataset should be as easy as picking a folder.
-
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
-[![Release](https://img.shields.io/github/v/release/heshengtao/labelall?style=flat-square)](../../releases)
-
-</div>
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="LabelAll — open, view and annotate COCO, YOLO, VOC and ImageFolder image datasets straight from a folder">
+</p>
 
 <p align="center">
-  <a href="README_zh.md"><b>简体中文</b></a> ·
-  <a href="README_zh_TW.md"><b>繁體中文</b></a> ·
-  <a href="README.md"><b>English</b></a> ·
-  <a href="README_ja.md"><b>日本語</b></a> ·
-  <a href="README_ko.md"><b>한국어</b></a> ·
-  <a href="README_es.md"><b>Español</b></a> ·
-  <a href="README_fr.md"><b>Français</b></a> ·
-  <a href="README_de.md"><b>Deutsch</b></a> ·
-  <a href="README_ru.md"><b>Русский</b></a> ·
-  <a href="README_ar.md"><b>العربية</b></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License: Apache-2.0"></a>
+  <a href="../../releases"><img src="https://img.shields.io/github/v/release/heshengtao/labelall?style=flat-square" alt="Latest release"></a>
+  <a href="https://hub.docker.com/r/ailm32442/labelall"><img src="https://img.shields.io/badge/docker-ailm32442%2Flabelall-2496ED.svg?logo=docker&logoColor=white" alt="Docker image"></a>
+</p>
+
+<p align="center">
+  <b><a href="https://labelall.superagentparty.com/">Live demo</a></b> ·
+  <b><a href="../../releases">Download for desktop</a></b> ·
+  <b><a href="#3-run-it-with-docker">Run with Docker</a></b> ·
+  <b><a href="./DEPLOY.md">Self-host</a></b>
+</p>
+
+<p align="center">
+  <a href="README_zh.md">简体中文</a> ·
+  <a href="README_zh_TW.md">繁體中文</a> ·
+  <a href="README.md">English</a> ·
+  <a href="README_ja.md">日本語</a> ·
+  <a href="README_ko.md">한국어</a> ·
+  <a href="README_es.md">Español</a> ·
+  <a href="README_fr.md">Français</a> ·
+  <a href="README_de.md">Deutsch</a> ·
+  <a href="README_ru.md">Русский</a> ·
+  <a href="README_ar.md">العربية</a>
 </p>
 
 ---
 
-## What is LabelAll
+<p align="center">
+  <img src="./assets/readme/showcase.png" width="100%" alt="LabelAll showing a Pascal VOC dataset: the image list, the annotation toolbar with class and layer controls, and two bounding boxes drawn on the current image.">
+</p>
 
 LabelAll is a **free, open-source** tool for opening, browsing, annotating and exporting common
-image datasets.
+image datasets. There is no format conversion step and no project file to set up — pick a folder
+and it reads what is already there.
 
-No code, no format conversion first, no hunting for the annotation files — pick a folder and it
-takes care of the rest. It is for computer-vision engineers, annotation and QA teams, students and
-researchers, and anyone who needs to look at or edit a batch of image labels quickly.
+It is built for computer-vision engineers, annotation and QA teams, students and researchers, and
+anyone who needs to look at or fix a batch of image labels quickly.
 
 ## What it does
 
 **Open and go**
 
-- Pick a folder: the format is detected automatically, no setup.
+- Pick a folder; the dataset format is detected automatically.
 - Forgiving reading: broken, missing or non-standard files are skipped and summarised in a dialog,
   so one bad file never blocks the whole dataset.
 - A thumbnail list that stays smooth with tens of thousands of images.
-- Filter by split (train / val / test) or class, and search by file name; double-click a thumbnail
-  to open it in the viewer.
+- Filter by split (train / val / test) or class, and search by file name; double-click a thumbnail to
+  open it in the viewer.
 
 **See clearly**
 
@@ -69,8 +75,12 @@ researchers, and anyone who needs to look at or edit a batch of image labels qui
 **A pleasure to use**
 
 - Light and dark themes with a customisable accent colour and palette.
-- Ten interface languages (including right-to-left Arabic); the desktop app updates itself, and
-  the web build feels the same.
+- Ten interface languages, including right-to-left Arabic; the desktop app updates itself, and the
+  web build feels the same.
+
+<p align="center">
+  <img src="./assets/readme/showcase-more.png" width="100%" alt="Left: LabelAll detecting a Pascal VOC dataset with 100% confidence. Right: the same annotated image in the dark theme.">
+</p>
 
 ## Supported datasets
 
@@ -85,11 +95,63 @@ researchers, and anyone who needs to look at or edit a batch of image labels qui
 > MS COCO, ImageNet / ILSVRC, Pascal VOC 2007/2012 and other public datasets can be opened in their
 > native format.
 
+## Run it
+
+There are three ways to use LabelAll. All of them run entirely on your machine — the app has **no
+backend**, so the images and annotations you open are never uploaded anywhere.
+
+### 1. Try it in the browser
+
+Open **<https://labelall.superagentparty.com/>** and pick a dataset folder. Nothing to install.
+
+> The web build needs the browser's File System Access API, so it must be served over **HTTPS** (or
+> `localhost`). **Chrome / Edge** can read and write; **Firefox / Safari** open datasets read-only.
+
+### 2. Install the desktop app
+
+Grab the installer for your system from the [Releases](../../releases) page — **macOS, Windows and
+Linux**. This is the recommended way to annotate, since it can always write back to disk.
+
+> **First launch on macOS**: the build is not notarized. If macOS says the app is “damaged” or cannot
+> verify the developer, run `xattr -cr /Applications/LabelAll.app` in Terminal, then open it — or
+> right-click the app and choose “Open”.
+
+### 3. Run it with Docker
+
+The web build is a plain static bundle, so the image is just `nginx` plus the compiled app. The
+published image is multi-arch (`linux/amd64` and `linux/arm64`):
+
+```bash
+docker run --rm -p 8080:80 ailm32442/labelall:latest
+```
+
+Then open <http://localhost:8080>.
+
+Or build it yourself from a checkout:
+
+```bash
+docker build -t labelall .
+docker run --rm -p 8080:80 labelall
+
+# or
+docker compose up -d --build
+```
+
+> Tags are built and pushed to Docker Hub automatically when you push a version tag
+> (`git tag v0.1.3 && git push origin v0.1.3`), producing semantic-version tags plus `latest`.
+> See [DEPLOY.md](./DEPLOY.md) for Docker Hub setup and other hosting options (Cloudflare Pages,
+> Netlify, Vercel, …).
+
 ## Quick start
 
 1. Open LabelAll and click “Open dataset”, then choose the dataset folder.
 2. Confirm the detected format and start browsing.
 3. Add or edit annotations, then export to the format you want.
+
+> Want to try it first? [`examples/voc-mini`](./examples/voc-mini) is a three-image Pascal VOC
+> dataset — open it directly.
+
+## Keyboard shortcuts
 
 | Action | Shortcut |
 | --- | --- |
@@ -100,18 +162,6 @@ researchers, and anyone who needs to look at or edit a batch of image labels qui
 | Undo / redo | `Ctrl`·`Cmd` + `Z` / `Shift` + `Ctrl`·`Cmd` + `Z` |
 | Zoom in / out / fit | `+` / `-` / `0` |
 | Pan the canvas | Drag the empty canvas, or `Space` + drag |
-
-> Want to try it first? [`examples/voc-mini`](./examples/voc-mini) is a three-image Pascal VOC
-> dataset — open it directly.
-
-## Download
-
-Grab the installer for your system from the [Releases](../../releases) page (macOS / Windows /
-Linux), or run the web build with `docker compose up -d --build` (see [DEPLOY.md](./DEPLOY.md)).
-
-> **First launch on macOS**: the build is not notarized. If macOS says the app is “damaged” or cannot
-> verify the developer, run `xattr -cr /Applications/LabelAll.app` in Terminal, then open it — or
-> right-click the app and choose “Open”.
 
 ## Known limitations
 
