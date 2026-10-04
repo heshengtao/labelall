@@ -185,5 +185,14 @@
     "warningTitle": "已导入，但有提示",
     "errorHint": "无法读取这个数据集。请确认选择的是正确的文件夹，且文件完整，然后重试。",
     "warningHint": "数据集已载入，但以下内容被跳过或被宽松处理："
+  },
+  "legal": {
+    "bannerTitle": "你的数据只保存在本地",
+    "bannerBody": "LabelAll 完全在你的浏览器中运行：数据集只在本地读取与解析，绝不会上传。本站仅在本地保存你的偏好设置与界面语言。",
+    "bannerAccept": "知道了",
+    "privacy": "隐私政策",
+    "terms": "用户协议",
+    "updated": "最后更新于 {{date}}",
+    "back": "返回"
   }
 }

@@ -1,0 +1,319 @@
+{
+  "privacy": {
+    "title": "Privacy Policy",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "overview",
+        "heading": "1. Overview and scope",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "This policy explains how the LabelAll demo website at labelall.superagentparty.com (the “Site”) handles information. LabelAll is a free, open-source tool that opens, views and annotates image datasets entirely on your own device. It has no backend and no user accounts."
+          },
+          {
+            "kind": "p",
+            "text": "It is written to meet the transparency requirements of the EU General Data Protection Regulation (GDPR) and the Personal Information Protection Law of the People's Republic of China (PIPL)."
+          }
+        ]
+      },
+      {
+        "id": "what-we-process",
+        "heading": "2. What we process",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "We keep the information we handle to an absolute minimum. There are three categories:"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Your datasets — completely local. The images, annotation files and labels you open are read directly from your own device through your browser's File System Access API. They are parsed in your browser and are never uploaded, transmitted, copied or stored on any server. We cannot see them.",
+              "On-device preferences — browser localStorage. The Site saves three things in your own browser: your theme accent colour, your default export format, and a list of recently opened datasets (name and folder path only, never their contents). The Site does not set any HTTP cookies of its own.",
+              "Hosting logs — Cloudflare. The Site is served by Cloudflare, which as our hosting and security provider may record access logs such as your IP address, user agent and request time, and may set a strictly necessary security cookie (__cf_bm). This is standard for any website and is used only to deliver the Site and protect it from abuse."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "what-we-dont-do",
+        "heading": "3. What we do not do",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "To be explicit, we do none of the following:"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "No accounts, logins or user profiles.",
+              "No analytics, telemetry, tracking pixels or advertising.",
+              "No profiling and no automated decision-making.",
+              "No selling, renting or sharing of personal information for marketing.",
+              "No upload of your datasets or annotations — the tool is incapable of sending them anywhere."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "retention",
+        "heading": "4. Where information is stored and for how long",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Preferences are stored only in your browser's localStorage on your own device, under the keys labelall.settings and labelall.language. They stay there until you clear this site's data in your browser or reset them in Settings. Clearing them only resets your preferences; it never touches your dataset files."
+          },
+          {
+            "kind": "p",
+            "text": "Cloudflare's access logs are kept for a short period determined by Cloudflare's own configuration and policies; see the Cloudflare privacy policy linked in section 5."
+          }
+        ]
+      },
+      {
+        "id": "processors",
+        "heading": "5. Third-party providers",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Running a public website inevitably involves third parties. The only ones involved here are:"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Cloudflare, Inc. — hosting, content delivery and security. It processes access logs and may set the security cookie described above.",
+              "GitHub, Inc. — only the desktop application contacts GitHub, not this Site: on startup the desktop app asks GitHub Releases whether a newer version exists. It sends no personal data, and that check is disabled in the web build."
+            ]
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "Cloudflare privacy policy",
+                "href": "https://www.cloudflare.com/privacypolicy/"
+              },
+              {
+                "label": "GitHub privacy statement",
+                "href": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "transfers",
+        "heading": "6. International transfers",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "The Site is hosted on Cloudflare's global network, so access logs may be processed outside your country. Cloudflare maintains appropriate safeguards for such transfers, such as standard contractual clauses. Because the contents of your datasets never leave your device, no dataset data is ever transferred."
+          }
+        ]
+      },
+      {
+        "id": "rights",
+        "heading": "7. Your rights",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Depending on where you live, you may have rights over the personal information we hold. In practice this is limited to the hosting logs described above, since everything else stays on your device:"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "GDPR (EU/EEA/UK): access, rectification, erasure, restriction of processing, objection to processing, data portability, and the right to lodge a complaint with your local supervisory authority.",
+              "PIPL (China): to know and decide on the processing of your personal information, to consult and copy it, to request correction or supplementation, to request deletion, to withdraw consent, to request an explanation of the processing rules, and to complain to a competent authority."
+            ]
+          },
+          {
+            "kind": "p",
+            "text": "To exercise any of these rights, please contact us using the details below."
+          }
+        ]
+      },
+      {
+        "id": "children",
+        "heading": "8. Children",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "The Site is a general-purpose developer tool and is not directed at children. We do not knowingly collect personal information from children."
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "9. Changes to this policy",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "We may update this policy as the tool evolves. When we do, we change the version and date shown at the top, and the on-site notice reappears so you can review the updated policy."
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "10. Contact",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "For any question or request about this policy, open an issue in the project repository or email us:"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "LabelAll issue tracker",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "acceptance",
+        "heading": "1. Acceptance of these terms",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "By accessing the LabelAll demo website or using the software, you agree to these Terms of Service. If you do not agree, please do not use the Site."
+          }
+        ]
+      },
+      {
+        "id": "service",
+        "heading": "2. What the service is",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll is a free, open-source tool for opening, viewing, annotating and exporting common image dataset formats, including COCO, YOLO, Pascal VOC and ImageFolder. It runs entirely in your browser or as a desktop application. There is no hosted backend and no user account."
+          },
+          {
+            "kind": "p",
+            "text": "The Site is provided free of charge, on an “as is” and “as available” basis, without warranties of any kind."
+          }
+        ]
+      },
+      {
+        "id": "license",
+        "heading": "3. Licence and open source",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll's source code is released under the Apache License 2.0, and your use of the source code is governed by that licence. These terms additionally govern your use of the hosted demo Site."
+          },
+          {
+            "kind": "links",
+            "items": [
+              { "label": "Source repository", "href": "https://github.com/heshengtao/labelall" },
+              {
+                "label": "Apache-2.0 licence",
+                "href": "https://github.com/heshengtao/labelall/blob/main/LICENSE"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "responsibilities",
+        "heading": "4. Your responsibilities",
+        "blocks": [
+          {
+            "kind": "ul",
+            "items": [
+              "You are responsible for the datasets you open, and you must hold the necessary rights and permissions to view, annotate and export them.",
+              "You must not use the Site or the software for any unlawful purpose, or in any way that infringes the rights of others.",
+              "Because all processing happens on your own device, you are responsible for keeping backups of your data."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "intellectual-property",
+        "heading": "5. Intellectual property",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "The LabelAll name, logo and the hosted Site belong to their respective owners. Your datasets and annotations remain entirely yours: we claim no rights over them, and we never receive a copy."
+          }
+        ]
+      },
+      {
+        "id": "warranty",
+        "heading": "6. Disclaimer of warranties",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "The Site and the software are provided without warranty of any kind, express or implied, including but not limited to fitness for a particular purpose, accuracy or non-infringement. Annotation and export results may contain errors, so always verify your data before relying on it. Export writes new files and never modifies your originals."
+          }
+        ]
+      },
+      {
+        "id": "liability",
+        "heading": "7. Limitation of liability",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "To the maximum extent permitted by law, the authors and maintainers are not liable for any indirect, incidental or consequential damages, or for any loss of data or profits, arising from your use of the Site or the software."
+          }
+        ]
+      },
+      {
+        "id": "third-party",
+        "heading": "8. Third-party services",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "The Site is hosted on Cloudflare and links to GitHub. Your use of those services is subject to their own terms and policies; see the Privacy Policy for details."
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "9. Changes and termination",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "We may modify, suspend or discontinue the Site at any time. We may also update these terms, and continuing to use the Site after an update means you accept the new terms. The open-source licence in section 3 survives any such change."
+          }
+        ]
+      },
+      {
+        "id": "governing-law",
+        "heading": "10. Governing law and disputes",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "These terms are governed by the laws of the People's Republic of China, without regard to conflict-of-law rules. Disputes will be submitted to the competent courts at the maintainer's place of residence. If you are a consumer resident in the EU/EEA, the mandatory consumer-protection rules of your country of residence continue to apply."
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "11. Contact",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "For any question about these terms, open an issue in the project repository or email us:"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "LabelAll issue tracker",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

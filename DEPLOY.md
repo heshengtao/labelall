@@ -62,3 +62,18 @@ SPA 回退和静态资源长缓存）。
 | **GitHub Pages** | 仓库 Pages 未被占用时 | 需要 `VITE_BASE=/<repo>/`；本项目已移除该配置，如需可加回 |
 
 > 无论哪种方式，公网访问都必须是 HTTPS，否则浏览器不会允许打开本地文件夹。
+
+## 演示站的合规提示
+
+公开演示站（`labelall.superagentparty.com`）会显示一条存储提示横幅，并提供
+**隐私政策**（`#/privacy`）与**用户协议**（`#/terms`）页面。它只是说明性的：应用本身不写
+Cookie，也绝不上传数据集。
+
+自托管部署默认**不显示**。如果你也想在自己的站点上打开，构建时设置环境变量即可：
+
+```bash
+VITE_FORCE_LEGAL=1 pnpm build
+```
+
+想把提示固定到另一个域名（而不是靠环境变量），改
+`src/platform/demoSite.ts` 里的 `DEMO_HOSTNAMES` 即可。

@@ -185,5 +185,14 @@
     "warningTitle": "已匯入，但有提示",
     "errorHint": "無法讀取此資料集。請確認選取的是正確的資料夾，且檔案完整，然後重試。",
     "warningHint": "資料集已載入，但以下內容被略過或寬鬆處理："
+  },
+  "legal": {
+    "bannerTitle": "你的資料只保存在本地",
+    "bannerBody": "LabelAll 完全在你的瀏覽器中執行：資料集只在本地讀取與解析，絕不會上傳。本站僅在本地儲存你的偏好設定與介面語言。",
+    "bannerAccept": "知道了",
+    "privacy": "隱私政策",
+    "terms": "使用者條款",
+    "updated": "最後更新於 {{date}}",
+    "back": "返回"
   }
 }

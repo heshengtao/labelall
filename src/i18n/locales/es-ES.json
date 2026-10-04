@@ -185,5 +185,14 @@
     "warningTitle": "Importado con avisos",
     "errorHint": "No se ha podido leer este dataset. Comprueba que has elegido la carpeta correcta y que sus archivos están completos, y vuelve a intentarlo.",
     "warningHint": "El dataset se ha cargado, pero lo siguiente se omitió o se interpretó de forma flexible:"
+  },
+  "legal": {
+    "bannerTitle": "Tus datos se quedan en tu dispositivo",
+    "bannerBody": "LabelAll funciona enteramente en tu navegador: tus conjuntos de datos se leen y procesan localmente y nunca se suben. Este sitio solo guarda tus preferencias y tu idioma en tu dispositivo.",
+    "bannerAccept": "Entendido",
+    "privacy": "Política de privacidad",
+    "terms": "Términos del servicio",
+    "updated": "Última actualización: {{date}}",
+    "back": "Atrás"
   }
 }

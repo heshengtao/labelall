@@ -104,6 +104,12 @@ backend**, so the images and annotations you open are never uploaded anywhere.
 
 Open **<https://labelall.superagentparty.com/>** and pick a dataset folder. Nothing to install.
 
+> The demo site shows a short storage notice and links to its
+> [privacy policy](https://labelall.superagentparty.com/#/privacy) and
+> [terms of service](https://labelall.superagentparty.com/#/terms). It is informational only — the
+> app sets no cookies and never uploads your datasets. Self-hosted builds do not show it unless you
+> build with `VITE_FORCE_LEGAL=1`.
+
 > The web build needs the browser's File System Access API, so it must be served over **HTTPS** (or
 > `localhost`). **Chrome / Edge** can read and write; **Firefox / Safari** open datasets read-only.
 

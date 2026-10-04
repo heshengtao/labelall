@@ -1,0 +1,319 @@
+{
+  "privacy": {
+    "title": "隐私政策",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "overview",
+        "heading": "一、概述与适用范围",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本政策说明 LabelAll 演示站点（labelall.superagentparty.com，下称“本站”）如何处理信息。LabelAll 是一款免费、开源的工具，完全在你自己的设备上打开、查看和标注图像数据集，没有后端，也没有用户账号。"
+          },
+          {
+            "kind": "p",
+            "text": "本政策按照欧盟《通用数据保护条例》（GDPR）与《中华人民共和国个人信息保护法》（PIPL）的透明性要求撰写。"
+          }
+        ]
+      },
+      {
+        "id": "what-we-process",
+        "heading": "二、我们处理哪些信息",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "我们处理的信息被压缩到最低限度，只有以下三类："
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "你的数据集——完全在本地处理。你打开的图片、标注文件和标签，均通过浏览器的 File System Access API 直接读取自你的设备，并在浏览器中解析，绝不会上传、传输、复制或存储到任何服务器。我们无法看到它们。",
+              "设备上的偏好设置——浏览器 localStorage。本站只在你自己的浏览器中保存三项内容：主题强调色、默认导出格式，以及最近打开的数据集列表（仅名称和文件夹路径，绝不含内容）。本站自身不写入任何 HTTP Cookie。",
+              "托管日志——Cloudflare。本站由 Cloudflare 提供托管与安全防护，其可能记录你的 IP 地址、User-Agent、请求时间等访问日志，并可能写入一枚严格必要的安全 Cookie（__cf_bm）。这是任何网站的标准做法，仅用于提供本站服务并防范滥用。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "what-we-dont-do",
+        "heading": "三、我们不会做的事",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "明确说明，我们不做以下任何一项："
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "不设账号、登录或用户画像。",
+              "不做统计分析、遥测、追踪像素或广告。",
+              "不做用户画像，也不做自动化决策。",
+              "不出售、出租或为营销目的共享个人信息。",
+              "不上传你的数据集或标注——该工具在设计上就不具备将数据发送出去的能力。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "retention",
+        "heading": "四、信息存储在哪里、保存多久",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "偏好设置仅存放在你设备上的浏览器 localStorage 中，键名为 labelall.settings 与 labelall.language，直到你在浏览器中清除本站数据或在“设置”中重置为止。清除它们只会重置偏好，绝不会影响你的数据集文件。"
+          },
+          {
+            "kind": "p",
+            "text": "Cloudflare 的访问日志按 Cloudflare 自身的配置与政策保留一段较短的时间；详见第五节链接的 Cloudflare 隐私政策。"
+          }
+        ]
+      },
+      {
+        "id": "processors",
+        "heading": "五、第三方服务提供者",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "运营一个公开网站不可避免地会涉及第三方。本站涉及的仅有以下两家："
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Cloudflare, Inc.——提供托管、内容分发与安全防护，会处理上述访问日志并可能写入上述安全 Cookie。",
+              "GitHub, Inc.——只有桌面端应用会访问 GitHub，本站不会：桌面端启动时会向 GitHub Releases 询问是否有新版本。该请求不发送任何个人信息，且在 Web 版中已禁用。"
+            ]
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "Cloudflare 隐私政策",
+                "href": "https://www.cloudflare.com/privacypolicy/"
+              },
+              {
+                "label": "GitHub 隐私声明",
+                "href": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "transfers",
+        "heading": "六、跨境传输",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本站托管在 Cloudflare 的全球网络上，因此访问日志可能在你的所在国之外被处理。Cloudflare 为此类传输维持了适当的保障措施（例如标准合同条款）。由于你的数据集内容从不离开你的设备，因此不会有任何数据集数据被传输。"
+          }
+        ]
+      },
+      {
+        "id": "rights",
+        "heading": "七、你的权利",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "视你所在地区的法律，你可能对我们持有的你的个人信息享有相应权利。实际上这只涉及上述托管日志，因为其余一切始终留在你的设备上："
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "GDPR（欧盟/欧洲经济区/英国）：访问、更正、删除、限制处理、反对处理、数据可携带，以及向当地监管机构投诉的权利。",
+              "PIPL（中国）：知情与决定权、查阅与复制权、更正与补充权、删除权、撤回同意权、要求解释处理规则的权利，以及向主管部门投诉的权利。"
+            ]
+          },
+          {
+            "kind": "p",
+            "text": "如需行使上述任何权利，请通过下方联系方式与我们联系。"
+          }
+        ]
+      },
+      {
+        "id": "children",
+        "heading": "八、儿童",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本站是面向开发者的通用工具，并非面向儿童。我们不会在明知的情况下收集儿童的个人信息。"
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "九、本政策的变更",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "随着工具演进，我们可能更新本政策。更新时，我们会修改顶部的版本与日期，站内提示也会重新出现，以便你审阅更新后的政策。"
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "十、联系方式",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "如对本政策有任何疑问或请求，请在项目仓库中提交 issue，或发送邮件至："
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "LabelAll issue 列表",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "用户协议",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "acceptance",
+        "heading": "一、协议的接受",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "访问 LabelAll 演示站点或使用本软件，即表示你同意本用户协议。如不同意，请勿使用本站。"
+          }
+        ]
+      },
+      {
+        "id": "service",
+        "heading": "二、服务内容",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll 是一款免费、开源的工具，用于打开、查看、标注并导出常见图像数据集格式，包括 COCO、YOLO、Pascal VOC 和 ImageFolder。它完全在你的浏览器或桌面应用中运行，没有托管后端，也没有用户账号。"
+          },
+          {
+            "kind": "p",
+            "text": "本站按“现状”和“可用”的原则免费提供，不附带任何形式的保证。"
+          }
+        ]
+      },
+      {
+        "id": "license",
+        "heading": "三、许可与开源",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll 的源代码以 Apache License 2.0 发布，你对源代码的使用受该许可约束。本协议另行约束你对托管演示站点的使用。"
+          },
+          {
+            "kind": "links",
+            "items": [
+              { "label": "源代码仓库", "href": "https://github.com/heshengtao/labelall" },
+              {
+                "label": "Apache-2.0 许可",
+                "href": "https://github.com/heshengtao/labelall/blob/main/LICENSE"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "responsibilities",
+        "heading": "四、你的责任",
+        "blocks": [
+          {
+            "kind": "ul",
+            "items": [
+              "你对自己打开的数据集负责，必须拥有查看、标注和导出它们所需的全部权利与授权。",
+              "你不得将本站或本软件用于任何违法用途，也不得用于侵犯他人权利。",
+              "由于全部处理都在你自己的设备上完成，请自行负责数据备份。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "intellectual-property",
+        "heading": "五、知识产权",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll 的名称、标识与托管站点归各自权利人所有。你的数据集与标注始终完全属于你：我们不主张任何权利，也从不获取其副本。"
+          }
+        ]
+      },
+      {
+        "id": "warranty",
+        "heading": "六、免责声明",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本站与软件不附带任何明示或默示的保证，包括但不限于对特定用途的适用性、准确性与不侵权。标注与导出结果可能存在错误，请在依赖之前务必自行核对。导出只会写入新文件，绝不修改你的原始文件。"
+          }
+        ]
+      },
+      {
+        "id": "liability",
+        "heading": "七、责任限制",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "在法律允许的最大范围内，作者与维护者不对因你使用本站或本软件而产生的任何间接、附带或后果性损害，以及任何数据或利润损失承担责任。"
+          }
+        ]
+      },
+      {
+        "id": "third-party",
+        "heading": "八、第三方服务",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本站托管于 Cloudflare，并包含指向 GitHub 的链接。你对这些服务的使用受其各自的条款与政策约束；详见《隐私政策》。"
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "九、变更与终止",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "我们可能随时修改、暂停或终止本站。我们也可能更新本协议，更新后继续使用本站即视为你接受新协议。第三条中的开源许可不因上述变更而失效。"
+          }
+        ]
+      },
+      {
+        "id": "governing-law",
+        "heading": "十、适用法律与争议解决",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本协议适用中华人民共和国法律，不考虑法律冲突规则。争议将提交维护者住所地有管辖权的法院解决。若你是居住于欧盟/欧洲经济区的消费者，你所在国家/地区的强制性消费者保护规定仍然适用。"
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "十一、联系方式",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "如对本协议有任何疑问，请在项目仓库中提交 issue，或发送邮件至："
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "LabelAll issue 列表",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -185,5 +185,14 @@
     "warningTitle": "Imported with notes",
     "errorHint": "This dataset could not be read. Check that you picked the right folder and that its files are complete, then try again.",
     "warningHint": "The dataset loaded, but the following was skipped or interpreted loosely:"
+  },
+  "legal": {
+    "bannerTitle": "Your data stays on your device",
+    "bannerBody": "LabelAll runs entirely in your browser: your datasets are read and parsed locally and are never uploaded. This site stores only your preferences and language on your device.",
+    "bannerAccept": "Got it",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "updated": "Last updated {{date}}",
+    "back": "Back"
   }
 }

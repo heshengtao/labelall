@@ -43,8 +43,13 @@ import { beginOpen, cancelOpen, confirmOpen, openHandle } from '@/features/open/
 import { SettingsDialog } from '@/features/settings/SettingsDialog'
 import { UpdateDialog } from '@/features/update/UpdateDialog'
 import { Viewer } from '@/features/viewer/Viewer'
+import { ConsentBanner } from '@/legal/ConsentBanner'
+import { LegalFooter } from '@/legal/LegalFooter'
+import { LegalPage } from '@/legal/LegalPage'
+import { useLegalHash } from '@/legal/useLegalHash'
 import { getDatasetSource } from '@/platform'
 import { detectRuntimeEnv } from '@/platform/detect-env'
+import { isDemoSite } from '@/platform/demoSite'
 import { GITHUB_URL, openExternal } from '@/platform/openExternal'
 import {
   handleTopBarPointerDown,
@@ -52,6 +57,7 @@ import {
   isMacDesktop,
 } from '@/platform/windowChrome'
 import { useDatasetStore } from '@/store/datasetStore'
+import { useLegalStore } from '@/store/legalStore'
 import { useSettingsStore, type RecentDataset } from '@/store/settingsStore'
 import { useUiStore } from '@/store/uiStore'
 import type { ParseService } from '@/workers/parseClient'
@@ -131,6 +137,9 @@ export default function App() {
   const setSettingsOpen = useUiStore((state) => state.setSettingsOpen)
   const recent = useSettingsStore((state) => state.recent)
   const rememberDataset = useSettingsStore((state) => state.rememberDataset)
+  const legalRoute = useLegalStore((state) => state.route)
+  const demoSite = isDemoSite()
+  useLegalHash()
 
   // The worker (and the parse service) are created on first use so the module
   // is never loaded — and no worker is spawned — until the user opens a dataset.
@@ -280,7 +289,9 @@ export default function App() {
         component="main"
         sx={{ flex: 1, display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}
       >
-        {dataset && handle ? (
+        {demoSite && legalRoute ? (
+          <LegalPage />
+        ) : dataset && handle ? (
           <Stack sx={{ flex: 1, minHeight: 0 }}>
             <DatasetHeader name={handle.displayName} dataset={dataset} warnings={warnings} />
             {viewMode === 'viewer' ? (
@@ -305,6 +316,9 @@ export default function App() {
           </Stack>
         )}
       </Box>
+
+      {demoSite ? <LegalFooter /> : null}
+      {demoSite ? <ConsentBanner /> : null}
 
       <OpenDialog
         open={pending !== null}

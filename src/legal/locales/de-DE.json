@@ -1,0 +1,319 @@
+{
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "overview",
+        "heading": "1. Überblick und Geltungsbereich",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Diese Erklärung beschreibt, wie die LabelAll-Demoseite unter labelall.superagentparty.com (die „Website“) mit Informationen umgeht. LabelAll ist ein kostenloses Open-Source-Werkzeug, das Bilddatensätze vollständig auf Ihrem eigenen Gerät öffnet, anzeigt und annotiert. Es gibt kein Backend und keine Benutzerkonten."
+          },
+          {
+            "kind": "p",
+            "text": "Sie ist so verfasst, dass sie die Transparenzanforderungen der Datenschutz-Grundverordnung der EU (DSGVO) und des Gesetzes der Volksrepublik China über den Schutz personenbezogener Informationen (PIPL) erfüllt."
+          }
+        ]
+      },
+      {
+        "id": "what-we-process",
+        "heading": "2. Welche Informationen wir verarbeiten",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Wir halten die verarbeiteten Informationen absolut minimal. Es gibt nur drei Kategorien:"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Ihre Datensätze – vollständig lokal. Die Bilder, Annotationsdateien und Labels, die Sie öffnen, werden direkt von Ihrem Gerät über die File System Access API Ihres Browsers gelesen. Sie werden in Ihrem Browser ausgewertet und niemals auf einen Server hochgeladen, übertragen, kopiert oder dort gespeichert. Wir können sie nicht sehen.",
+              "Einstellungen auf dem Gerät – Browser-localStorage. Die Website speichert drei Dinge in Ihrem Browser: die Akzentfarbe des Designs, Ihr Standard-Exportformat und eine Liste der zuletzt geöffneten Datensätze (nur Name und Ordnerpfad, niemals deren Inhalt). Die Website setzt selbst keine HTTP-Cookies.",
+              "Hosting-Protokolle – Cloudflare. Die Website wird von Cloudflare bereitgestellt, das als unser Hosting- und Sicherheitsanbieter Zugriffsprotokolle wie Ihre IP-Adresse, den User-Agent und die Anfragezeit erfassen und ein unbedingt erforderliches Sicherheits-Cookie (__cf_bm) setzen kann. Das ist für jede Website üblich und dient nur der Bereitstellung der Website und dem Schutz vor Missbrauch."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "what-we-dont-do",
+        "heading": "3. Was wir nicht tun",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Um es klar zu sagen: Wir tun nichts von alledem."
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Keine Konten, Anmeldungen oder Benutzerprofile.",
+              "Keine Analyse, Telemetrie, Tracking-Pixel oder Werbung.",
+              "Keine Profilbildung und keine automatisierten Entscheidungen.",
+              "Kein Verkauf, keine Vermietung und keine Weitergabe personenbezogener Informationen zu Marketingzwecken.",
+              "Kein Hochladen Ihrer Datensätze oder Annotationen – das Werkzeug ist gar nicht in der Lage, sie irgendwohin zu senden."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "retention",
+        "heading": "4. Wo Informationen gespeichert werden und wie lange",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Einstellungen werden ausschließlich im localStorage Ihres Browsers auf Ihrem eigenen Gerät unter den Schlüsseln labelall.settings und labelall.language gespeichert. Sie bleiben dort, bis Sie die Daten dieser Website in Ihrem Browser löschen oder sie in den Einstellungen zurücksetzen. Das Löschen setzt nur Ihre Einstellungen zurück; Ihre Datensatzdateien werden nie berührt."
+          },
+          {
+            "kind": "p",
+            "text": "Die Zugriffsprotokolle von Cloudflare werden für einen kurzen Zeitraum aufbewahrt, der durch Cloudflares eigene Konfiguration und Richtlinien bestimmt wird; siehe die in Abschnitt 5 verlinkte Datenschutzerklärung von Cloudflare."
+          }
+        ]
+      },
+      {
+        "id": "processors",
+        "heading": "5. Drittanbieter",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Der Betrieb einer öffentlichen Website bringt zwangsläufig Dritte mit sich. Die einzigen hier Beteiligten sind:"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Cloudflare, Inc. – Hosting, Bereitstellung von Inhalten und Sicherheit. Es verarbeitet die Zugriffsprotokolle und kann das oben beschriebene Sicherheits-Cookie setzen.",
+              "GitHub, Inc. – nur die Desktop-App kontaktiert GitHub, nicht diese Website: Beim Start fragt die Desktop-App bei GitHub Releases nach einer neueren Version. Sie sendet keine personenbezogenen Daten, und diese Prüfung ist in der Web-Version deaktiviert."
+            ]
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "Datenschutzerklärung von Cloudflare",
+                "href": "https://www.cloudflare.com/privacypolicy/"
+              },
+              {
+                "label": "Datenschutzhinweise von GitHub",
+                "href": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "transfers",
+        "heading": "6. Internationale Übermittlungen",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Die Website wird im globalen Netzwerk von Cloudflare gehostet, sodass Zugriffsprotokolle außerhalb Ihres Landes verarbeitet werden können. Cloudflare unterhält angemessene Garantien für solche Übermittlungen, etwa Standardvertragsklauseln. Da der Inhalt Ihrer Datensätze Ihr Gerät nie verlässt, werden niemals Datensatzdaten übermittelt."
+          }
+        ]
+      },
+      {
+        "id": "rights",
+        "heading": "7. Ihre Rechte",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Je nachdem, wo Sie leben, haben Sie möglicherweise Rechte an den personenbezogenen Informationen, die wir verarbeiten. In der Praxis beschränkt sich das auf die oben beschriebenen Hosting-Protokolle, da alles andere auf Ihrem Gerät bleibt:"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "DSGVO (EU/EWR/UK): Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Widerspruch gegen die Verarbeitung, Datenübertragbarkeit und das Recht, bei Ihrer zuständigen Aufsichtsbehörde Beschwerde einzulegen.",
+              "PIPL (China): über die Verarbeitung Ihrer personenbezogenen Informationen informiert zu sein und darüber zu entscheiden, sie einzusehen und zu kopieren, ihre Berichtigung oder Ergänzung zu verlangen, ihre Löschung zu verlangen, die Einwilligung zu widerrufen, eine Erläuterung der Verarbeitungsregeln zu verlangen und bei einer zuständigen Behörde Beschwerde einzulegen."
+            ]
+          },
+          {
+            "kind": "p",
+            "text": "Um eines dieser Rechte auszuüben, kontaktieren Sie uns bitte über die untenstehenden Angaben."
+          }
+        ]
+      },
+      {
+        "id": "children",
+        "heading": "8. Kinder",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Die Website ist ein Allzweckwerkzeug für Entwickler und richtet sich nicht an Kinder. Wir erheben wissentlich keine personenbezogenen Informationen von Kindern."
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "9. Änderungen dieser Erklärung",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Wir können diese Erklärung im Zuge der Weiterentwicklung des Werkzeugs aktualisieren. In diesem Fall ändern wir die oben angegebene Version und das Datum, und der Hinweis auf der Website erscheint erneut, damit Sie die aktualisierte Erklärung prüfen können."
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "10. Kontakt",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Bei Fragen oder Anliegen zu dieser Erklärung eröffnen Sie ein Issue im Projekt-Repository oder schreiben Sie uns eine E-Mail:"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "LabelAll-Issue-Tracker",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "acceptance",
+        "heading": "1. Zustimmung zu diesen Bedingungen",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Durch den Zugriff auf die LabelAll-Demoseite oder die Nutzung der Software stimmen Sie diesen Nutzungsbedingungen zu. Wenn Sie nicht einverstanden sind, nutzen Sie die Website bitte nicht."
+          }
+        ]
+      },
+      {
+        "id": "service",
+        "heading": "2. Was der Dienst ist",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll ist ein kostenloses Open-Source-Werkzeug zum Öffnen, Anzeigen, Annotieren und Exportieren gängiger Bilddatensatzformate, darunter COCO, YOLO, Pascal VOC und ImageFolder. Es läuft vollständig in Ihrem Browser oder als Desktop-Anwendung. Es gibt kein gehostetes Backend und kein Benutzerkonto."
+          },
+          {
+            "kind": "p",
+            "text": "Die Website wird kostenlos „wie besehen“ und „wie verfügbar“ bereitgestellt, ohne jegliche Gewährleistung."
+          }
+        ]
+      },
+      {
+        "id": "license",
+        "heading": "3. Lizenz und Open Source",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Der Quellcode von LabelAll wird unter der Apache-Lizenz 2.0 veröffentlicht, und Ihre Nutzung des Quellcodes unterliegt dieser Lizenz. Diese Bedingungen regeln zusätzlich Ihre Nutzung der gehosteten Demoseite."
+          },
+          {
+            "kind": "links",
+            "items": [
+              { "label": "Quellcode-Repository", "href": "https://github.com/heshengtao/labelall" },
+              {
+                "label": "Apache-2.0-Lizenz",
+                "href": "https://github.com/heshengtao/labelall/blob/main/LICENSE"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "responsibilities",
+        "heading": "4. Ihre Pflichten",
+        "blocks": [
+          {
+            "kind": "ul",
+            "items": [
+              "Sie sind für die Datensätze verantwortlich, die Sie öffnen, und müssen über die erforderlichen Rechte und Genehmigungen verfügen, um sie anzusehen, zu annotieren und zu exportieren.",
+              "Sie dürfen die Website oder die Software nicht für rechtswidrige Zwecke oder in einer Weise nutzen, die Rechte anderer verletzt.",
+              "Da die gesamte Verarbeitung auf Ihrem eigenen Gerät erfolgt, sind Sie für Backups Ihrer Daten verantwortlich."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "intellectual-property",
+        "heading": "5. Geistiges Eigentum",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Der Name und das Logo von LabelAll sowie die gehostete Website gehören ihren jeweiligen Inhabern. Ihre Datensätze und Annotationen bleiben vollständig Ihre eigenen: Wir erheben keine Ansprüche darauf und erhalten niemals eine Kopie."
+          }
+        ]
+      },
+      {
+        "id": "warranty",
+        "heading": "6. Gewährleistungsausschluss",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Die Website und die Software werden ohne jegliche ausdrückliche oder stillschweigende Gewährleistung bereitgestellt, einschließlich, aber nicht beschränkt auf Eignung für einen bestimmten Zweck, Genauigkeit und Nichtverletzung. Annotations- und Exportergebnisse können Fehler enthalten; prüfen Sie Ihre Daten daher stets, bevor Sie sich darauf verlassen. Der Export schreibt neue Dateien und verändert Ihre Originale nie."
+          }
+        ]
+      },
+      {
+        "id": "liability",
+        "heading": "7. Haftungsbeschränkung",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Soweit gesetzlich zulässig, haften die Autoren und Maintainer nicht für mittelbare, zufällige oder Folgeschäden oder für Daten- oder Gewinnverluste, die aus Ihrer Nutzung der Website oder der Software entstehen."
+          }
+        ]
+      },
+      {
+        "id": "third-party",
+        "heading": "8. Dienste Dritter",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Die Website wird bei Cloudflare gehostet und enthält Links zu GitHub. Ihre Nutzung dieser Dienste unterliegt deren eigenen Bedingungen und Richtlinien; Einzelheiten finden Sie in der Datenschutzerklärung."
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "9. Änderungen und Beendigung",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Wir können die Website jederzeit ändern, aussetzen oder einstellen. Wir können auch diese Bedingungen aktualisieren, und die weitere Nutzung der Website nach einer Aktualisierung gilt als Zustimmung zu den neuen Bedingungen. Die Open-Source-Lizenz in Abschnitt 3 bleibt von solchen Änderungen unberührt."
+          }
+        ]
+      },
+      {
+        "id": "governing-law",
+        "heading": "10. Anwendbares Recht und Streitigkeiten",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Diese Bedingungen unterliegen dem Recht der Volksrepublik China, ohne Rücksicht auf Kollisionsnormen. Streitigkeiten werden den zuständigen Gerichten am Wohnsitz des Maintainers vorgelegt. Wenn Sie Verbraucher mit Wohnsitz im EU/EWR sind, gelten weiterhin die zwingenden Verbraucherschutzvorschriften Ihres Wohnsitzlandes."
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "11. Kontakt",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Bei Fragen zu diesen Bedingungen eröffnen Sie ein Issue im Projekt-Repository oder schreiben Sie uns eine E-Mail:"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "LabelAll-Issue-Tracker",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

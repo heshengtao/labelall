@@ -185,5 +185,14 @@
     "warningTitle": "Importé avec des remarques",
     "errorHint": "Ce jeu de données n'a pas pu être lu. Vérifiez que vous avez choisi le bon dossier et que ses fichiers sont complets, puis réessayez.",
     "warningHint": "Le jeu de données a été chargé, mais les éléments suivants ont été ignorés ou interprétés de façon souple :"
+  },
+  "legal": {
+    "bannerTitle": "Vos données restent sur votre appareil",
+    "bannerBody": "LabelAll fonctionne entièrement dans votre navigateur : vos jeux de données sont lus et analysés localement et ne sont jamais téléversés. Ce site n'enregistre que vos préférences et votre langue sur votre appareil.",
+    "bannerAccept": "J'ai compris",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "updated": "Dernière mise à jour : {{date}}",
+    "back": "Retour"
   }
 }

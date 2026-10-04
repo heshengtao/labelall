@@ -1,0 +1,319 @@
+{
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "overview",
+        "heading": "1. Présentation et champ d'application",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Cette politique explique comment le site de démonstration LabelAll, à l'adresse labelall.superagentparty.com (le « Site »), traite les informations. LabelAll est un outil gratuit et open source qui ouvre, affiche et annote des jeux d'images entièrement sur votre propre appareil. Il n'a ni backend ni compte utilisateur."
+          },
+          {
+            "kind": "p",
+            "text": "Elle est rédigée pour satisfaire aux exigences de transparence du Règlement général sur la protection des données de l'UE (RGPD) et de la loi de la République populaire de Chine sur la protection des informations personnelles (PIPL)."
+          }
+        ]
+      },
+      {
+        "id": "what-we-process",
+        "heading": "2. Ce que nous traitons",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Nous limitons au strict minimum les informations que nous traitons. Il n'y a que trois catégories :"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Vos jeux de données — entièrement locaux. Les images, fichiers d'annotation et étiquettes que vous ouvrez sont lus directement depuis votre appareil via l'API File System Access de votre navigateur. Ils sont analysés dans votre navigateur et ne sont jamais téléversés, transmis, copiés ni stockés sur un quelconque serveur. Nous ne pouvons pas les voir.",
+              "Préférences sur l'appareil — localStorage du navigateur. Le Site enregistre trois éléments dans votre propre navigateur : la couleur d'accent du thème, votre format d'export par défaut, et une liste des jeux de données récemment ouverts (nom et chemin du dossier uniquement, jamais leur contenu). Le Site ne dépose lui-même aucun cookie HTTP.",
+              "Journaux d'hébergement — Cloudflare. Le Site est servi par Cloudflare qui, en tant que fournisseur d'hébergement et de sécurité, peut enregistrer des journaux d'accès tels que votre adresse IP, votre agent utilisateur et l'heure de la requête, et peut déposer un cookie de sécurité strictement nécessaire (__cf_bm). C'est la pratique standard de tout site web, utilisé uniquement pour fournir le Site et le protéger contre les abus."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "what-we-dont-do",
+        "heading": "3. Ce que nous ne faisons pas",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Pour être explicites, nous ne faisons aucune des choses suivantes :"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Aucun compte, connexion ni profil utilisateur.",
+              "Aucune analyse d'audience, télémétrie, pixel de suivi ni publicité.",
+              "Aucun profilage ni décision automatisée.",
+              "Aucune vente, location ni partage d'informations personnelles à des fins de marketing.",
+              "Aucun téléversement de vos jeux de données ou annotations — l'outil est incapable de les envoyer où que ce soit."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "retention",
+        "heading": "4. Où les informations sont stockées et pendant combien de temps",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Les préférences ne sont stockées que dans le localStorage de votre navigateur, sur votre propre appareil, sous les clés labelall.settings et labelall.language. Elles y restent jusqu'à ce que vous effaciez les données de ce site dans votre navigateur ou les réinitialisiez dans les Paramètres. Les effacer ne fait que réinitialiser vos préférences ; cela ne touche jamais aux fichiers de vos jeux de données."
+          },
+          {
+            "kind": "p",
+            "text": "Les journaux d'accès de Cloudflare sont conservés pendant une courte période déterminée par la configuration et les politiques de Cloudflare ; voir la politique de confidentialité de Cloudflare liée à la section 5."
+          }
+        ]
+      },
+      {
+        "id": "processors",
+        "heading": "5. Fournisseurs tiers",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Exploiter un site web public implique inévitablement des tiers. Les seuls concernés ici sont :"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Cloudflare, Inc. — hébergement, diffusion de contenu et sécurité. Il traite les journaux d'accès et peut déposer le cookie de sécurité décrit ci-dessus.",
+              "GitHub, Inc. — seule l'application de bureau contacte GitHub, pas ce Site : au démarrage, l'application de bureau demande à GitHub Releases s'il existe une version plus récente. Elle n'envoie aucune donnée personnelle, et cette vérification est désactivée dans la version web."
+            ]
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "Politique de confidentialité de Cloudflare",
+                "href": "https://www.cloudflare.com/privacypolicy/"
+              },
+              {
+                "label": "Déclaration de confidentialité de GitHub",
+                "href": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "transfers",
+        "heading": "6. Transferts internationaux",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Le Site est hébergé sur le réseau mondial de Cloudflare, de sorte que les journaux d'accès peuvent être traités en dehors de votre pays. Cloudflare maintient des garanties appropriées pour ces transferts, telles que les clauses contractuelles types. Comme le contenu de vos jeux de données ne quitte jamais votre appareil, aucune donnée de jeu de données n'est transférée."
+          }
+        ]
+      },
+      {
+        "id": "rights",
+        "heading": "7. Vos droits",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Selon votre lieu de résidence, vous pouvez disposer de droits sur les informations personnelles que nous détenons. En pratique, cela se limite aux journaux d'hébergement décrits ci-dessus, tout le reste restant sur votre appareil :"
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "RGPD (UE/EEE/Royaume-Uni) : accès, rectification, effacement, limitation du traitement, opposition au traitement, portabilité des données, et le droit d'introduire une réclamation auprès de votre autorité de contrôle locale.",
+              "PIPL (Chine) : connaître et décider du traitement de vos informations personnelles, les consulter et les copier, demander leur correction ou leur complément, demander leur suppression, retirer votre consentement, demander une explication des règles de traitement et déposer une réclamation auprès d'une autorité compétente."
+            ]
+          },
+          {
+            "kind": "p",
+            "text": "Pour exercer l'un de ces droits, veuillez nous contacter aux coordonnées ci-dessous."
+          }
+        ]
+      },
+      {
+        "id": "children",
+        "heading": "8. Enfants",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Le Site est un outil de développement à usage général et ne s'adresse pas aux enfants. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants."
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "9. Modifications de cette politique",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Nous pouvons mettre à jour cette politique à mesure que l'outil évolue. Le cas échéant, nous modifions la version et la date affichées en haut, et l'avis sur le site réapparaît pour que vous puissiez prendre connaissance de la politique mise à jour."
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "10. Contact",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Pour toute question ou demande concernant cette politique, ouvrez un ticket dans le dépôt du projet ou écrivez-nous par e-mail :"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "Suivi des tickets LabelAll",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "acceptance",
+        "heading": "1. Acceptation de ces conditions",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "En accédant au site de démonstration LabelAll ou en utilisant le logiciel, vous acceptez les présentes Conditions d'utilisation. Si vous n'êtes pas d'accord, veuillez ne pas utiliser le Site."
+          }
+        ]
+      },
+      {
+        "id": "service",
+        "heading": "2. Objet du service",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll est un outil gratuit et open source permettant d'ouvrir, d'afficher, d'annoter et d'exporter des formats courants de jeux d'images, notamment COCO, YOLO, Pascal VOC et ImageFolder. Il s'exécute entièrement dans votre navigateur ou comme application de bureau. Il n'y a ni backend hébergé ni compte utilisateur."
+          },
+          {
+            "kind": "p",
+            "text": "Le Site est fourni gratuitement, « en l'état » et « selon disponibilité », sans garantie d'aucune sorte."
+          }
+        ]
+      },
+      {
+        "id": "license",
+        "heading": "3. Licence et open source",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Le code source de LabelAll est publié sous licence Apache 2.0, et votre utilisation du code source est régie par cette licence. Les présentes conditions régissent en outre votre utilisation du Site de démonstration hébergé."
+          },
+          {
+            "kind": "links",
+            "items": [
+              { "label": "Dépôt du code source", "href": "https://github.com/heshengtao/labelall" },
+              {
+                "label": "Licence Apache-2.0",
+                "href": "https://github.com/heshengtao/labelall/blob/main/LICENSE"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "responsibilities",
+        "heading": "4. Vos responsabilités",
+        "blocks": [
+          {
+            "kind": "ul",
+            "items": [
+              "Vous êtes responsable des jeux de données que vous ouvrez et devez détenir les droits et autorisations nécessaires pour les consulter, les annoter et les exporter.",
+              "Vous ne devez pas utiliser le Site ou le logiciel à des fins illicites, ni d'une manière portant atteinte aux droits d'autrui.",
+              "Comme tout le traitement se fait sur votre propre appareil, vous êtes responsable de la sauvegarde de vos données."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "intellectual-property",
+        "heading": "5. Propriété intellectuelle",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Le nom et le logo de LabelAll ainsi que le Site hébergé appartiennent à leurs propriétaires respectifs. Vos jeux de données et annotations restent entièrement les vôtres : nous ne revendiquons aucun droit sur eux et n'en recevons jamais copie."
+          }
+        ]
+      },
+      {
+        "id": "warranty",
+        "heading": "6. Exclusion de garanties",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Le Site et le logiciel sont fournis sans garantie d'aucune sorte, expresse ou implicite, y compris, sans s'y limiter, l'adéquation à un usage particulier, l'exactitude ou l'absence de contrefaçon. Les résultats d'annotation et d'export peuvent contenir des erreurs ; vérifiez toujours vos données avant de vous y fier. L'export écrit de nouveaux fichiers et ne modifie jamais vos originaux."
+          }
+        ]
+      },
+      {
+        "id": "liability",
+        "heading": "7. Limitation de responsabilité",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Dans toute la mesure permise par la loi, les auteurs et les mainteneurs ne sauraient être tenus responsables des dommages indirects, accessoires ou consécutifs, ni d'aucune perte de données ou de bénéfices, résultant de votre utilisation du Site ou du logiciel."
+          }
+        ]
+      },
+      {
+        "id": "third-party",
+        "heading": "8. Services tiers",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Le Site est hébergé sur Cloudflare et contient des liens vers GitHub. Votre utilisation de ces services est soumise à leurs propres conditions et politiques ; voir la Politique de confidentialité pour plus de détails."
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "9. Modifications et résiliation",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Nous pouvons modifier, suspendre ou interrompre le Site à tout moment. Nous pouvons également mettre à jour les présentes conditions, et continuer à utiliser le Site après une mise à jour vaut acceptation des nouvelles conditions. La licence open source de la section 3 survit à toute modification de ce type."
+          }
+        ]
+      },
+      {
+        "id": "governing-law",
+        "heading": "10. Droit applicable et litiges",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Les présentes conditions sont régies par les lois de la République populaire de Chine, sans égard aux règles de conflit de lois. Les litiges seront soumis aux tribunaux compétents du lieu de résidence du mainteneur. Si vous êtes un consommateur résidant dans l'UE/EEE, les règles impératives de protection des consommateurs de votre pays de résidence continuent de s'appliquer."
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "11. Contact",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "Pour toute question concernant les présentes conditions, ouvrez un ticket dans le dépôt du projet ou écrivez-nous par e-mail :"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "Suivi des tickets LabelAll",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

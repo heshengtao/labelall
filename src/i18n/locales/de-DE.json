@@ -185,5 +185,14 @@
     "warningTitle": "Mit Hinweisen importiert",
     "errorHint": "Dieser Datensatz konnte nicht gelesen werden. Prüfe, ob du den richtigen Ordner gewählt hast und die Dateien vollständig sind, und versuche es erneut.",
     "warningHint": "Der Datensatz wurde geladen, aber Folgendes wurde übersprungen oder locker interpretiert:"
+  },
+  "legal": {
+    "bannerTitle": "Ihre Daten bleiben auf Ihrem Gerät",
+    "bannerBody": "LabelAll läuft vollständig in Ihrem Browser: Ihre Datensätze werden lokal gelesen und ausgewertet und niemals hochgeladen. Diese Website speichert nur Ihre Einstellungen und Sprache auf Ihrem Gerät.",
+    "bannerAccept": "Verstanden",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen",
+    "updated": "Zuletzt aktualisiert am {{date}}",
+    "back": "Zurück"
   }
 }

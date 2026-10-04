@@ -1,0 +1,319 @@
+{
+  "privacy": {
+    "title": "隱私政策",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "overview",
+        "heading": "一、概述與適用範圍",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本政策說明 LabelAll 展示網站（labelall.superagentparty.com，下稱「本站」）如何處理資訊。LabelAll 是一款免費、開源的工具，完全在你自己裝置上開啟、檢視與標註影像資料集，沒有後端，也沒有使用者帳號。"
+          },
+          {
+            "kind": "p",
+            "text": "本政策依歐盟《一般資料保護規則》（GDPR）與《中華人民共和國個人信息保護法》（PIPL）的透明性要求撰寫。"
+          }
+        ]
+      },
+      {
+        "id": "what-we-process",
+        "heading": "二、我們處理哪些資訊",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "我們處理的資訊被壓縮到最低限度，只有以下三類："
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "你的資料集——完全在本地處理。你開啟的圖片、標註檔案與標籤，均透過瀏覽器的 File System Access API 直接讀取自你的裝置，並在瀏覽器中解析，絕不會上傳、傳輸、複製或儲存到任何伺服器。我們無法看到它們。",
+              "裝置上的偏好設定——瀏覽器 localStorage。本站只在你自己的瀏覽器中儲存三項內容：主題強調色、預設匯出格式，以及最近開啟的資料集清單（僅名稱與資料夾路徑，絕不含內容）。本站自身不寫入任何 HTTP Cookie。",
+              "主機日誌——Cloudflare。本站由 Cloudflare 提供主機與安全防護，其可能記錄你的 IP 位址、User-Agent、請求時間等存取日誌，並可能寫入一枚嚴格必要的安全 Cookie（__cf_bm）。這是任何網站的標準做法，僅用於提供本站服務並防範濫用。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "what-we-dont-do",
+        "heading": "三、我們不會做的事",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "明確說明，我們不做以下任何一項："
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "不設帳號、登入或使用者輪廓。",
+              "不做統計分析、遙測、追蹤像素或廣告。",
+              "不做使用者輪廓分析，也不做自動化決策。",
+              "不出售、出租或為行銷目的共享個人資料。",
+              "不上傳你的資料集或標註——本工具在設計上就不具備將資料傳送出去的能力。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "retention",
+        "heading": "四、資訊儲存在哪裡、保存多久",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "偏好設定僅存放在你裝置上的瀏覽器 localStorage 中，鍵名為 labelall.settings 與 labelall.language，直到你在瀏覽器中清除本站資料或在「設定」中重設為止。清除它們只會重設偏好，絕不會影響你的資料集檔案。"
+          },
+          {
+            "kind": "p",
+            "text": "Cloudflare 的存取日誌依 Cloudflare 自身的設定與政策保留一段較短的時間；詳見第五節連結的 Cloudflare 隱私政策。"
+          }
+        ]
+      },
+      {
+        "id": "processors",
+        "heading": "五、第三方服務供應商",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "營運一個公開網站不可避免地會涉及第三方。本站涉及的僅有以下兩家："
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "Cloudflare, Inc.——提供主機、內容遞送與安全防護，會處理上述存取日誌並可能寫入上述安全 Cookie。",
+              "GitHub, Inc.——只有桌面版應用程式會存取 GitHub，本站不會：桌面版啟動時會向 GitHub Releases 詢問是否有新版本。該請求不傳送任何個人資料，且在網頁版中已停用。"
+            ]
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "Cloudflare 隱私政策",
+                "href": "https://www.cloudflare.com/privacypolicy/"
+              },
+              {
+                "label": "GitHub 隱私聲明",
+                "href": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "transfers",
+        "heading": "六、跨境傳輸",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本站主機位於 Cloudflare 的全球網路上，因此存取日誌可能在你的所在國之外被處理。Cloudflare 為此類傳輸維持了適當的保障措施（例如標準契約條款）。由於你的資料集內容從不離開你的裝置，因此不會有任何資料集資料被傳輸。"
+          }
+        ]
+      },
+      {
+        "id": "rights",
+        "heading": "七、你的權利",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "視你所在國家或地區的法律，你可能對我們持有的你的個人資料享有相應權利。實際上這只涉及上述主機日誌，因為其餘一切始終留在你的裝置上："
+          },
+          {
+            "kind": "ul",
+            "items": [
+              "GDPR（歐盟/歐洲經濟區/英國）：存取、更正、刪除、限制處理、反對處理、資料可攜，以及向當地監管機關申訴的權利。",
+              "PIPL（中國）：知情與決定權、查閱與複製權、更正與補充權、刪除權、撤回同意權、要求解釋處理規則的權利，以及向主管機關申訴的權利。"
+            ]
+          },
+          {
+            "kind": "p",
+            "text": "如需行使上述任何權利，請透過下方聯絡方式與我們聯絡。"
+          }
+        ]
+      },
+      {
+        "id": "children",
+        "heading": "八、兒童",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本站是面向開發者的通用工具，並非面向兒童。我們不會在明知的情況下蒐集兒童的個人資料。"
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "九、本政策的變更",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "隨著工具演進，我們可能更新本政策。更新時，我們會修改頂部的版本與日期，站內提示也會重新出現，以便你審閱更新後的政策。"
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "十、聯絡方式",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "如對本政策有任何疑問或請求，請在專案倉庫中提交 issue，或寄送電子郵件至："
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "LabelAll issue 清單",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "使用者條款",
+    "updatedAt": "2026-10-04",
+    "sections": [
+      {
+        "id": "acceptance",
+        "heading": "一、條款的接受",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "存取 LabelAll 展示網站或使用本軟體，即表示你同意本使用者條款。如不同意，請勿使用本站。"
+          }
+        ]
+      },
+      {
+        "id": "service",
+        "heading": "二、服務內容",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll 是一款免費、開源的工具，用於開啟、檢視、標註並匯出常見影像資料集格式，包括 COCO、YOLO、Pascal VOC 與 ImageFolder。它完全在你的瀏覽器或桌面應用程式中執行，沒有託管後端，也沒有使用者帳號。"
+          },
+          {
+            "kind": "p",
+            "text": "本站依「現狀」與「可用」原則免費提供，不附帶任何形式的保證。"
+          }
+        ]
+      },
+      {
+        "id": "license",
+        "heading": "三、授權與開源",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll 的原始碼以 Apache License 2.0 發布，你對原始碼的使用受該授權條款拘束。本條款另行拘束你對託管展示網站的使用。"
+          },
+          {
+            "kind": "links",
+            "items": [
+              { "label": "原始碼倉庫", "href": "https://github.com/heshengtao/labelall" },
+              {
+                "label": "Apache-2.0 授權",
+                "href": "https://github.com/heshengtao/labelall/blob/main/LICENSE"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "responsibilities",
+        "heading": "四、你的責任",
+        "blocks": [
+          {
+            "kind": "ul",
+            "items": [
+              "你對自己開啟的資料集負責，必須擁有檢視、標註與匯出它們所需的全部權利與授權。",
+              "你不得將本站或本軟體用於任何違法用途，也不得用於侵害他人權利。",
+              "由於全部處理都在你自己的裝置上完成，請自行負責資料備份。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "intellectual-property",
+        "heading": "五、智慧財產權",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "LabelAll 的名稱、標誌與託管網站歸各自權利人所有。你的資料集與標註始終完全屬於你：我們不主張任何權利，也從不取得其副本。"
+          }
+        ]
+      },
+      {
+        "id": "warranty",
+        "heading": "六、免責聲明",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本站與軟體不附帶任何明示或默示的保證，包括但不限於對特定用途的適用性、正確性與不侵權。標註與匯出結果可能存在錯誤，請在依賴之前務必自行核對。匯出只會寫入新檔案，絕不修改你的原始檔案。"
+          }
+        ]
+      },
+      {
+        "id": "liability",
+        "heading": "七、責任限制",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "在法律允許的最大範圍內，作者與維護者不對因你使用本站或本軟體而產生的任何間接、附帶或後果性損害，以及任何資料或利潤損失承擔責任。"
+          }
+        ]
+      },
+      {
+        "id": "third-party",
+        "heading": "八、第三方服務",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本站託管於 Cloudflare，並包含指向 GitHub 的連結。你對這些服務的使用受其各自的條款與政策拘束；詳見《隱私政策》。"
+          }
+        ]
+      },
+      {
+        "id": "changes",
+        "heading": "九、變更與終止",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "我們可能隨時修改、暫停或終止本站。我們也可能更新本條款，更新後繼續使用本站即視為你接受新條款。第三條中的開源授權不因上述變更而失效。"
+          }
+        ]
+      },
+      {
+        "id": "governing-law",
+        "heading": "十、準據法與爭議解決",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "本條款適用中華人民共和國法律，不考慮法律衝突規則。爭議將提交維護者住所地有管轄權的法院解決。若你是居住於歐盟/歐洲經濟區的消費者，你所在國家或地區的強制性消費者保護規定仍然適用。"
+          }
+        ]
+      },
+      {
+        "id": "contact",
+        "heading": "十一、聯絡方式",
+        "blocks": [
+          {
+            "kind": "p",
+            "text": "如對本條款有任何疑問，請在專案倉庫中提交 issue，或寄送電子郵件至："
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "LabelAll issue 清單",
+                "href": "https://github.com/heshengtao/labelall/issues"
+              },
+              { "label": "hst97@qq.com", "href": "mailto:hst97@qq.com" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
