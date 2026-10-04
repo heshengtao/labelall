@@ -1,7 +1,7 @@
 {
   "name": "labelall",
   "private": true,
-  "version": "0.1.8",
+  "version": "0.2.0",
   "type": "module",
   "packageManager": "pnpm@11.11.0",
   "description": "Cross-platform desktop & web tool for loading, viewing and annotating common image datasets (COCO, YOLO, Pascal VOC, ImageFolder).",

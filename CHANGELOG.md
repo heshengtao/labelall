@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-04
+
+### Added
+
+- **Save back to the original dataset.** The new Save button and `Ctrl/Cmd+S`
+  write your edits straight into the files the dataset was read from — COCO's
+  JSON, YOLO's `labels/*.txt` plus its `data.yaml`, Pascal VOC's XMLs (each back
+  to the path it came from, so XMLs sitting beside their images are not
+  reorganised) and labelme's per-image JSONs (a labelme writer is new). A cleared
+  YOLO label is written back as an empty file instead of being left stale.
+- Unsaved-changes tracking: a dot on the Save button, and a save / discard /
+  cancel prompt when the window is closed, the dataset is closed, or another
+  dataset is opened.
+- When a target format cannot represent something (VOC polygons, keypoints in
+  VOC or labelme, ImageFolder's folder layout, …), saving lists the losses and
+  asks for confirmation before it overwrites the originals.
+- The web build can request write access for a folder it opened read-only — the
+  “view files” option in Chrome's folder prompt returns a read-only handle — so
+  Save and Export can be enabled with one click instead of failing silently.
+
+### Changed
+
+- Save and Export are disabled when the folder is genuinely read-only (a browser
+  without the File System Access API) rather than failing after the fact.
+
+### Fixed
+
+- Web: clicking Save on a folder opened read-only used to fail with an error and
+  no way to recover; the actual write permission is now queried and offered for
+  escalation.
+
 ## [0.1.8] - 2026-10-04
 
 ### Changed
@@ -205,7 +236,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/heshengtao/labelall/releases/tag/v0.2.0
 [0.1.8]: https://github.com/heshengtao/labelall/releases/tag/v0.1.8
 [0.1.7]: https://github.com/heshengtao/labelall/releases/tag/v0.1.7
 [0.1.6]: https://github.com/heshengtao/labelall/releases/tag/v0.1.6
