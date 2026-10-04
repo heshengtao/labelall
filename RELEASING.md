@@ -34,6 +34,12 @@ pnpm tauri build
 TAURI_SIGNING_PRIVATE_KEY="$(cat ~/.tauri/labelall-updater.key)" pnpm tauri build
 ```
 
+> 想在本机产出带 WebView2 运行时的 **Windows 离线版**（该配置关掉了自动更新产物，所以无需签名密钥）：
+
+```bash
+pnpm tauri build --config src-tauri/tauri.windows-offline.conf.json
+```
+
 ## 三、macOS 需要「私有自签名 key」吗？
 
 **不需要。** macOS 打包**不需要你生成任何自签名私钥**。只有三种情况，选一种即可：
@@ -164,6 +170,25 @@ Gatekeeper 只信任 Apple 签发的 Developer ID 证书。你自己用「钥匙
    WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
    WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
    ```
+
+### 两种 Windows 安装包（在线 / 离线）
+
+Windows 端的界面依赖 **WebView2 运行时**，而它**不是** Windows 系统组件：Windows 11 自带，
+Windows 10 常常没有。所以每次发布都会在 Release 上附**两个** Windows 安装包：
+
+| 文件（`<版本>` 为实际版本号） | 说明 |
+| --- | --- |
+| `LabelAll_<版本>_x64-setup.exe` / `LabelAll_<版本>_x64_en-US.msi` | **在线版**（默认）：安装时联网到微软 CDN 下载 WebView2，体积小。**自动更新以它为准。** |
+| `LabelAll_<版本>_x64-setup-offline.exe` / `LabelAll_<版本>_x64_en-US-offline.msi` | **离线版**：把完整 WebView2 运行时打进安装包（约 +130MB），**全程无需联网**，适合内网 / 气隙机器。 |
+
+离线版由 `release.yml` 里独立的 `windows-offline` 任务构建：它用
+`src-tauri/tauri.windows-offline.conf.json`（`webviewInstallMode: offlineInstaller`）覆盖默认配置，
+产出后重命名加上 `-offline` 后缀，再作为额外资产附到同一个草稿 Release。
+该配置同时关掉了 `createUpdaterArtifacts`，所以**它不需要更新签名密钥，也不会写入 `latest.json`**——
+内网机器因此不会去联网检查更新。
+
+> 只针对 Windows：macOS 用系统自带的 WKWebView、Linux 的 AppImage 本身就是自包含的，
+> 都不存在「需要额外下载的运行时」这个问题，无需区分。
 
 ## 七、常见问题
 

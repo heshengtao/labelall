@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-10-04
+
+### Added
+
+- A second Windows installer that bundles the full WebView2 runtime
+  (`…-setup-offline.exe` / `…-offline.msi`), for intranet or air-gapped machines that cannot
+  download it during setup. The regular Windows installer still fetches WebView2 on install and
+  stays the auto-update target; the offline build is not published to `latest.json`.
+
 ## [0.1.4] - 2026-10-04
 
 ### Added
@@ -144,7 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/heshengtao/labelall/releases/tag/v0.1.5
 [0.1.4]: https://github.com/heshengtao/labelall/releases/tag/v0.1.4
 [0.1.3]: https://github.com/heshengtao/labelall/releases/tag/v0.1.3
 [0.1.2]: https://github.com/heshengtao/labelall/releases/tag/v0.1.2

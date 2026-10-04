@@ -112,6 +112,10 @@ Open **<https://labelall.superagentparty.com/>** and pick a dataset folder. Noth
 Grab the installer for your system from the [Releases](../../releases) page — **macOS, Windows and
 Linux**. This is the recommended way to annotate, since it can always write back to disk.
 
+> **Windows**: two installers are published. Pick the one ending in `-offline` if the machine has no
+> internet access — it bundles the WebView2 runtime. The regular installer downloads WebView2 during
+> setup instead, so it is much smaller.
+
 > **First launch on macOS**: the build is not notarized. If macOS says the app is “damaged” or cannot
 > verify the developer, run `xattr -cr /Applications/LabelAll.app` in Terminal, then open it — or
 > right-click the app and choose “Open”.
