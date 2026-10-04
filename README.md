@@ -166,8 +166,9 @@ docker compose up -d --build
 | Action | Shortcut |
 | --- | --- |
 | Previous / next image | `←` / `→` |
-| Select / move · Draw a box · Polygon · Keypoints | `V` · `B` · `P` · `K` |
-| Nudge the selected annotation | `Arrows` (hold `Shift` for 10px) |
+| Switch the active class | `↑` / `↓` (no selection) |
+| Select / move · Draw a box · Polygon · Keypoints | `V` · `B` · `N` · `M` |
+| Nudge the selected annotation | `W A S D` (hold `Shift` for 10px) |
 | Delete / duplicate selection | `Delete` / `Ctrl`·`Cmd` + `D` |
 | Undo / redo | `Ctrl`·`Cmd` + `Z` / `Shift` + `Ctrl`·`Cmd` + `Z` |
 | Zoom in / out / fit | `+` / `-` / `0` |

@@ -197,16 +197,20 @@ export function AnnotateToolbar() {
 
       <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
 
-      <Tooltip title={t('categories.title')}>
-        <IconButton size="small" onClick={() => setCategoriesOpen(true)}>
-          <CategoryOutlinedIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title={t('shortcuts.title')}>
-        <IconButton size="small" onClick={() => setHelpOpen(true)}>
-          <HelpIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      <Button
+        size="small"
+        startIcon={<CategoryOutlinedIcon fontSize="small" />}
+        onClick={() => setCategoriesOpen(true)}
+      >
+        {t('categories.title')}
+      </Button>
+      <Button
+        size="small"
+        startIcon={<HelpIcon fontSize="small" />}
+        onClick={() => setHelpOpen(true)}
+      >
+        {t('shortcuts.title')}
+      </Button>
     </Stack>
   )
 }

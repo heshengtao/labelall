@@ -13,13 +13,20 @@ import {
   IconButton,
   Stack,
   Switch,
+  TextField,
   Tooltip,
   Typography,
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
-import { resizeBBox, translateAnnotation, type BoxEdge } from '@/core/annotationEdits'
-import { bboxArea, bboxFromPoints, bboxFromPolygons, polygonArea } from '@/core/geometry'
+import {
+  clampAnnotation,
+  constrainTranslation,
+  resizeBBox,
+  translateAnnotation,
+  type BoxEdge,
+} from '@/core/annotationEdits'
+import { bboxArea, bboxFromPoints, bboxFromPolygons, clampBBox, polygonArea } from '@/core/geometry'
 import type { BBox, DatasetModel, Point, Polygon } from '@/core/model'
 import { AnnotateToolbar } from '@/features/annotate/AnnotateToolbar'
 import { useEditorShortcuts } from '@/features/annotate/useEditorShortcuts'
@@ -104,6 +111,8 @@ export function Viewer({ dataset, resolveImageUrl, resolveThumbnail }: ViewerPro
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 })
   const [viewport, setViewport] = useState<Viewport | null>(null)
   const [contextMenu, setContextMenu] = useState<CanvasContextMenuState | null>(null)
+  // Null while not editing: the field then shows the current image (index + 1).
+  const [jumpDraft, setJumpDraft] = useState<string | null>(null)
   const onResize = useCallback((size: { width: number; height: number }) => setStageSize(size), [])
 
   const fitted = useMemo(
@@ -143,14 +152,31 @@ export function Viewer({ dataset, resolveImageUrl, resolveThumbnail }: ViewerPro
 
   const fit = useCallback(() => setViewport(null), [])
 
+  const commitJump = useCallback(
+    (value: string) => {
+      const n = Number.parseInt(value, 10)
+      if (Number.isFinite(n) && imageCount > 0) {
+        const target = Math.min(imageCount, Math.max(1, n))
+        selectImage(dataset.images[target - 1].id)
+      }
+    },
+    [imageCount, dataset.images, selectImage],
+  )
+
   const onCreateBBox = useCallback(
     (bbox: BBox) => {
       if (currentImageId === null || activeCategoryId === null) {
         return
       }
-      addAnnotation({ type: 'bbox', imageId: currentImageId, categoryId: activeCategoryId, bbox })
+      addAnnotation(
+        clampAnnotation(
+          { type: 'bbox', imageId: currentImageId, categoryId: activeCategoryId, bbox },
+          imageWidth,
+          imageHeight,
+        ),
+      )
     },
-    [addAnnotation, currentImageId, activeCategoryId],
+    [addAnnotation, currentImageId, activeCategoryId, imageWidth, imageHeight],
   )
 
   const onCreatePolygon = useCallback(
@@ -158,16 +184,22 @@ export function Viewer({ dataset, resolveImageUrl, resolveThumbnail }: ViewerPro
       if (currentImageId === null || activeCategoryId === null) {
         return
       }
-      addAnnotation({
-        type: 'polygon',
-        imageId: currentImageId,
-        categoryId: activeCategoryId,
-        polygons: [polygon],
-        bbox: bboxFromPolygons([polygon]),
-        area: polygonArea(polygon),
-      })
+      addAnnotation(
+        clampAnnotation(
+          {
+            type: 'polygon',
+            imageId: currentImageId,
+            categoryId: activeCategoryId,
+            polygons: [polygon],
+            bbox: bboxFromPolygons([polygon]),
+            area: polygonArea(polygon),
+          },
+          imageWidth,
+          imageHeight,
+        ),
+      )
     },
-    [addAnnotation, currentImageId, activeCategoryId],
+    [addAnnotation, currentImageId, activeCategoryId, imageWidth, imageHeight],
   )
 
   const onCreateKeypoints = useCallback(
@@ -183,27 +215,36 @@ export function Viewer({ dataset, resolveImageUrl, resolveThumbnail }: ViewerPro
         ...(names[position] ? { name: names[position] } : {}),
       }))
       const bbox = bboxFromPoints(points)
-      addAnnotation({
-        type: 'keypoints',
-        imageId: currentImageId,
-        categoryId: activeCategoryId,
-        bbox,
-        keypoints,
-        numKeypoints: points.length,
-        area: bboxArea(bbox),
-      })
+      addAnnotation(
+        clampAnnotation(
+          {
+            type: 'keypoints',
+            imageId: currentImageId,
+            categoryId: activeCategoryId,
+            bbox,
+            keypoints,
+            numKeypoints: points.length,
+            area: bboxArea(bbox),
+          },
+          imageWidth,
+          imageHeight,
+        ),
+      )
     },
-    [addAnnotation, currentImageId, activeCategoryId, schemaOf],
+    [addAnnotation, currentImageId, activeCategoryId, schemaOf, imageWidth, imageHeight],
   )
 
   const onMoveAnnotation = useCallback(
     (targetIndex: number, dx: number, dy: number) =>
       updateAnnotation(
         targetIndex,
-        (annotation) => translateAnnotation(annotation, dx, dy),
+        (annotation) => {
+          const moved = constrainTranslation(annotation, dx, dy, imageWidth, imageHeight)
+          return translateAnnotation(annotation, moved.dx, moved.dy)
+        },
         'move annotation',
       ),
-    [updateAnnotation],
+    [updateAnnotation, imageWidth, imageHeight],
   )
 
   const onResizeAnnotation = useCallback(
@@ -212,11 +253,14 @@ export function Viewer({ dataset, resolveImageUrl, resolveThumbnail }: ViewerPro
         targetIndex,
         (annotation) =>
           annotation.type === 'bbox'
-            ? { ...annotation, bbox: resizeBBox(annotation.bbox, edge, point) }
+            ? {
+                ...annotation,
+                bbox: clampBBox(resizeBBox(annotation.bbox, edge, point), imageWidth, imageHeight),
+              }
             : annotation,
         'resize annotation',
       ),
-    [updateAnnotation],
+    [updateAnnotation, imageWidth, imageHeight],
   )
 
   const shortcuts = useMemo(
@@ -225,8 +269,9 @@ export function Viewer({ dataset, resolveImageUrl, resolveThumbnail }: ViewerPro
       zoomOut: () => zoomByCenter(1 / 1.25),
       fit,
       navigate: goTo,
+      bounds: { width: imageWidth, height: imageHeight },
     }),
-    [zoomByCenter, fit, goTo],
+    [zoomByCenter, fit, goTo, imageWidth, imageHeight],
   )
   useEditorShortcuts(shortcuts)
 
@@ -261,9 +306,31 @@ export function Viewer({ dataset, resolveImageUrl, resolveThumbnail }: ViewerPro
             </IconButton>
           </span>
         </Tooltip>
-        <Typography variant="caption" sx={{ color: 'text.secondary', minWidth: 56 }}>
-          {index + 1} / {imageCount}
-        </Typography>
+        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+          <TextField
+            size="small"
+            type="number"
+            value={jumpDraft ?? String(index + 1)}
+            onChange={(event) => setJumpDraft(event.target.value)}
+            onFocus={() => setJumpDraft(String(index + 1))}
+            onBlur={(event) => {
+              commitJump(event.target.value)
+              setJumpDraft(null)
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                ;(event.target as HTMLInputElement).blur()
+              }
+            }}
+            slotProps={{
+              htmlInput: { min: 1, max: imageCount, 'aria-label': t('viewer.goto') },
+            }}
+            sx={{ width: 72 }}
+          />
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            / {imageCount}
+          </Typography>
+        </Stack>
         <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
         <Tooltip title={t('viewer.zoomOut')}>
           <IconButton size="small" onClick={() => zoomByCenter(1 / 1.25)}>

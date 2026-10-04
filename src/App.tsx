@@ -34,6 +34,7 @@ import { IMAGE_EXTENSIONS } from '@/core/formats/detect'
 import type { DatasetModel } from '@/core/model'
 import { fileExtension } from '@/core/path'
 import { CategoriesPanel } from '@/features/categories/CategoriesPanel'
+import { CategoryLegend } from '@/features/categories/CategoryLegend'
 import { ExportButton } from '@/features/export/ExportButton'
 import { ShortcutsDialog } from '@/features/help/ShortcutsDialog'
 import { SaveButton } from '@/features/save/SaveButton'
@@ -111,6 +112,7 @@ function DatasetHeader({ name, dataset, warnings }: DatasetHeaderProps) {
           </ToggleButton>
         </ToggleButtonGroup>
       </Stack>
+      <CategoryLegend categories={dataset.categories} annotations={dataset.annotations} />
       {warnings.length > 0 ? (
         <Alert severity="warning">
           {t('dataset.warnings', { count: warnings.length })} — {warnings.slice(0, 3).join('; ')}
@@ -142,6 +144,8 @@ export default function App() {
   const setSettingsOpen = useUiStore((state) => state.setSettingsOpen)
   const recent = useSettingsStore((state) => state.recent)
   const rememberDataset = useSettingsStore((state) => state.rememberDataset)
+  const forgetDataset = useSettingsStore((state) => state.forgetDataset)
+  const rememberPosition = useSettingsStore((state) => state.rememberPosition)
   const legalRoute = useLegalStore((state) => state.route)
   const demoSite = isDemoSite()
   useLegalHash()
@@ -161,6 +165,13 @@ export default function App() {
   useEffect(() => {
     void useWriteAccessStore.getState().refresh(handle)
   }, [handle])
+
+  // Remember the last image viewed in each dataset, so reopening returns there.
+  useEffect(() => {
+    if (handle && currentImageId !== null) {
+      rememberPosition(handle.id, currentImageId)
+    }
+  }, [handle, currentImageId, rememberPosition])
 
   // The worker (and the parse service) are created on first use so the module
   // is never loaded — and no worker is spawned — until the user opens a dataset.
@@ -192,6 +203,11 @@ export default function App() {
       await confirmOpen(service, candidate)
       const state = useDatasetStore.getState()
       if (state.dataset && state.handle) {
+        // Return to the image the user last had open in this dataset, if any.
+        const saved = useSettingsStore.getState().positions[state.handle.id]
+        if (saved != null && state.dataset.images.some((image) => image.id === saved)) {
+          state.selectImage(saved)
+        }
         rememberDataset({
           id: state.handle.id,
           root: state.handle.root,
@@ -358,6 +374,7 @@ export default function App() {
               onOpenDataset={handleOpen}
               recent={recent}
               onOpenRecent={handleOpenRecent}
+              onDeleteRecent={(entry) => forgetDataset(entry.id)}
               canReopen={runtimeEnv === 'tauri'}
             />
           </Stack>

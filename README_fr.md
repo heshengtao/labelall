@@ -136,8 +136,9 @@ docker compose up -d --build
 | Action | Raccourci |
 | --- | --- |
 | Image précédente / suivante | `←` / `→` |
-| Sélectionner/déplacer · Boîte · Polygone · Points clés | `V` · `B` · `P` · `K` |
-| Déplacer l'annotation sélectionnée | `Flèches` (`Shift` pour 10px) |
+| Changer de classe active | `↑` / `↓` |
+| Sélectionner/déplacer · Boîte · Polygone · Points clés | `V` · `B` · `N` · `M` |
+| Déplacer l'annotation sélectionnée | `W A S D` (`Shift` pour 10px) |
 | Supprimer / dupliquer | `Delete` / `Ctrl`·`Cmd` + `D` |
 | Annuler / rétablir | `Ctrl`·`Cmd` + `Z` / `Shift` + `Ctrl`·`Cmd` + `Z` |
 | Zoom avant / arrière / ajuster | `+` / `-` / `0` |

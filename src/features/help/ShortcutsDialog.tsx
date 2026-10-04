@@ -6,11 +6,12 @@ import { useUiStore } from '@/store/uiStore'
 const SHORTCUTS: Array<{ keys: string; labelKey: string }> = [
   { keys: 'V', labelKey: 'shortcuts.select' },
   { keys: 'B', labelKey: 'shortcuts.bbox' },
-  { keys: 'P', labelKey: 'shortcuts.polygon' },
-  { keys: 'K', labelKey: 'shortcuts.keypoint' },
+  { keys: 'N', labelKey: 'shortcuts.polygon' },
+  { keys: 'M', labelKey: 'shortcuts.keypoint' },
   { keys: '← →', labelKey: 'shortcuts.navigate' },
-  { keys: '↑ ↓', labelKey: 'shortcuts.nudge' },
-  { keys: 'Shift + ↑ ↓ ← →', labelKey: 'shortcuts.nudgeLarge' },
+  { keys: '↑ ↓', labelKey: 'shortcuts.cycleCategory' },
+  { keys: 'W A S D', labelKey: 'shortcuts.nudge' },
+  { keys: 'Shift + W A S D', labelKey: 'shortcuts.nudgeLarge' },
   { keys: 'Delete', labelKey: 'shortcuts.delete' },
   { keys: 'Ctrl/Cmd + D', labelKey: 'shortcuts.duplicate' },
   { keys: 'Ctrl/Cmd + Z', labelKey: 'shortcuts.undo' },
@@ -33,7 +34,12 @@ export function ShortcutsDialog() {
       <DialogContent>
         <Stack spacing={1}>
           {SHORTCUTS.map(({ keys, labelKey }) => (
-            <Stack key={keys} direction="row" spacing={2} sx={{ justifyContent: 'space-between' }}>
+            <Stack
+              key={labelKey}
+              direction="row"
+              spacing={2}
+              sx={{ justifyContent: 'space-between' }}
+            >
               <Typography variant="body2">{t(labelKey)}</Typography>
               <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
                 {keys}

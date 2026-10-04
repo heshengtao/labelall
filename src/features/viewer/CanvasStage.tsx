@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import type Konva from 'konva'
 import { Circle, Group, Image as KonvaImage, Layer, Line, Rect, Stage } from 'react-konva'
 
-import { resizeBBox, type BoxEdge } from '@/core/annotationEdits'
-import { bboxFromCorners } from '@/core/geometry'
+import { constrainTranslation, resizeBBox, type BoxEdge } from '@/core/annotationEdits'
+import { bboxFromCorners, clampPoint } from '@/core/geometry'
 import type { BBox, KeypointSchema, Point, Polygon } from '@/core/model'
 import type { EditorTool, LayerVisibility } from '@/store/uiStore'
 
@@ -183,7 +183,12 @@ export function CanvasStage({
 
   const pointerToImage = (): Point | null => {
     const pointer = stageRef.current?.getPointerPosition()
-    return pointer ? toImagePoint(viewport, pointer) : null
+    if (!pointer) {
+      return null
+    }
+    const point = toImagePoint(viewport, pointer)
+    // Snap drawing and dragging to the image bounds while the size is known.
+    return imageWidth > 0 && imageHeight > 0 ? clampPoint(point, imageWidth, imageHeight) : point
   }
 
   const pointerScreen = (): Point | null => {
@@ -241,8 +246,12 @@ export function CanvasStage({
       return
     }
     if (interaction.kind === 'move') {
-      const dx = interaction.current.x - interaction.start.x
-      const dy = interaction.current.y - interaction.start.y
+      const rawDx = interaction.current.x - interaction.start.x
+      const rawDy = interaction.current.y - interaction.start.y
+      const annotation = annotations.find((entry) => entry.index === interaction.index)?.annotation
+      const { dx, dy } = annotation
+        ? constrainTranslation(annotation, rawDx, rawDy, imageWidth, imageHeight)
+        : { dx: rawDx, dy: rawDy }
       if (dx !== 0 || dy !== 0) {
         onMove(interaction.index, dx, dy)
       }
@@ -255,14 +264,20 @@ export function CanvasStage({
   }
 
   // Live previews handed to the layers; nothing is written to the store yet.
-  const moveOffset =
-    interaction?.kind === 'move'
-      ? {
-          index: interaction.index,
-          dx: interaction.current.x - interaction.start.x,
-          dy: interaction.current.y - interaction.start.y,
-        }
-      : null
+  const moveOffset = ((): { index: number; dx: number; dy: number } | null => {
+    if (interaction?.kind !== 'move') {
+      return null
+    }
+    const raw = {
+      dx: interaction.current.x - interaction.start.x,
+      dy: interaction.current.y - interaction.start.y,
+    }
+    const annotation = annotations.find((entry) => entry.index === interaction.index)?.annotation
+    const { dx, dy } = annotation
+      ? constrainTranslation(annotation, raw.dx, raw.dy, imageWidth, imageHeight)
+      : raw
+    return { index: interaction.index, dx, dy }
+  })()
 
   const resizePreview = ((): { index: number; box: BBox } | null => {
     if (interaction?.kind !== 'resize') {

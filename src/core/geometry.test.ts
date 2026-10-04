@@ -6,6 +6,7 @@ import {
   bboxToVocBox,
   bboxToYoloBox,
   clampBBox,
+  clampPoint,
   polygonArea,
   round,
   vocBoxToBBox,
@@ -72,6 +73,11 @@ describe('areas and overlap', () => {
       width: 20,
       height: 20,
     })
+  })
+
+  it('clamps points into the image', () => {
+    expect(clampPoint({ x: -3, y: 30 }, 20, 20)).toEqual({ x: 0, y: 20 })
+    expect(clampPoint({ x: 5, y: 5 }, 20, 20)).toEqual({ x: 5, y: 5 })
   })
 })
 

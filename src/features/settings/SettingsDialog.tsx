@@ -1,4 +1,3 @@
-import DeleteIcon from '@mui/icons-material/Delete'
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt'
 import {
   Button,
@@ -6,7 +5,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
   MenuItem,
   Stack,
   TextField,
@@ -44,8 +42,6 @@ export function SettingsDialog() {
   const setSeed = useSettingsStore((state) => state.setSeed)
   const defaultExportFormat = useSettingsStore((state) => state.defaultExportFormat)
   const setDefaultExportFormat = useSettingsStore((state) => state.setDefaultExportFormat)
-  const recent = useSettingsStore((state) => state.recent)
-  const forgetDataset = useSettingsStore((state) => state.forgetDataset)
 
   const colorScheme = useColorScheme()
   const mode = colorScheme?.mode ?? 'system'
@@ -152,22 +148,6 @@ export function SettingsDialog() {
               >
                 {t('legal.terms')}
               </Button>
-            </Stack>
-          ) : null}
-
-          {recent.length > 0 ? (
-            <Stack spacing={0.5}>
-              <Typography variant="body2">{t('settings.recent')}</Typography>
-              {recent.map((item) => (
-                <Stack key={item.id} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                  <Typography variant="caption" noWrap sx={{ flex: 1 }}>
-                    {item.displayName}
-                  </Typography>
-                  <IconButton size="small" onClick={() => forgetDataset(item.id)}>
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Stack>
-              ))}
             </Stack>
           ) : null}
         </Stack>

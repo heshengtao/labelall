@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  clampAnnotation,
+  constrainTranslation,
   duplicateAnnotation,
   resizeBBox,
   translateAnnotation,
@@ -95,5 +97,106 @@ describe('duplicateAnnotation', () => {
     if (copy.type === 'bbox') {
       expect(copy.bbox).toEqual({ x: 18, y: 28, width: 30, height: 40 })
     }
+  })
+})
+
+describe('constrainTranslation', () => {
+  const annotation: Annotation = {
+    type: 'bbox',
+    imageId: 0,
+    categoryId: 0,
+    bbox: { x: 90, y: 90, width: 20, height: 20 },
+  }
+
+  it('keeps the whole shape inside the image and preserves its size', () => {
+    expect(constrainTranslation(annotation, 50, 50, 100, 100)).toEqual({ dx: -10, dy: -10 })
+    expect(constrainTranslation(annotation, -500, -500, 100, 100)).toEqual({ dx: -90, dy: -90 })
+  })
+
+  it('uses the polygon bounds', () => {
+    const polygon: Annotation = {
+      type: 'polygon',
+      imageId: 0,
+      categoryId: 0,
+      polygons: [
+        [
+          { x: 80, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 20 },
+        ],
+      ],
+    }
+    expect(constrainTranslation(polygon, 30, 0, 100, 100)).toEqual({ dx: 0, dy: 0 })
+  })
+
+  it('does nothing when the image size is unknown', () => {
+    expect(constrainTranslation(annotation, 5, 5, 0, 0)).toEqual({ dx: 5, dy: 5 })
+  })
+})
+
+describe('clampAnnotation', () => {
+  it('clamps a box into the image', () => {
+    const annotation: Annotation = {
+      type: 'bbox',
+      imageId: 0,
+      categoryId: 0,
+      bbox: { x: -5, y: -5, width: 50, height: 50 },
+    }
+    const clamped = clampAnnotation(annotation, 100, 100)
+    expect(clamped.type === 'bbox' && clamped.bbox).toEqual({ x: 0, y: 0, width: 50, height: 50 })
+  })
+
+  it('clamps polygon vertices and recomputes the box', () => {
+    const annotation: Annotation = {
+      type: 'polygon',
+      imageId: 0,
+      categoryId: 0,
+      polygons: [
+        [
+          { x: -10, y: -10 },
+          { x: 50, y: 0 },
+          { x: 50, y: 50 },
+        ],
+      ],
+    }
+    const clamped = clampAnnotation(annotation, 100, 100)
+    if (clamped.type === 'polygon') {
+      expect(clamped.polygons[0]).toEqual([
+        { x: 0, y: 0 },
+        { x: 50, y: 0 },
+        { x: 50, y: 50 },
+      ])
+      expect(clamped.bbox).toEqual({ x: 0, y: 0, width: 50, height: 50 })
+    }
+  })
+
+  it('clamps keypoints and recomputes the box', () => {
+    const annotation: Annotation = {
+      type: 'keypoints',
+      imageId: 0,
+      categoryId: 0,
+      bbox: { x: 0, y: 0, width: 0, height: 0 },
+      numKeypoints: 2,
+      keypoints: [
+        { x: -5, y: 0, v: 2 },
+        { x: 200, y: 50, v: 2 },
+      ],
+    }
+    const clamped = clampAnnotation(annotation, 100, 100)
+    if (clamped.type === 'keypoints') {
+      expect(clamped.keypoints[0]).toMatchObject({ x: 0, y: 0 })
+      expect(clamped.keypoints[1]).toMatchObject({ x: 100, y: 50 })
+      expect(clamped.bbox).toEqual({ x: 0, y: 0, width: 100, height: 50 })
+    }
+  })
+
+  it('does nothing when the image size is unknown', () => {
+    const annotation: Annotation = {
+      type: 'bbox',
+      imageId: 0,
+      categoryId: 0,
+      bbox: { x: -5, y: -5, width: 50, height: 50 },
+    }
+    expect(clampAnnotation(annotation, 0, 0)).toEqual(annotation)
   })
 })

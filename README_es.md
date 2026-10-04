@@ -136,8 +136,9 @@ docker compose up -d --build
 | Acción | Atajo |
 | --- | --- |
 | Imagen anterior / siguiente | `←` / `→` |
-| Seleccionar/mover · Caja · Polígono · Puntos clave | `V` · `B` · `P` · `K` |
-| Mover la anotación seleccionada | `Flechas` (con `Shift`, 10px) |
+| Cambiar la clase activa | `↑` / `↓` |
+| Seleccionar/mover · Caja · Polígono · Puntos clave | `V` · `B` · `N` · `M` |
+| Mover la anotación seleccionada | `W A S D` (con `Shift`, 10px) |
 | Eliminar / duplicar | `Delete` / `Ctrl`·`Cmd` + `D` |
 | Deshacer / rehacer | `Ctrl`·`Cmd` + `Z` / `Shift` + `Ctrl`·`Cmd` + `Z` |
 | Acercar / alejar / ajustar | `+` / `-` / `0` |

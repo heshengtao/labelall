@@ -136,8 +136,9 @@ docker compose up -d --build
 | Aktion | Tastenkürzel |
 | --- | --- |
 | Vorheriges / nächstes Bild | `←` / `→` |
-| Auswählen/Verschieben · Rechteck · Polygon · Keypoints | `V` · `B` · `P` · `K` |
-| Ausgewählte Annotation verschieben | `Pfeiltasten` (`Shift` für 10px) |
+| Aktive Klasse wechseln | `↑` / `↓` |
+| Auswählen/Verschieben · Rechteck · Polygon · Keypoints | `V` · `B` · `N` · `M` |
+| Ausgewählte Annotation verschieben | `W A S D` (`Shift` für 10px) |
 | Löschen / duplizieren | `Delete` / `Ctrl`·`Cmd` + `D` |
 | Rückgängig / wiederholen | `Ctrl`·`Cmd` + `Z` / `Shift` + `Ctrl`·`Cmd` + `Z` |
 | Vergrößern / verkleinern / anpassen | `+` / `-` / `0` |

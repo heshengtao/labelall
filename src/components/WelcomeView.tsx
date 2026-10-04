@@ -1,5 +1,6 @@
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined'
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined'
+import CloseIcon from '@mui/icons-material/Close'
 import DevicesOutlinedIcon from '@mui/icons-material/DevicesOutlined'
 import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined'
 import { Box, Button, Card, CardContent, Chip, Stack, Tooltip, Typography } from '@mui/material'
@@ -35,6 +36,7 @@ export interface WelcomeViewProps {
   onOpenDataset: () => void
   recent?: RecentDataset[]
   onOpenRecent?: (entry: RecentDataset) => void
+  onDeleteRecent?: (entry: RecentDataset) => void
   canReopen?: boolean
 }
 
@@ -42,6 +44,7 @@ export function WelcomeView({
   onOpenDataset,
   recent = [],
   onOpenRecent,
+  onDeleteRecent,
   canReopen = false,
 }: WelcomeViewProps) {
   const { t } = useTranslation()
@@ -93,8 +96,13 @@ export function WelcomeView({
                 <span>
                   <Chip
                     label={entry.displayName}
-                    disabled={!canReopen}
-                    onClick={() => onOpenRecent?.(entry)}
+                    onClick={() => canReopen && onOpenRecent?.(entry)}
+                    onDelete={onDeleteRecent ? () => onDeleteRecent(entry) : undefined}
+                    deleteIcon={
+                      <Tooltip title={t('welcome.forget')}>
+                        <CloseIcon fontSize="small" />
+                      </Tooltip>
+                    }
                   />
                 </span>
               </Tooltip>

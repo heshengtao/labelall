@@ -79,6 +79,14 @@ export function polygonsArea(polygons: readonly Polygon[]): number {
   return polygons.reduce((total, polygon) => total + polygonArea(polygon), 0)
 }
 
+/** Keeps a point inside the image bounds. */
+export function clampPoint(point: Point, imageWidth: number, imageHeight: number): Point {
+  return {
+    x: Math.min(Math.max(point.x, 0), imageWidth),
+    y: Math.min(Math.max(point.y, 0), imageHeight),
+  }
+}
+
 /** Keeps a box inside the image bounds without letting it invert. */
 export function clampBBox(box: BBox, imageWidth: number, imageHeight: number): BBox {
   const x = Math.min(Math.max(box.x, 0), imageWidth)

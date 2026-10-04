@@ -17,11 +17,14 @@ interface SettingsState {
   defaultExportFormat: ExportChoice
   /** Recently opened datasets, most recent first. */
   recent: RecentDataset[]
+  /** Last image id viewed in each dataset, keyed by dataset handle id. */
+  positions: Record<string, number>
 
   setSeed(seed: string): void
   setDefaultExportFormat(format: ExportChoice): void
   rememberDataset(entry: RecentDataset): void
   forgetDataset(id: string): void
+  rememberPosition(datasetId: string, imageId: number): void
 }
 
 const STORAGE_KEY = 'labelall.settings'
@@ -31,9 +34,28 @@ interface Persisted {
   seed: string
   defaultExportFormat: ExportChoice
   recent: RecentDataset[]
+  positions: Record<string, number>
 }
 
-const DEFAULTS: Persisted = { seed: DEFAULT_SEED, defaultExportFormat: 'coco', recent: [] }
+const DEFAULTS: Persisted = {
+  seed: DEFAULT_SEED,
+  defaultExportFormat: 'coco',
+  recent: [],
+  positions: {},
+}
+
+function loadPositions(value: unknown): Record<string, number> {
+  if (!value || typeof value !== 'object') {
+    return {}
+  }
+  const result: Record<string, number> = {}
+  for (const [key, entry] of Object.entries(value as Record<string, unknown>)) {
+    if (typeof entry === 'number' && Number.isFinite(entry)) {
+      result[key] = entry
+    }
+  }
+  return result
+}
 
 function load(): Persisted {
   if (typeof localStorage === 'undefined') {
@@ -49,6 +71,7 @@ function load(): Persisted {
       seed: typeof parsed.seed === 'string' ? parsed.seed : DEFAULTS.seed,
       defaultExportFormat: parsed.defaultExportFormat ?? DEFAULTS.defaultExportFormat,
       recent: Array.isArray(parsed.recent) ? parsed.recent : [],
+      positions: loadPositions(parsed.positions),
     }
   } catch {
     return { ...DEFAULTS }
@@ -68,8 +91,8 @@ function persist(value: Persisted): void {
 
 export const useSettingsStore = create<SettingsState>((set, get) => {
   const save = (): void => {
-    const { seed, defaultExportFormat, recent } = get()
-    persist({ seed, defaultExportFormat, recent })
+    const { seed, defaultExportFormat, recent, positions } = get()
+    persist({ seed, defaultExportFormat, recent, positions })
   }
 
   return {
@@ -93,7 +116,15 @@ export const useSettingsStore = create<SettingsState>((set, get) => {
       save()
     },
     forgetDataset: (id) => {
-      set((state) => ({ recent: state.recent.filter((item) => item.id !== id) }))
+      set((state) => {
+        const positions = { ...state.positions }
+        delete positions[id]
+        return { recent: state.recent.filter((item) => item.id !== id), positions }
+      })
+      save()
+    },
+    rememberPosition: (datasetId, imageId) => {
+      set((state) => ({ positions: { ...state.positions, [datasetId]: imageId } }))
       save()
     },
   }
