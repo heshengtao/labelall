@@ -32,6 +32,24 @@
     "settings": "Paramètres",
     "help": "Aide"
   },
+  "save": {
+    "grantWrite": "Autoriser l'écriture",
+    "grantingWrite": "Demande…",
+    "grantDenied": "L'accès en écriture n'a pas été accordé. Réessayez et choisissez d'autoriser l'enregistrement.",
+    "grantWriteHint": "Demander au navigateur l'autorisation d'enregistrer dans ce dossier",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré dans le jeu de données d'origine",
+    "unsupported": "Ce format ne permet pas encore l'enregistrement sur place ; utilisez Exporter",
+    "readOnly": "Ce navigateur ne peut ouvrir les jeux de données qu'en lecture seule",
+    "noDataset": "Aucun jeu de données ouvert",
+    "unsavedTitle": "Modifications non enregistrées",
+    "unsavedBody": "Ce jeu de données contient des modifications non enregistrées. Les enregistrer avant de continuer ?",
+    "saveAndContinue": "Enregistrer et continuer",
+    "discard": "Ignorer les modifications",
+    "overwriteTitle": "Écraser les fichiers d'origine ?",
+    "overwriteBody": "Certaines annotations ne peuvent pas être représentées exactement dans ce format :",
+    "confirmOverwrite": "Enregistrer quand même"
+  },
   "theme": {
     "label": "Apparence",
     "light": "Clair",
@@ -127,6 +145,7 @@
     "delete": "Supprimer la classe"
   },
   "shortcuts": {
+    "save": "Enregistrer les modifications",
     "title": "Raccourcis clavier",
     "select": "Sélectionner / déplacer",
     "bbox": "Dessiner une boîte",

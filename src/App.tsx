@@ -36,6 +36,9 @@ import { fileExtension } from '@/core/path'
 import { CategoriesPanel } from '@/features/categories/CategoriesPanel'
 import { ExportButton } from '@/features/export/ExportButton'
 import { ShortcutsDialog } from '@/features/help/ShortcutsDialog'
+import { SaveButton } from '@/features/save/SaveButton'
+import { SaveConfirmDialog, UnsavedChangesDialog } from '@/features/save/SaveDialogs'
+import { guardUnsavedChanges, useCloseGuard, useSaveShortcut } from '@/features/save/useSaveGuards'
 import { ImageList } from '@/features/imagelist/ImageList'
 import { clearThumbnailCache } from '@/features/imagelist/thumbnail'
 import { ImportReportDialog } from '@/features/open/ImportReportDialog'
@@ -60,6 +63,7 @@ import { useDatasetStore } from '@/store/datasetStore'
 import { useLegalStore } from '@/store/legalStore'
 import { useSettingsStore, type RecentDataset } from '@/store/settingsStore'
 import { useUiStore } from '@/store/uiStore'
+import { useWriteAccessStore } from '@/store/writeAccessStore'
 import type { ParseService } from '@/workers/parseClient'
 
 interface DatasetHeaderProps {
@@ -87,6 +91,7 @@ function DatasetHeader({ name, dataset, warnings }: DatasetHeaderProps) {
           })}
         </Typography>
         <Box sx={{ flex: 1 }} />
+        <SaveButton />
         <ExportButton />
         <ToggleButtonGroup
           size="small"
@@ -140,6 +145,8 @@ export default function App() {
   const legalRoute = useLegalStore((state) => state.route)
   const demoSite = isDemoSite()
   useLegalHash()
+  useSaveShortcut()
+  useCloseGuard()
 
   // Thumbnails are keyed by dataset-relative path, so drop the cache whenever a
   // different dataset is opened.
@@ -148,6 +155,12 @@ export default function App() {
       clearThumbnailCache()
     }
   }, [handle?.id])
+
+  // Write permission is per opened folder — a browser can hand back a read-only
+  // handle — so re-check it whenever the dataset changes.
+  useEffect(() => {
+    void useWriteAccessStore.getState().refresh(handle)
+  }, [handle])
 
   // The worker (and the parse service) are created on first use so the module
   // is never loaded — and no worker is spawned — until the user opens a dataset.
@@ -160,6 +173,9 @@ export default function App() {
   }
 
   const handleOpen = async (): Promise<void> => {
+    if (!(await guardUnsavedChanges())) {
+      return
+    }
     setBusy(true)
     try {
       const service = await getParseService()
@@ -194,6 +210,9 @@ export default function App() {
     if (entry.kind !== 'tauri') {
       return
     }
+    if (!(await guardUnsavedChanges())) {
+      return
+    }
     setBusy(true)
     try {
       const service = await getParseService()
@@ -204,6 +223,12 @@ export default function App() {
       })
     } finally {
       setBusy(false)
+    }
+  }
+
+  const handleCloseDataset = async (): Promise<void> => {
+    if (await guardUnsavedChanges()) {
+      close()
     }
   }
 
@@ -291,7 +316,7 @@ export default function App() {
           <LanguageToggle />
           {dataset ? (
             <Tooltip title={t('dataset.close')}>
-              <IconButton aria-label={t('dataset.close')} onClick={close}>
+              <IconButton aria-label={t('dataset.close')} onClick={() => void handleCloseDataset()}>
                 <CloseIcon />
               </IconButton>
             </Tooltip>
@@ -355,6 +380,8 @@ export default function App() {
       <SettingsDialog />
       <ImportReportDialog />
       <UpdateDialog />
+      <UnsavedChangesDialog />
+      <SaveConfirmDialog />
     </>
   )
 }

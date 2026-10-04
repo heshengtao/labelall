@@ -15,6 +15,7 @@ const SHORTCUTS: Array<{ keys: string; labelKey: string }> = [
   { keys: 'Ctrl/Cmd + D', labelKey: 'shortcuts.duplicate' },
   { keys: 'Ctrl/Cmd + Z', labelKey: 'shortcuts.undo' },
   { keys: 'Ctrl/Cmd + Shift + Z', labelKey: 'shortcuts.redo' },
+  { keys: 'Ctrl/Cmd + S', labelKey: 'shortcuts.save' },
   { keys: '+ / -', labelKey: 'shortcuts.zoom' },
   { keys: '0', labelKey: 'shortcuts.fit' },
   { keys: 'Space + drag', labelKey: 'shortcuts.pan' },

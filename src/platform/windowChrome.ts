@@ -71,6 +71,21 @@ export function closeWindow(): void {
   void getCurrentWindow().close()
 }
 
+/** Close the window without re-running `onCloseRequested` (avoids a loop). */
+export function destroyWindow(): Promise<void> {
+  return getCurrentWindow().destroy()
+}
+
+/**
+ * Intercept the native close button. Calling `preventDefault()` keeps the window
+ * open, so the caller can prompt and then call `destroyWindow()`.
+ */
+export function onCloseRequested(
+  handler: (event: { preventDefault(): void }) => void,
+): Promise<() => void> {
+  return getCurrentWindow().onCloseRequested(handler)
+}
+
 export function isWindowMaximized(): Promise<boolean> {
   return getCurrentWindow().isMaximized()
 }

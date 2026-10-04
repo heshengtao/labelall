@@ -191,6 +191,7 @@ export async function readCoco(options: CocoReadOptions): Promise<ReadResult> {
         images: [],
         categories: [],
         annotations: [],
+        origin: { annotationPath, ...(imageDir ? { imageDir } : {}) },
       },
       warnings,
     }
@@ -355,6 +356,10 @@ export async function readCoco(options: CocoReadOptions): Promise<ReadResult> {
     ...(raw.info ? { info: raw.info as DatasetModel['info'] } : {}),
     ...(Array.isArray(raw.licenses) ? { licenses: raw.licenses } : {}),
     classNames: categories.map((category) => category.name),
+    origin: {
+      annotationPath,
+      ...(imageDir ? { imageDir } : {}),
+    },
   }
 
   return { dataset, warnings }
@@ -367,6 +372,21 @@ function bboxArray(box: BBox): number[] {
 export interface CocoWriteOptions {
   /** Where to write the JSON, relative to the output root. */
   path?: string
+  /**
+   * Directory the images' `file_name` is relative to. When set, that prefix is
+   * stripped from `image.filePath` so an in-place save reproduces the original
+   * `file_name` instead of nesting `imageDir` inside it.
+   */
+  imageDir?: string
+}
+
+/** Invert the reader's `joinPath(imageDir, file_name)`. */
+function fileNameRelativeTo(filePath: string, imageDir: string | undefined): string {
+  if (!imageDir) {
+    return filePath
+  }
+  const prefix = imageDir.endsWith('/') ? imageDir : `${imageDir}/`
+  return filePath.startsWith(prefix) ? filePath.slice(prefix.length) : filePath
 }
 
 /** Serialise a dataset back to a single COCO JSON file. */
@@ -390,7 +410,7 @@ export function writeCoco(dataset: DatasetModel, options: CocoWriteOptions = {})
 
   const images = dataset.images.map((image) => ({
     id: image.id,
-    file_name: image.filePath,
+    file_name: fileNameRelativeTo(image.filePath, options.imageDir),
     width: image.width,
     height: image.height,
   }))

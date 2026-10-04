@@ -32,6 +32,24 @@
     "settings": "設定",
     "help": "ヘルプ"
   },
+  "save": {
+    "grantWrite": "書き込みを許可",
+    "grantingWrite": "リクエスト中…",
+    "grantDenied": "書き込み権限が許可されませんでした。もう一度試し、システムの確認で保存を許可してください。",
+    "grantWriteHint": "このフォルダへの保存権限をブラウザに要求します",
+    "saving": "保存中…",
+    "saved": "元のデータセットに保存しました",
+    "unsupported": "この形式はまだ上書き保存に対応していません。エクスポートをご利用ください",
+    "readOnly": "このブラウザではデータセットを読み取り専用でしか開けません",
+    "noDataset": "データセットが開かれていません",
+    "unsavedTitle": "保存されていない変更があります",
+    "unsavedBody": "このデータセットに保存されていない変更があります。続行する前に保存しますか？",
+    "saveAndContinue": "保存して続行",
+    "discard": "変更を破棄",
+    "overwriteTitle": "元のファイルを上書きしますか？",
+    "overwriteBody": "一部のアノテーションはこの形式で正確に表現できません：",
+    "confirmOverwrite": "それでも保存"
+  },
   "theme": {
     "label": "外観",
     "light": "ライト",
@@ -127,6 +145,7 @@
     "delete": "クラスを削除"
   },
   "shortcuts": {
+    "save": "変更を保存",
     "title": "キーボードショートカット",
     "select": "選択 / 移動",
     "bbox": "矩形を描く",

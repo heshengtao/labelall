@@ -11,6 +11,8 @@ function fakeSource(overrides: Partial<DatasetSource> = {}): DatasetSource {
   return {
     kind: 'web',
     canWrite: false,
+    queryWritePermission: async () => 'unsupported',
+    requestWritePermission: async () => false,
     pickDataset: async () => ({ id: 'h', root: '', displayName: 'fixture' }),
     scan: async () => [{ path: 'a.jpg', isDir: false, size: 1 }],
     readText: async () => '',

@@ -37,6 +37,7 @@ import type { Category } from '@/core/model'
 import { getDatasetSource } from '@/platform'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useSettingsStore } from '@/store/settingsStore'
+import { useWriteAccessStore } from '@/store/writeAccessStore'
 
 import { exportDataset } from './exportDataset'
 
@@ -137,6 +138,8 @@ export function ExportButton() {
     () => (dataset ? dataset.categories.filter((category) => selected.has(category.id)) : []),
     [dataset, selected],
   )
+  const permission = useWriteAccessStore((state) => state.permission)
+  const writable = source.canWrite && permission === 'granted'
 
   if (!dataset || !handle || !filtered || !format || !target) {
     return null
@@ -191,12 +194,12 @@ export function ExportButton() {
 
   return (
     <>
-      <Tooltip title={source.canWrite ? t('export.title') : t('export.readOnly')}>
+      <Tooltip title={writable ? t('export.title') : t('export.readOnly')}>
         <span>
           <Button
             size="small"
             startIcon={<DownloadIcon />}
-            disabled={!source.canWrite}
+            disabled={!writable}
             onClick={openDialog}
           >
             {t('export.title')}

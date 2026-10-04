@@ -145,3 +145,28 @@ describe('annotation editing', () => {
     expect(annotations()).toHaveLength(1)
   })
 })
+
+describe('unsaved changes', () => {
+  it('starts clean and becomes dirty after an edit', () => {
+    open()
+    expect(useDatasetStore.getState().dirty).toBe(false)
+    useDatasetStore.getState().addAnnotation(bbox())
+    expect(useDatasetStore.getState().dirty).toBe(true)
+  })
+
+  it('clears the dirty flag on save and sets it again on the next edit', () => {
+    open()
+    useDatasetStore.getState().addAnnotation(bbox())
+    useDatasetStore.getState().markSaved()
+    expect(useDatasetStore.getState().dirty).toBe(false)
+    useDatasetStore.getState().addAnnotation(bbox(5, 5))
+    expect(useDatasetStore.getState().dirty).toBe(true)
+  })
+
+  it('resets the dirty flag when the dataset is closed', () => {
+    open()
+    useDatasetStore.getState().addAnnotation(bbox())
+    useDatasetStore.getState().close()
+    expect(useDatasetStore.getState().dirty).toBe(false)
+  })
+})

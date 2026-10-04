@@ -15,8 +15,8 @@ import { FILE_READ_CONCURRENCY, mapLimit } from '../concurrency'
 import { bboxFromCorners, bboxFromPolygons, polygonsArea } from '../geometry'
 import type { Annotation, Category, DatasetModel, ImageRecord, Polygon } from '../model'
 import { assignCategoryColors } from '../palette'
-import { fileBasename, joinPath } from '../path'
-import type { ReadContext, ReadResult } from './types'
+import { fileBasename, joinPath, replaceExtension } from '../path'
+import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
 
 interface RawLabelmeShape {
   label?: string
@@ -142,6 +142,7 @@ export function parseLabelme(text: string, options: LabelmeParseOptions): ReadRe
         images: [],
         categories: [],
         annotations: [],
+        origin: { ...(imageDir ? { imageDir } : {}) },
       },
       warnings,
     }
@@ -169,6 +170,7 @@ export function parseLabelme(text: string, options: LabelmeParseOptions): ReadRe
     width: raw.imageWidth ?? 0,
     height: raw.imageHeight ?? 0,
     ...(split ? { split } : {}),
+    annotationPath,
   }
 
   const annotations: Annotation[] = []
@@ -195,6 +197,7 @@ export function parseLabelme(text: string, options: LabelmeParseOptions): ReadRe
     categories: assignCategoryColors(categories),
     annotations,
     classNames: categories.map((category) => category.name),
+    origin: { ...(imageDir ? { imageDir } : {}) },
   }
 
   return { dataset, warnings }
@@ -299,7 +302,105 @@ export async function readLabelmeDataset(options: LabelmeDatasetReadOptions): Pr
     categories: assignCategoryColors(categories),
     annotations,
     classNames: categories.map((category) => category.name),
+    origin: { ...(options.imageDir ? { imageDir: options.imageDir } : {}) },
   }
 
   return { dataset, warnings }
+}
+
+export interface LabelmeWriteOptions {
+  /** Directory `imagePath` is relative to; that prefix is stripped from `filePath`. */
+  imageDir?: string
+  /**
+   * Override the JSON path for an image. Defaults to the path the JSON was read
+   * from, falling back to the image path with a `.json` extension.
+   */
+  pathFor?: (image: ImageRecord) => string
+}
+
+/** Invert the reader's `joinPath(imageDir, imagePath)`. */
+function imagePathRelativeTo(filePath: string, imageDir: string | undefined): string {
+  if (!imageDir) {
+    return filePath
+  }
+  const prefix = imageDir.endsWith('/') ? imageDir : `${imageDir}/`
+  return filePath.startsWith(prefix) ? filePath.slice(prefix.length) : filePath
+}
+
+/**
+ * Serialise a dataset back to one labelme JSON per image.
+ *
+ * Only the shapes the reader understands round-trip: boxes become `rectangle`
+ * shapes and polygons become `polygon` shapes. Anything else is reported rather
+ * than silently dropped.
+ */
+export function writeLabelme(
+  dataset: DatasetModel,
+  options: LabelmeWriteOptions = {},
+): WriteResult {
+  const files: OutputFile[] = []
+  const warnings: string[] = []
+  const categoryById = new Map(dataset.categories.map((category) => [category.id, category]))
+
+  for (const image of dataset.images) {
+    const shapes: Record<string, unknown>[] = []
+
+    for (const annotation of dataset.annotations) {
+      if (annotation.imageId !== image.id) {
+        continue
+      }
+      const label =
+        categoryById.get(annotation.categoryId)?.name ?? `class-${annotation.categoryId}`
+
+      if (annotation.type === 'classification') {
+        warnings.push('Image-level class labels have no labelme equivalent and were skipped')
+        continue
+      }
+
+      if (annotation.type === 'bbox') {
+        const { x, y, width, height } = annotation.bbox
+        shapes.push({
+          label,
+          points: [
+            [x, y],
+            [x + width, y + height],
+          ],
+          group_id: null,
+          shape_type: 'rectangle',
+          flags: annotation.attributes ?? {},
+        })
+        continue
+      }
+
+      if (annotation.type === 'polygon') {
+        for (const polygon of annotation.polygons) {
+          shapes.push({
+            label,
+            points: polygon.map((point) => [point.x, point.y]),
+            group_id: null,
+            shape_type: 'polygon',
+            flags: annotation.attributes ?? {},
+          })
+        }
+        continue
+      }
+
+      warnings.push(`Annotation of type "${annotation.type}" has no labelme shape and was skipped`)
+    }
+
+    const path =
+      options.pathFor?.(image) ?? image.annotationPath ?? replaceExtension(image.filePath, '.json')
+    const payload = {
+      version: '5.5.0',
+      flags: {},
+      shapes,
+      imagePath: imagePathRelativeTo(image.filePath, options.imageDir),
+      imageData: null,
+      imageHeight: image.height,
+      imageWidth: image.width,
+    }
+    files.push({ path, contents: `${JSON.stringify(payload, null, 2)}\n` })
+  }
+
+  return { files, warnings }
 }

@@ -36,6 +36,18 @@ export interface ExportTarget {
 }
 
 /**
+ * Write access to an open dataset, mirroring the File System Access API's
+ * permission states.
+ *
+ * - `granted`     — writes are allowed
+ * - `prompt` / `denied` — the browser can still be asked (a user gesture shows
+ *   its permission prompt); desktop never reports these
+ * - `unsupported` — the host has no writable API at all, so there is nothing to
+ *   grant (a browser without the File System Access API)
+ */
+export type WritePermission = 'granted' | 'prompt' | 'denied' | 'unsupported'
+
+/**
  * Everything the UI needs from the host environment.
  *
  * The desktop (`tauri`) and web (`web`) implementations are interchangeable, so
@@ -44,8 +56,16 @@ export interface ExportTarget {
  */
 export interface DatasetSource {
   readonly kind: 'tauri' | 'web'
-  /** Whether annotations can be written back to the source at all. */
+  /** Whether the host can write to a dataset at all (the desktop build always can). */
   readonly canWrite: boolean
+  /** Current write permission of an open handle. */
+  queryWritePermission(handle: DatasetHandle): Promise<WritePermission>
+  /**
+   * Ask the host for write access. Must be called from a user gesture — the
+   * browser only shows its permission prompt then. Resolves whether it was
+   * granted.
+   */
+  requestWritePermission(handle: DatasetHandle): Promise<boolean>
   /** Native folder picker; resolves to null when the user cancels. */
   pickDataset(): Promise<DatasetHandle | null>
   /** List every entry below the handle, as relative POSIX paths. */

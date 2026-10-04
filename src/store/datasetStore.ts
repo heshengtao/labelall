@@ -46,6 +46,8 @@ interface DatasetState {
   generation: number
   /** Undo/redo stack for edits to the dataset. */
   history: History
+  /** Whether the dataset has edits that have not been written back to disk. */
+  dirty: boolean
 
   setStatus(status: OpenStatus): void
   setProgress(progress: number): void
@@ -56,6 +58,8 @@ interface DatasetState {
   selectAnnotation(index: number | null): void
   invalidateOpen(): void
   close(): void
+  /** Called after a successful save, clearing the unsaved-changes indicator. */
+  markSaved(): void
 
   edit(recipe: (draft: Draft<DatasetModel>) => void, label: string): void
   undo(): void
@@ -113,6 +117,7 @@ const initialState = {
   selectedAnnotationIndex: null,
   generation: 0,
   history: emptyHistory,
+  dirty: false,
 }
 
 export const useDatasetStore = create<DatasetState>((set) => ({
@@ -131,6 +136,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
       currentImageId: dataset.images[0]?.id ?? null,
       selectedAnnotationIndex: null,
       history: emptyHistory,
+      dirty: false,
     }),
 
   selectImage: (imageId) => set({ currentImageId: imageId, selectedAnnotationIndex: null }),
@@ -141,13 +147,31 @@ export const useDatasetStore = create<DatasetState>((set) => ({
 
   close: () => set({ ...initialState }),
 
+  markSaved: () =>
+    set((state) => {
+      const dataset = state.dataset
+      // The labels that now exist on disk are exactly the images with
+      // annotations, so record them: a later save can then clear a label the
+      // user deletes instead of leaving the old file behind.
+      if (!dataset?.origin?.labelledImageIds) {
+        return { dirty: false }
+      }
+      const labelledImageIds = dataset.images
+        .filter((image) => dataset.annotations.some((item) => item.imageId === image.id))
+        .map((image) => image.id)
+      return {
+        dirty: false,
+        dataset: { ...dataset, origin: { ...dataset.origin, labelledImageIds } },
+      }
+    }),
+
   edit: (recipe, label) =>
     set((state) => {
       if (!state.dataset) {
         return {}
       }
       const result = applyEdit(state.dataset, state.history, label, recipe)
-      return { dataset: result.value, history: result.history }
+      return { dataset: result.value, history: result.history, dirty: true }
     }),
 
   undo: () =>
@@ -160,6 +184,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
         dataset: result.value,
         history: result.history,
         selectedAnnotationIndex: null,
+        dirty: true,
       }
     }),
 
@@ -173,6 +198,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
         dataset: result.value,
         history: result.history,
         selectedAnnotationIndex: null,
+        dirty: true,
       }
     }),
 
@@ -188,6 +214,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
         dataset: result.value,
         history: result.history,
         selectedAnnotationIndex: result.value.annotations.length - 1,
+        dirty: true,
       }
     }),
 
@@ -202,7 +229,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
           draft.annotations[index] = update(current as Annotation)
         }
       })
-      return { dataset: result.value, history: result.history }
+      return { dataset: result.value, history: result.history, dirty: true }
     }),
 
   deleteAnnotation: (index) =>
@@ -217,6 +244,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
         dataset: result.value,
         history: result.history,
         selectedAnnotationIndex: nearestIndexForImage(result.value, state.currentImageId, index),
+        dirty: true,
       }
     }),
 
@@ -239,6 +267,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
           dataset: result.value,
           history: result.history,
           selectedAnnotationIndex: null,
+          dirty: true,
         }
       }
       const result = applyEdit(state.dataset, state.history, 'add label', (draft) => {
@@ -248,6 +277,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
         dataset: result.value,
         history: result.history,
         selectedAnnotationIndex: result.value.annotations.length - 1,
+        dirty: true,
       }
     }),
 
@@ -266,6 +296,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
         dataset: result.value,
         history: result.history,
         selectedAnnotationIndex: index + 1,
+        dirty: true,
       }
     }),
 
@@ -283,7 +314,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
       const result = applyEdit(state.dataset, state.history, 'add category', (draft) => {
         draft.categories.push(category)
       })
-      return { dataset: result.value, history: result.history }
+      return { dataset: result.value, history: result.history, dirty: true }
     }),
 
   updateCategory: (id, patch) =>
@@ -298,7 +329,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
           Object.assign(current, patch)
         }
       })
-      return { dataset: result.value, history: result.history }
+      return { dataset: result.value, history: result.history, dirty: true }
     }),
 
   deleteCategory: (id) =>
@@ -314,6 +345,7 @@ export const useDatasetStore = create<DatasetState>((set) => ({
         dataset: result.value,
         history: result.history,
         selectedAnnotationIndex: null,
+        dirty: true,
       }
     }),
 }))

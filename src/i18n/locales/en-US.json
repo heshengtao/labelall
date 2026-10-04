@@ -32,6 +32,24 @@
     "settings": "Settings",
     "help": "Help"
   },
+  "save": {
+    "grantWrite": "Grant write access",
+    "grantingWrite": "Requesting…",
+    "grantDenied": "Write access was not granted. Try again and choose to allow saving.",
+    "grantWriteHint": "Ask the browser for permission to save into this folder",
+    "saving": "Saving…",
+    "saved": "Saved to the original dataset",
+    "unsupported": "This dataset format cannot be saved in place yet — use Export instead",
+    "readOnly": "This browser can only open datasets read-only",
+    "noDataset": "No dataset is open",
+    "unsavedTitle": "Unsaved changes",
+    "unsavedBody": "You have unsaved changes to this dataset. Save them before continuing?",
+    "saveAndContinue": "Save and continue",
+    "discard": "Discard changes",
+    "overwriteTitle": "Save over the original files?",
+    "overwriteBody": "Some annotations cannot be represented exactly in this format:",
+    "confirmOverwrite": "Save anyway"
+  },
   "theme": {
     "label": "Appearance",
     "light": "Light",
@@ -127,6 +145,7 @@
     "delete": "Delete class"
   },
   "shortcuts": {
+    "save": "Save changes",
     "title": "Keyboard shortcuts",
     "select": "Select / move",
     "bbox": "Draw a box",

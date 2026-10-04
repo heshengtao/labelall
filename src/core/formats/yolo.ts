@@ -128,6 +128,10 @@ export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
 
   const images: ImageRecord[] = []
   const annotations: Annotation[] = []
+  // Remember which images had a label file, so a save can still clear a label
+  // the user deleted (an empty file) without inventing files for images that
+  // never had any.
+  const labelledImageIds: number[] = []
   let maxClass = names.length - 1
 
   for (let imageId = 0; imageId < total; imageId += 1) {
@@ -145,6 +149,7 @@ export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
     if (!text || text.trim() === '') {
       continue
     }
+    labelledImageIds.push(imageId)
     if (!size) {
       warnings.push(`Could not determine the size of ${image.path}; its labels were skipped`)
       continue
@@ -245,6 +250,10 @@ export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
     categories: assignCategoryColors(categories),
     annotations,
     classNames: categories.map((category) => category.name),
+    origin: {
+      ...(yamlEntry ? { yamlPath: yamlEntry.path } : {}),
+      labelledImageIds,
+    },
   }
 
   return { dataset, warnings }
@@ -271,8 +280,25 @@ function formatYaml(names: string[], schema: KeypointSchema | undefined): string
   return `${lines.join('\n')}\n`
 }
 
+export interface YoloWriteOptions {
+  /** Path of the `data.yaml`. Defaults to `data.yaml` at the output root. */
+  yamlPath?: string
+  /** Override the label path for an image. Defaults to the `images/`→`labels/` rule. */
+  pathFor?: (image: ImageRecord) => string
+  /**
+   * Whether to emit a (possibly empty) label file for an image that currently
+   * has no annotations. Used by save so clearing an image's last label overwrites
+   * the old file instead of leaving it stale.
+   */
+  emitEmptyFor?: (image: ImageRecord) => boolean
+}
+
 /** Serialise a dataset to YOLO label files plus a `data.yaml`. */
-export function writeYolo(dataset: DatasetModel, task: YoloTask): WriteResult {
+export function writeYolo(
+  dataset: DatasetModel,
+  task: YoloTask,
+  options: YoloWriteOptions = {},
+): WriteResult {
   const files: OutputFile[] = []
   const warnings: string[] = []
 
@@ -356,16 +382,16 @@ export function writeYolo(dataset: DatasetModel, task: YoloTask): WriteResult {
       )
     }
 
-    if (lines.length > 0) {
+    if (lines.length > 0 || options.emitEmptyFor?.(image) === true) {
       files.push({
-        path: imagesPathToLabelsPath(image.filePath),
-        contents: `${lines.join('\n')}\n`,
+        path: options.pathFor?.(image) ?? imagesPathToLabelsPath(image.filePath),
+        contents: lines.length > 0 ? `${lines.join('\n')}\n` : '',
       })
     }
   }
 
   files.push({
-    path: 'data.yaml',
+    path: options.yamlPath ?? 'data.yaml',
     contents: formatYaml(names, task === 'pose' ? schema : undefined),
   })
   return { files, warnings }

@@ -32,6 +32,24 @@
     "settings": "设置",
     "help": "帮助"
   },
+  "save": {
+    "grantWrite": "授权写入",
+    "grantingWrite": "请求中…",
+    "grantDenied": "未获得写入权限。请重试，并在系统提示中选择允许保存。",
+    "grantWriteHint": "向浏览器申请写入此文件夹的权限",
+    "saving": "保存中…",
+    "saved": "已保存到原数据集",
+    "unsupported": "该数据集格式暂不支持原地保存，请改用导出",
+    "readOnly": "当前浏览器仅支持只读打开数据集",
+    "noDataset": "当前没有打开数据集",
+    "unsavedTitle": "有未保存的修改",
+    "unsavedBody": "该数据集有未保存的修改，继续前是否保存？",
+    "saveAndContinue": "保存并继续",
+    "discard": "放弃修改",
+    "overwriteTitle": "覆盖原始文件？",
+    "overwriteBody": "以下标注无法在该格式中完整表示：",
+    "confirmOverwrite": "仍要保存"
+  },
   "theme": {
     "label": "外观",
     "light": "浅色",
@@ -127,6 +145,7 @@
     "delete": "删除类别"
   },
   "shortcuts": {
+    "save": "保存修改",
     "title": "快捷键",
     "select": "选择 / 移动",
     "bbox": "绘制矩形框",

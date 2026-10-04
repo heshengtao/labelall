@@ -1,3 +1,5 @@
+import type { VocBoxPolicy } from './geometry'
+
 /**
  * The unified, format-independent dataset model.
  *
@@ -8,6 +10,29 @@
  * normalised values, Label Studio's percentages — must be normalised inside the
  * readers/writers and never leak into this model.
  */
+
+/**
+ * Everything needed to write a dataset back into the layout it was read from,
+ * so "save" can overwrite the original files instead of exporting a copy.
+ *
+ * All paths are relative to the dataset root. Readers fill this in; writers and
+ * the save flow read it. It is deliberately separate from the canonical paths
+ * the export writers use, because the files a dataset was read from do not
+ * always follow the canonical layout (e.g. VOC XMLs sitting next to their
+ * images rather than under `Annotations/`).
+ */
+export interface DatasetOrigin {
+  /** COCO: the single annotation JSON to overwrite. */
+  annotationPath?: string
+  /** Directory that image references are relative to (COCO `file_name`, labelme `imagePath`). */
+  imageDir?: string
+  /** YOLO: the `data.yaml`/`*.yaml` to overwrite. */
+  yamlPath?: string
+  /** VOC: the coordinate policy the dataset was read with, so writing inverts it exactly. */
+  boxPolicy?: VocBoxPolicy
+  /** YOLO: ids of images that had a non-empty label file, so a cleared label is still written. */
+  labelledImageIds?: number[]
+}
 
 export interface Point {
   x: number
@@ -93,6 +118,12 @@ export interface ImageRecord {
   fileName?: string
   /** Format-specific metadata carried through unchanged. */
   source?: Record<string, unknown>
+  /**
+   * Relative path of the annotation file this image's annotations were read
+   * from (VOC XML, labelme JSON). Absent for formats that keep every annotation
+   * in one dataset-level file, or that derive labels from the folder layout.
+   */
+  annotationPath?: string
 }
 
 export interface AnnotationFlags {
@@ -199,6 +230,8 @@ export interface DatasetModel {
   licenses?: License[]
   /** Format-specific leftovers that do not map cleanly onto the model. */
   extras?: Record<string, unknown>
+  /** How to write this dataset back to disk in its original layout. */
+  origin?: DatasetOrigin
 }
 
 /** Create an empty dataset for a given format and root. */

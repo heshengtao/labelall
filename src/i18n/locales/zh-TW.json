@@ -32,6 +32,24 @@
     "settings": "設定",
     "help": "說明"
   },
+  "save": {
+    "grantWrite": "授權寫入",
+    "grantingWrite": "請求中…",
+    "grantDenied": "未取得寫入權限。請重試，並在系統提示中選擇允許儲存。",
+    "grantWriteHint": "向瀏覽器申請寫入此資料夾的權限",
+    "saving": "儲存中…",
+    "saved": "已儲存到原始資料集",
+    "unsupported": "此資料集格式尚不支援原地儲存，請改用匯出",
+    "readOnly": "目前瀏覽器僅支援唯讀開啟資料集",
+    "noDataset": "目前沒有開啟資料集",
+    "unsavedTitle": "有未儲存的變更",
+    "unsavedBody": "此資料集有未儲存的變更，繼續前要儲存嗎？",
+    "saveAndContinue": "儲存並繼續",
+    "discard": "捨棄變更",
+    "overwriteTitle": "覆寫原始檔案？",
+    "overwriteBody": "以下標註無法在此格式中完整表示：",
+    "confirmOverwrite": "仍要儲存"
+  },
   "theme": {
     "label": "外觀",
     "light": "淺色",
@@ -127,6 +145,7 @@
     "delete": "刪除類別"
   },
   "shortcuts": {
+    "save": "儲存變更",
     "title": "鍵盤快速鍵",
     "select": "選取 / 移動",
     "bbox": "繪製矩形框",

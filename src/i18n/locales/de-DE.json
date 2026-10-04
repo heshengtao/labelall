@@ -32,6 +32,24 @@
     "settings": "Einstellungen",
     "help": "Hilfe"
   },
+  "save": {
+    "grantWrite": "Schreibzugriff erteilen",
+    "grantingWrite": "Wird angefragt…",
+    "grantDenied": "Schreibzugriff wurde nicht erteilt. Versuche es erneut und wähle „Speichern erlauben“.",
+    "grantWriteHint": "Den Browser um Erlaubnis bitten, in diesen Ordner zu speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Im Original-Datensatz gespeichert",
+    "unsupported": "Dieses Format unterstützt noch kein direktes Speichern; verwenden Sie Exportieren",
+    "readOnly": "Dieser Browser kann Datensätze nur schreibgeschützt öffnen",
+    "noDataset": "Kein Datensatz geöffnet",
+    "unsavedTitle": "Ungespeicherte Änderungen",
+    "unsavedBody": "Dieser Datensatz hat ungespeicherte Änderungen. Vor dem Fortfahren speichern?",
+    "saveAndContinue": "Speichern und fortfahren",
+    "discard": "Änderungen verwerfen",
+    "overwriteTitle": "Originaldateien überschreiben?",
+    "overwriteBody": "Einige Annotationen lassen sich in diesem Format nicht exakt darstellen:",
+    "confirmOverwrite": "Trotzdem speichern"
+  },
   "theme": {
     "label": "Darstellung",
     "light": "Hell",
@@ -127,6 +145,7 @@
     "delete": "Klasse löschen"
   },
   "shortcuts": {
+    "save": "Änderungen speichern",
     "title": "Tastenkürzel",
     "select": "Auswählen / verschieben",
     "bbox": "Rechteck zeichnen",

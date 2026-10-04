@@ -7,6 +7,7 @@ import {
   type DatasetSource,
   type TextFile,
   type Thumbnail,
+  type WritePermission,
 } from './types'
 
 // --- Minimal File System Access API typings ---------------------------------
@@ -23,12 +24,17 @@ interface FsFileHandle {
   getFile(): Promise<File>
   createWritable(): Promise<FsWritable>
 }
+interface FsPermissionDescriptor {
+  mode?: 'read' | 'readwrite'
+}
 interface FsDirectoryHandle {
   kind: 'directory'
   name: string
   values(): AsyncIterableIterator<FsDirectoryHandle | FsFileHandle>
   getDirectoryHandle(name: string, options?: { create?: boolean }): Promise<FsDirectoryHandle>
   getFileHandle(name: string, options?: { create?: boolean }): Promise<FsFileHandle>
+  queryPermission?(descriptor?: FsPermissionDescriptor): Promise<PermissionState>
+  requestPermission?(descriptor?: FsPermissionDescriptor): Promise<PermissionState>
 }
 
 declare global {
@@ -193,6 +199,39 @@ export function createWebSource(): DatasetSource {
   return {
     kind: 'web',
     canWrite,
+
+    async queryWritePermission(handle): Promise<WritePermission> {
+      const entry = stored.get(handle.id)
+      // No directory handle means the read-only fallback, or a browser without
+      // the File System Access API — either way there is no permission to grant.
+      if (!entry || entry.kind !== 'fs') {
+        return 'unsupported'
+      }
+      if (typeof entry.dir.queryPermission !== 'function') {
+        // Opened with `mode: 'readwrite'`, and the API cannot report the state.
+        return 'granted'
+      }
+      try {
+        return await entry.dir.queryPermission({ mode: 'readwrite' })
+      } catch {
+        return 'unsupported'
+      }
+    },
+
+    async requestWritePermission(handle): Promise<boolean> {
+      const entry = stored.get(handle.id)
+      if (!entry || entry.kind !== 'fs' || typeof entry.dir.requestPermission !== 'function') {
+        return false
+      }
+      try {
+        // Only works during a user gesture — the browser shows its folder
+        // permission prompt ("view files" vs "save changes") here.
+        const state = await entry.dir.requestPermission({ mode: 'readwrite' })
+        return state === 'granted'
+      } catch {
+        return false
+      }
+    },
 
     async pickDataset(): Promise<DatasetHandle | null> {
       revokeAllBlobUrls()

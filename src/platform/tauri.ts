@@ -56,6 +56,16 @@ export function createTauriSource(): DatasetSource {
     kind: 'tauri',
     canWrite: true,
 
+    queryWritePermission() {
+      // The desktop build writes through Rust with the user's own filesystem
+      // permissions, so there is no per-handle grant to query.
+      return Promise.resolve('granted')
+    },
+
+    requestWritePermission() {
+      return Promise.resolve(true)
+    },
+
     async pickDataset(): Promise<DatasetHandle | null> {
       const selected = await open({ directory: true, multiple: false })
       if (typeof selected !== 'string') {

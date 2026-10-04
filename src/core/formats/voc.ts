@@ -93,6 +93,7 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
         })),
         categories: [],
         annotations: [],
+        origin: { boxPolicy: policy },
       },
       warnings,
     }
@@ -165,6 +166,7 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
       fileName,
       width: Number(size.width ?? 0) || 0,
       height: Number(size.height ?? 0) || 0,
+      annotationPath: target.path,
     })
 
     for (const object of toArray(node.object as VocObject | VocObject[] | undefined)) {
@@ -217,6 +219,7 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
     categories: assignCategoryColors(categories),
     annotations,
     classNames: categories.map((category) => category.name),
+    origin: { boxPolicy: policy },
   }
 
   return { dataset, warnings }
@@ -224,6 +227,12 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
 
 export interface VocWriteOptions {
   boxPolicy?: VocBoxPolicy
+  /**
+   * Override the XML path for an image. Defaults to the canonical
+   * `Annotations/<stem>.xml`; a save passes the original path so a dataset whose
+   * XMLs sit next to their images is not restructured.
+   */
+  pathFor?: (image: ImageRecord) => string
 }
 
 function flagsOf(annotation: Annotation): AnnotationFlags | undefined {
@@ -278,7 +287,10 @@ export function writeVoc(dataset: DatasetModel, options: VocWriteOptions = {}): 
       },
     }) as string
 
-    files.push({ path: `Annotations/${fileStem(image.filePath)}.xml`, contents: xml })
+    files.push({
+      path: options.pathFor?.(image) ?? `Annotations/${fileStem(image.filePath)}.xml`,
+      contents: xml,
+    })
   }
 
   return { files, warnings }

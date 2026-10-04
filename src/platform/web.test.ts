@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { entriesFromRelativePaths } from './web'
+import { createWebSource, entriesFromRelativePaths } from './web'
 
 describe('entriesFromRelativePaths', () => {
   it('synthesises directory entries and sorts the listing', () => {
@@ -21,5 +21,15 @@ describe('entriesFromRelativePaths', () => {
   it('handles files directly in the root', () => {
     const entries = entriesFromRelativePaths([{ path: 'a.jpg', size: 1 }])
     expect(entries).toEqual([{ path: 'a.jpg', isDir: false, size: 1 }])
+  })
+})
+
+describe('write permission', () => {
+  const handle = { id: 'missing', root: '', displayName: 'x' }
+
+  it('reports unsupported for a handle it did not open', async () => {
+    const source = createWebSource()
+    await expect(source.queryWritePermission(handle)).resolves.toBe('unsupported')
+    await expect(source.requestWritePermission(handle)).resolves.toBe(false)
   })
 })

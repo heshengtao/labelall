@@ -16,4 +16,4 @@ export function getDatasetSource(): DatasetSource {
   return cached
 }
 
-export type { DatasetHandle, DatasetSource, TextFile } from './types'
+export type { DatasetHandle, DatasetSource, TextFile, WritePermission } from './types'

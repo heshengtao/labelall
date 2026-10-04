@@ -32,6 +32,24 @@
     "settings": "Ajustes",
     "help": "Ayuda"
   },
+  "save": {
+    "grantWrite": "Permitir escritura",
+    "grantingWrite": "Solicitando…",
+    "grantDenied": "No se concedió permiso de escritura. Inténtalo de nuevo y elige permitir guardar.",
+    "grantWriteHint": "Pedir al navegador permiso para guardar en esta carpeta",
+    "saving": "Guardando…",
+    "saved": "Guardado en el dataset original",
+    "unsupported": "Este formato aún no admite guardado en el sitio; usa Exportar",
+    "readOnly": "Este navegador solo puede abrir datasets en modo lectura",
+    "noDataset": "No hay ningún dataset abierto",
+    "unsavedTitle": "Cambios sin guardar",
+    "unsavedBody": "Tienes cambios sin guardar en este dataset. ¿Guardarlos antes de continuar?",
+    "saveAndContinue": "Guardar y continuar",
+    "discard": "Descartar cambios",
+    "overwriteTitle": "¿Sobrescribir los archivos originales?",
+    "overwriteBody": "Algunas anotaciones no pueden representarse con exactitud en este formato:",
+    "confirmOverwrite": "Guardar igualmente"
+  },
   "theme": {
     "label": "Apariencia",
     "light": "Claro",
@@ -127,6 +145,7 @@
     "delete": "Eliminar clase"
   },
   "shortcuts": {
+    "save": "Guardar cambios",
     "title": "Atajos de teclado",
     "select": "Seleccionar / mover",
     "bbox": "Dibujar una caja",
