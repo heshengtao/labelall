@@ -158,6 +158,7 @@
   },
   "settings": {
     "title": "Ajustes",
+    "version": "Versión {{version}}",
     "seed": "Color de acento",
     "palette": "Paleta",
     "hex": "Hex",

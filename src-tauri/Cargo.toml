@@ -1,6 +1,6 @@
 [package]
 name = "labelall"
-version = "0.1.3"
+version = "0.1.4"
 description = "Load, view and annotate common image datasets"
 authors = ["heshengtao"]
 license = "Apache-2.0"

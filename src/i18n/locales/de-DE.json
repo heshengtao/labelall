@@ -158,6 +158,7 @@
   },
   "settings": {
     "title": "Einstellungen",
+    "version": "Version {{version}}",
     "seed": "Akzentfarbe",
     "palette": "Palette",
     "hex": "Hex",

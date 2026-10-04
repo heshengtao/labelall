@@ -158,6 +158,7 @@
   },
   "settings": {
     "title": "设置",
+    "version": "版本 {{version}}",
     "seed": "主题色",
     "palette": "调色板",
     "hex": "颜色值",

@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
+import { APP_VERSION } from '@/appVersion'
 import { ColorFieldWithReset } from '@/components/ColorField'
 import { SEED_COLUMNS, SEED_PRESETS } from '@/components/presets'
 import type { ExportChoice } from '@/core/formats/losses'
@@ -110,19 +111,23 @@ export function SettingsDialog() {
             ))}
           </TextField>
 
-          <Button
-            size="small"
-            startIcon={<SystemUpdateAltIcon />}
-            onClick={() =>
-              void useUpdateStore
-                .getState()
-                .checkForUpdates()
-                .then(() => setOpen(false))
-            }
-            sx={{ alignSelf: 'flex-start' }}
-          >
-            {t('update.check')}
-          </Button>
+          <Stack spacing={0.5} sx={{ alignItems: 'flex-start' }}>
+            <Button
+              size="small"
+              startIcon={<SystemUpdateAltIcon />}
+              onClick={() =>
+                void useUpdateStore
+                  .getState()
+                  .checkForUpdates()
+                  .then(() => setOpen(false))
+              }
+            >
+              {t('update.check')}
+            </Button>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              {t('settings.version', { version: APP_VERSION })}
+            </Typography>
+          </Stack>
 
           {recent.length > 0 ? (
             <Stack spacing={0.5}>

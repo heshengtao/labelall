@@ -158,6 +158,7 @@
   },
   "settings": {
     "title": "Настройки",
+    "version": "Версия {{version}}",
     "seed": "Акцентный цвет",
     "palette": "Палитра",
     "hex": "HEX",

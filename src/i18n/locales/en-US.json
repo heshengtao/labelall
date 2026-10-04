@@ -158,6 +158,7 @@
   },
   "settings": {
     "title": "Settings",
+    "version": "Version {{version}}",
     "seed": "Accent colour",
     "palette": "Palette",
     "hex": "Hex",
