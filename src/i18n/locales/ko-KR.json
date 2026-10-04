@@ -39,6 +39,12 @@
   "language": {
     "label": "언어"
   },
+  "window": {
+    "minimize": "최소화",
+    "maximize": "최대화",
+    "restore": "이전 크기로 복원",
+    "close": "닫기"
+  },
   "welcome": {
     "title": "라벨링 시작하기",
     "subtitle": "데이터셋 폴더를 열면 바로 보고 라벨링할 수 있습니다.",

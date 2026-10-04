@@ -39,6 +39,12 @@
   "language": {
     "label": "語言"
   },
+  "window": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "還原",
+    "close": "關閉"
+  },
   "welcome": {
     "title": "開始標註",
     "subtitle": "開啟資料集資料夾即可開始檢視與標註。",

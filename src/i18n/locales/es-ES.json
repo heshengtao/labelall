@@ -39,6 +39,12 @@
   "language": {
     "label": "Idioma"
   },
+  "window": {
+    "minimize": "Minimizar",
+    "maximize": "Maximizar",
+    "restore": "Restaurar",
+    "close": "Cerrar"
+  },
   "welcome": {
     "title": "Empieza a anotar",
     "subtitle": "Abre una carpeta de dataset para empezar a ver y anotar.",

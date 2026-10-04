@@ -39,6 +39,12 @@
   "language": {
     "label": "Sprache"
   },
+  "window": {
+    "minimize": "Minimieren",
+    "maximize": "Maximieren",
+    "restore": "Wiederherstellen",
+    "close": "Schließen"
+  },
   "welcome": {
     "title": "Mit dem Annotieren beginnen",
     "subtitle": "Öffne einen Datensatzordner, um Bilder anzusehen und zu annotieren.",

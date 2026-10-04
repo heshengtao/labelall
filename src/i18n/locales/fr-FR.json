@@ -39,6 +39,12 @@
   "language": {
     "label": "Langue"
   },
+  "window": {
+    "minimize": "Réduire",
+    "maximize": "Agrandir",
+    "restore": "Restaurer",
+    "close": "Fermer"
+  },
   "welcome": {
     "title": "Commencer à annoter",
     "subtitle": "Ouvrez un dossier de jeu de données pour commencer à consulter et annoter.",

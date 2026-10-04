@@ -39,6 +39,12 @@
   "language": {
     "label": "Language"
   },
+  "window": {
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "restore": "Restore",
+    "close": "Close"
+  },
   "welcome": {
     "title": "Start annotating",
     "subtitle": "Open a dataset folder to start viewing and annotating.",

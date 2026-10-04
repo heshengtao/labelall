@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { ThemeModeToggle } from '@/components/ThemeModeToggle'
 import { WelcomeView } from '@/components/WelcomeView'
+import { WindowControls } from '@/components/WindowControls'
 import type { DetectionCandidate } from '@/core/formats/detect'
 import { IMAGE_EXTENSIONS } from '@/core/formats/detect'
 import type { DatasetModel } from '@/core/model'
@@ -45,6 +46,11 @@ import { Viewer } from '@/features/viewer/Viewer'
 import { getDatasetSource } from '@/platform'
 import { detectRuntimeEnv } from '@/platform/detect-env'
 import { GITHUB_URL, openExternal } from '@/platform/openExternal'
+import {
+  handleTopBarPointerDown,
+  hasCustomWindowControls,
+  isMacDesktop,
+} from '@/platform/windowChrome'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useSettingsStore, type RecentDataset } from '@/store/settingsStore'
 import { useUiStore } from '@/store/uiStore'
@@ -106,6 +112,9 @@ function DatasetHeader({ name, dataset, warnings }: DatasetHeaderProps) {
 export default function App() {
   const { t } = useTranslation()
   const runtimeEnv = detectRuntimeEnv()
+  const macDesktop = isMacDesktop()
+  const showWindowControls = hasCustomWindowControls()
+  const desktopChrome = macDesktop || showWindowControls
   const parseServiceRef = useRef<ParseService | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -203,18 +212,24 @@ export default function App() {
       <CssBaseline />
       <AppBar
         position="static"
-        sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}
+        onMouseDown={handleTopBarPointerDown}
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+          userSelect: desktopChrome ? 'none' : undefined,
+        }}
       >
-        <Toolbar variant="dense" sx={{ gap: 1 }}>
+        {/* Padding is applied inline so the macOS traffic-light gap stays on the
+            physical left even when the layout is mirrored for RTL languages. */}
+        <Toolbar
+          variant="dense"
+          style={macDesktop ? { paddingLeft: 80 } : undefined}
+          sx={{ gap: 1 }}
+        >
           <DatasetOutlinedIcon color="primary" />
           <Typography variant="h6" component="div" sx={{ fontWeight: 600, mr: 1 }}>
             {t('app.name')}
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: 'text.secondary', display: { xs: 'none', md: 'block' } }}
-          >
-            {dataset && handle ? handle.displayName : t('app.tagline')}
           </Typography>
           <Box sx={{ flex: 1 }} />
           <Tooltip title={t('env.desktop') + ' / ' + t('env.web')}>
@@ -254,6 +269,7 @@ export default function App() {
               </IconButton>
             </Tooltip>
           ) : null}
+          {showWindowControls ? <WindowControls /> : null}
         </Toolbar>
         {working ? (
           <LinearProgress variant="determinate" value={Math.round(progress * 100)} />

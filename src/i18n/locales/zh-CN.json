@@ -39,6 +39,12 @@
   "language": {
     "label": "语言"
   },
+  "window": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "还原",
+    "close": "关闭"
+  },
   "welcome": {
     "title": "开始标注",
     "subtitle": "打开一个数据集目录即可开始查看与标注。",

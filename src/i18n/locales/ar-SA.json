@@ -39,6 +39,12 @@
   "language": {
     "label": "اللغة"
   },
+  "window": {
+    "minimize": "تصغير",
+    "maximize": "تكبير",
+    "restore": "استعادة",
+    "close": "إغلاق"
+  },
   "welcome": {
     "title": "ابدأ الوسم",
     "subtitle": "افتح مجلد مجموعة بيانات لبدء العرض والوسم.",

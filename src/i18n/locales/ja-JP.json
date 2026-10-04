@@ -39,6 +39,12 @@
   "language": {
     "label": "言語"
   },
+  "window": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "元に戻す",
+    "close": "閉じる"
+  },
   "welcome": {
     "title": "アノテーションを始める",
     "subtitle": "データセットのフォルダを開くと、閲覧とアノテーションを開始できます。",
