@@ -35,6 +35,11 @@ describe('path helpers', () => {
   it('resolves the label file for the last /images/ segment', () => {
     expect(imagesPathToLabelsPath('dataset/images/train/a.jpg')).toBe('dataset/labels/train/a.txt')
     expect(imagesPathToLabelsPath('images/train/a.jpg')).toBe('labels/train/a.txt')
-    expect(imagesPathToLabelsPath('a.jpg')).toBe('labels/a.txt')
+  })
+
+  it('falls back to a sibling label when there is no images/ segment', () => {
+    // Matches Ultralytics / MindYOLO, which swap the extension in place.
+    expect(imagesPathToLabelsPath('a.jpg')).toBe('a.txt')
+    expect(imagesPathToLabelsPath('JPEGImages/0001.jpg')).toBe('JPEGImages/0001.txt')
   })
 })

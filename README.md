@@ -68,9 +68,14 @@ anyone who needs to look at or fix a batch of image labels quickly.
 
 **Export and interop**
 
-- Export to COCO, YOLO, Pascal VOC or classification folders in one step.
+- Export to COCO, YOLO, MindYOLO, Pascal VOC, classification folders, labelme or CSV in one step.
+- Split a dataset into train / val / test at any ratio — with a reproducible seed — and each split is
+  written to its own subfolder. A 0% split is simply left out, so exporting with no validation or
+  test set works too.
+- For COCO, YOLO, MindYOLO and VOC you can also pick the standard content-first layout
+  (`images/<split>/` + `labels/<split>/`, one root `data.yaml`); both layouts re-open cleanly.
 - Before exporting, LabelAll **tells you exactly what the target format cannot keep**, and writes
-  into a separate folder — your original files are never modified.
+  into a separate, timestamped folder — your original files are never modified.
 
 **A pleasure to use**
 
@@ -86,11 +91,13 @@ anyone who needs to look at or fix a batch of image labels quickly.
 
 | Format | Open | Export | Notes |
 | --- | :---: | :---: | --- |
-| **COCO** | ✅ | ✅ | Polygon and RLE segmentation, keypoints |
+| **COCO** | ✅ | ✅ | Polygon and RLE segmentation, keypoints; split `instances_train/val/test.json` files merge on open |
 | **YOLO** | ✅ | ✅ | Detect, segment and pose tasks |
+| **MindYOLO** | ✅ | ✅ | `data.yaml`, per-split image-list `.txt`, YOLO labels and the eval `annotations/instances_<split>2017.json`; missing splits are tolerated |
 | **Pascal VOC** | ✅ | ✅ | 1-based boxes, XML next to images or in `Annotations/` |
 | **Classification / ImageNet** | ✅ | Partial | The folder name is the class |
-| **labelme** | ✅ | — | Interop with labelme |
+| **labelme** | ✅ | ✅ | Boxes and polygons |
+| **CSV** | ✅ | ✅ | One row per annotation: `image,width,height,label,type,xmin,ymin,xmax,ymax,polygon,keypoints` |
 
 > MS COCO, ImageNet / ILSVRC, Pascal VOC 2007/2012 and other public datasets can be opened in their
 > native format.
@@ -158,7 +165,7 @@ docker compose up -d --build
 2. Confirm the detected format and start browsing.
 3. Add or edit annotations, then export to the format you want.
 
-> Want to try it first? [`examples/voc-mini`](./examples/voc-mini) is a three-image Pascal VOC
+> Want to try it first? [`examples/voc-mini`](./examples/voc-mini) is a ten-image Pascal VOC
 > dataset — open it directly.
 
 ## Keyboard shortcuts
@@ -179,7 +186,7 @@ docker compose up -d --build
 - Aimed at datasets of up to ~50k images with annotation files under 100 MB; larger ones are not
   guaranteed to stay smooth yet.
 - The web build is read/write in Chrome / Edge and read-only in Firefox / Safari.
-- Export writes annotation files only; images are not copied.
+- Export writes annotation files and, when "Copy images" is on, copies the images alongside them.
 
 ## Contributing and license
 

@@ -62,4 +62,15 @@ describe('detectFormat', () => {
     })
     expect(candidates[0]).toMatchObject({ format: 'yolo-pose', confidence: 1 })
   })
+
+  it('detects a MindYOLO dataset from its split list files', async () => {
+    const candidates = await detect('mindyolo')
+    expect(candidates[0]).toMatchObject({ format: 'mindyolo', confidence: 1 })
+  })
+
+  it('detects a CSV annotation file by its image column', async () => {
+    const candidates = await detect('csv')
+    expect(candidates[0]).toMatchObject({ format: 'csv', confidence: 0.9 })
+    expect(candidates[0]?.params?.annotationPath).toBe('annotations.csv')
+  })
 })

@@ -30,7 +30,15 @@ import { useUiStore } from '@/store/uiStore'
 import { useUpdateStore } from '@/store/updateStore'
 import { DEFAULT_SEED } from '@/theme/md3'
 
-const EXPORT_FORMATS: ExportChoice[] = ['coco', 'yolo', 'voc', 'imagefolder']
+const EXPORT_FORMATS: ExportChoice[] = [
+  'coco',
+  'yolo',
+  'mindyolo',
+  'voc',
+  'imagefolder',
+  'labelme',
+  'csv',
+]
 const MODES = ['light', 'dark', 'system'] as const
 
 export function SettingsDialog() {

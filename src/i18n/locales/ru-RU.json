@@ -190,7 +190,21 @@
     "classesTruncated": "Показаны первые {{shown}} из {{total}} классов; введите текст для фильтра.",
     "copyImages": "Копировать изображения в папку экспорта",
     "exporting": "Экспорт…",
-    "doneWithImages": "Экспортировано {{files}} файлов и {{images}} изображений в формате {{format}}"
+    "doneWithImages": "Экспортировано {{files}} файлов и {{images}} изображений в формате {{format}}",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "Разделить на обучение / валидацию / тест",
+    "train": "Обучение",
+    "val": "Валидация",
+    "test": "Тест",
+    "seed": "Случайное зерно",
+    "splitPreview": "Планируемое разделение: {{summary}}",
+    "splitHint": "Каждый набор записывается в свою подпапку в {{path}}; набор с 0 % пропускается.",
+    "splitInvalid": "Хотя бы один набор должен быть больше 0 %",
+    "layout": "Структура папок",
+    "layoutSplitFirst": "Сначала разбиение — <split>/images/…",
+    "layoutLabelsFirst": "Сначала содержимое — images/<split>/…"
   },
   "settings": {
     "title": "Настройки",

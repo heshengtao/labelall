@@ -190,7 +190,21 @@
     "classesTruncated": "Showing the first {{shown}} of {{total}} classes — type to narrow.",
     "copyImages": "Copy images into the export folder",
     "exporting": "Exporting…",
-    "doneWithImages": "Exported {{files}} file(s) and {{images}} image(s) as {{format}}"
+    "doneWithImages": "Exported {{files}} file(s) and {{images}} image(s) as {{format}}",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "Split into train / val / test",
+    "train": "Train",
+    "val": "Validation",
+    "test": "Test",
+    "seed": "Random seed",
+    "splitPreview": "Planned split: {{summary}}",
+    "splitHint": "Each split is written under its own subfolder in {{path}}; a 0% split is left out.",
+    "splitInvalid": "At least one split must be greater than 0%",
+    "layout": "Folder layout",
+    "layoutSplitFirst": "Split first — <split>/images/…",
+    "layoutLabelsFirst": "Content first — images/<split>/…"
   },
   "settings": {
     "title": "Settings",

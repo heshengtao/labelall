@@ -61,8 +61,10 @@ LabelAll 是一款**免费开源**的工具，用来打开、浏览、标注和�
 
 **导出与互通**
 
-- 一键导出为 COCO、YOLO、Pascal VOC 或分类文件夹格式。
-- 导出前会**明确告诉你目标格式无法保留什么**，并写到单独目录——原始文件绝不改动。
+- 一键导出为 COCO、YOLO、MindYOLO、Pascal VOC、分类文件夹、labelme 或 CSV 格式。
+- 可按任意比例把数据集划分为训练 / 验证 / 测试集（随机种子可复现），每个子集写入独立子目录；比例为 0% 的子集直接省略，因此导出空验证集或空测试集也没问题。
+- COCO / YOLO / MindYOLO / VOC 还可选择标准的「先图片标签」结构（`images/<split>/` + `labels/<split>/`，根目录单个 `data.yaml`）；两种结构都能被重新打开。
+- 导出前会**明确告诉你目标格式无法保留什么**，并写到带时间戳的单独目录——原始文件绝不改动。
 
 **用起来顺手**
 
@@ -77,11 +79,13 @@ LabelAll 是一款**免费开源**的工具，用来打开、浏览、标注和�
 
 | 格式 | 打开 | 导出 | 说明 |
 | --- | :---: | :---: | --- |
-| **COCO** | ✅ | ✅ | 含多边形与 RLE 分割、关键点 |
+| **COCO** | ✅ | ✅ | 含多边形与 RLE 分割、关键点；打开时自动合并 `instances_train/val/test.json` 划分文件 |
 | **YOLO** | ✅ | ✅ | 检测 / 分割 / 姿态三种任务 |
+| **MindYOLO** | ✅ | ✅ | `data.yaml`、按子集的图片清单 `.txt`、YOLO 标签，以及评估用的 `annotations/instances_<split>2017.json`；缺少某个子集也能正常加载 |
 | **Pascal VOC** | ✅ | ✅ | 1 基坐标；XML 与图片同级或在 `Annotations/` 中 |
 | **分类文件夹 / ImageNet** | ✅ | 部分 | 目录名即类别名 |
-| **labelme** | ✅ | — | 便于与 labelme 互通 |
+| **labelme** | ✅ | ✅ | 矩形框与多边形 |
+| **CSV** | ✅ | ✅ | 每行一个标注：`image,width,height,label,type,xmin,ymin,xmax,ymax,polygon,keypoints` |
 
 > 也可直接打开 MS COCO、ImageNet / ILSVRC、Pascal VOC 2007/2012 等公开数据集的原始格式。
 
@@ -129,7 +133,7 @@ docker compose up -d --build
 2. 确认识别出的格式，开始浏览。
 3. 新增或修改标注，再导出为需要的格式。
 
-> 想先试试？[`examples/voc-mini`](./examples/voc-mini) 是一个 3 张图的小型 Pascal VOC 数据集，直接打开即可。
+> 想先试试？[`examples/voc-mini`](./examples/voc-mini) 是一个 10 张图的小型 Pascal VOC 数据集，直接打开即可。
 
 ## 快捷键
 
@@ -148,7 +152,7 @@ docker compose up -d --build
 
 - 面向约 5 万张图片、标注文件不超过 100 MB 的数据集；更大规模暂不保证流畅。
 - 网页版在 Chrome / Edge 可读写，Firefox / Safari 仅支持只读。
-- 导出只写标注文件，不复制图片。
+- 导出会写出标注文件；勾选“复制图片”时会一并复制图片。
 
 ## 参与贡献与许可
 

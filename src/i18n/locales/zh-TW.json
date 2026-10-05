@@ -190,7 +190,21 @@
     "classesTruncated": "僅顯示前 {{shown}} / {{total}} 個類別，輸入可篩選。",
     "copyImages": "複製圖片到匯出目錄",
     "exporting": "正在匯出…",
-    "doneWithImages": "已匯出 {{format}}：{{files}} 個檔案、{{images}} 張圖片"
+    "doneWithImages": "已匯出 {{format}}：{{files}} 個檔案、{{images}} 張圖片",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "劃分為訓練 / 驗證 / 測試集",
+    "train": "訓練集",
+    "val": "驗證集",
+    "test": "測試集",
+    "seed": "隨機種子",
+    "splitPreview": "劃分預覽：{{summary}}",
+    "splitHint": "每個子集寫入 {{path}} 下獨立的子資料夾；比例為 0% 的子集不會匯出。",
+    "splitInvalid": "至少有一個子集比例需大於 0%",
+    "layout": "目錄結構",
+    "layoutSplitFirst": "先劃分 — <split>/images/…",
+    "layoutLabelsFirst": "先圖片標籤 — images/<split>/…"
   },
   "settings": {
     "title": "設定",

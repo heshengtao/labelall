@@ -22,7 +22,7 @@ const dataset: DatasetModel = {
 
 function fakeSource() {
   const writes: { path: string; contents: string }[][] = []
-  const copies: { relPaths: string[]; destPrefix: string }[] = []
+  const copies: { files: { from: string; to: string }[]; destPrefix: string }[] = []
   const source = {
     exportTarget: () => ({
       prefix: '../LabelAll_export/coco',
@@ -33,15 +33,29 @@ function fakeSource() {
     },
     copyImages: async (
       _handle: DatasetHandle,
-      relPaths: string[],
+      files: { from: string; to: string }[],
       destPrefix: string,
       onProgress?: (value: number) => void,
     ) => {
-      copies.push({ relPaths, destPrefix })
+      copies.push({ files, destPrefix })
       onProgress?.(1)
     },
   } as unknown as DatasetSource
   return { source, writes, copies }
+}
+
+/** A YOLO-ish dataset whose images are not under `images/`. */
+const yoloDataset: DatasetModel = {
+  sourceFormat: 'voc',
+  root: 'set',
+  images: [
+    { id: 0, filePath: 'JPEGImages/a.jpg', width: 10, height: 10 },
+    { id: 1, filePath: 'JPEGImages/b.jpg', width: 10, height: 10 },
+  ],
+  categories: [{ id: 0, name: 'cat' }],
+  annotations: [
+    { type: 'bbox', imageId: 0, categoryId: 0, bbox: { x: 1, y: 1, width: 2, height: 2 } },
+  ],
 }
 
 describe('exportDataset', () => {
@@ -66,7 +80,13 @@ describe('exportDataset', () => {
 
     expect(writes).toHaveLength(1)
     expect(copies).toEqual([
-      { relPaths: ['images/a.jpg', 'images/b.jpg'], destPrefix: '../LabelAll_export/coco' },
+      {
+        files: [
+          { from: 'images/a.jpg', to: 'images/a.jpg' },
+          { from: 'images/b.jpg', to: 'images/b.jpg' },
+        ],
+        destPrefix: '../LabelAll_export/coco',
+      },
     ])
     expect(outcome.images).toBe(2)
     expect(progress.at(-1)).toBe(1)
@@ -87,5 +107,101 @@ describe('exportDataset', () => {
     expect(copies).toHaveLength(0)
     expect(outcome.images).toBe(0)
     expect(progress.at(-1)).toBe(1)
+  })
+
+  it('writes each split into its own subfolder', async () => {
+    const { source, writes, copies } = fakeSource()
+
+    const outcome = await exportDataset(source, handle, dataset, 'coco', {
+      copyImages: true,
+      split: { train: 1, val: 0, test: 0 },
+    })
+
+    expect(writes[0][0].path).toBe('../LabelAll_export/coco/train/annotations/instances.json')
+    expect(copies).toEqual([
+      {
+        files: [
+          { from: 'images/a.jpg', to: 'images/a.jpg' },
+          { from: 'images/b.jpg', to: 'images/b.jpg' },
+        ],
+        destPrefix: '../LabelAll_export/coco/train',
+      },
+    ])
+    expect(outcome.splits).toEqual([{ split: 'train', files: 1, images: 2 }])
+  })
+
+  it('omits a zero-weight split instead of creating an empty folder', async () => {
+    const { source, writes, copies } = fakeSource()
+
+    const outcome = await exportDataset(source, handle, dataset, 'coco', {
+      copyImages: true,
+      split: { train: 0, val: 1, test: 0 },
+    })
+
+    expect(outcome.splits).toEqual([{ split: 'val', files: 1, images: 2 }])
+    expect(writes.every((batch) => batch[0].path.startsWith('../LabelAll_export/coco/val/'))).toBe(
+      true,
+    )
+    expect(copies[0].destPrefix).toBe('../LabelAll_export/coco/val')
+  })
+
+  it('labels-first puts images/labels under the split and one config at the root', async () => {
+    const { source, writes, copies } = fakeSource()
+
+    const outcome = await exportDataset(source, handle, yoloDataset, 'yolo-detect', {
+      copyImages: true,
+      split: { train: 1, val: 0, test: 0 },
+      layout: 'labels-first',
+    })
+
+    const written = writes.flat()
+    const paths = written.map((file) => file.path)
+    // Labels sit inside labels/train, not train/labels.
+    expect(paths).toContain('../LabelAll_export/coco/labels/train/a.txt')
+    expect(paths).toContain('../LabelAll_export/coco/data.yaml')
+    expect(paths).toContain('../LabelAll_export/coco/classes.txt')
+
+    const yaml = written.find((file) => file.path.endsWith('/data.yaml'))?.contents ?? ''
+    expect(yaml).toContain('train: images/train')
+    expect(yaml).toContain('names:')
+
+    // Images are relocated under images/train.
+    expect(copies).toEqual([
+      {
+        files: [
+          { from: 'JPEGImages/a.jpg', to: 'images/train/a.jpg' },
+          { from: 'JPEGImages/b.jpg', to: 'images/train/b.jpg' },
+        ],
+        destPrefix: '../LabelAll_export/coco',
+      },
+    ])
+    expect(outcome.splits).toEqual([{ split: 'train', files: expect.any(Number), images: 2 }])
+  })
+
+  it('labels-first writes one COCO JSON per split with images relative to images/', async () => {
+    const { source, writes } = fakeSource()
+
+    await exportDataset(source, handle, dataset, 'coco', {
+      copyImages: false,
+      split: { train: 1, val: 0, test: 0 },
+      layout: 'labels-first',
+    })
+
+    const json = writes.flat().find((file) => file.path.endsWith('instances_train.json'))
+    expect(json?.path).toBe('../LabelAll_export/coco/annotations/instances_train.json')
+    const payload = JSON.parse(json?.contents ?? '{}')
+    expect(payload.images[0].file_name).toBe('train/a.jpg')
+  })
+
+  it('falls back to split-first for formats without a labels-first layout', async () => {
+    const { source, writes } = fakeSource()
+
+    await exportDataset(source, handle, dataset, 'imagefolder', {
+      copyImages: false,
+      split: { train: 1, val: 0, test: 0 },
+      layout: 'labels-first',
+    })
+
+    expect(writes.flat()[0].path).toBe('../LabelAll_export/coco/train/classes.txt')
   })
 })

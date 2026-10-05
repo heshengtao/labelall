@@ -1,0 +1,8 @@
+data:
+  dataset_name: tiny
+  train_set: ./train.txt
+  val_set: ./val.txt
+  nc: 2
+  names: ['cat', 'dog']
+  train_transforms: []
+  test_transforms: []

@@ -67,5 +67,7 @@ export function imagesPathToLabelsPath(imagePath: string, labelDir = 'labels'): 
   if (imagePath.startsWith('images/')) {
     return replaceExtension(`${labelDir}/${imagePath.slice('images/'.length)}`, '.txt')
   }
-  return replaceExtension(joinPath(labelDir, fileBasename(imagePath)), '.txt')
+  // No `images/` segment at all: Ultralytics (and therefore MindYOLO) derives
+  // the label by swapping the extension in the same directory, so match that.
+  return replaceExtension(imagePath, '.txt')
 }

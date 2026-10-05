@@ -16,15 +16,15 @@ describe('examples/voc-mini', () => {
     expect(candidates[0]).toMatchObject({ format: 'voc', confidence: 1 })
   })
 
-  it('reads three images, two classes and six boxes', async () => {
+  it('reads ten images, two classes and twenty boxes', async () => {
     const { dataset, warnings } = await readVoc({
       root: 'voc-mini',
       files: scanDirectory(root),
       readText: directoryReader(root),
     })
-    expect(dataset.images).toHaveLength(3)
+    expect(dataset.images).toHaveLength(10)
     expect([...(dataset.classNames ?? [])].sort()).toEqual(['circle', 'rectangle'])
-    expect(dataset.annotations).toHaveLength(6)
+    expect(dataset.annotations).toHaveLength(20)
     expect(warnings).toEqual([])
   })
 })

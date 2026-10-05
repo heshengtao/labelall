@@ -35,6 +35,14 @@ export interface ExportTarget {
   displayPath: string
 }
 
+/** One image to copy: `from` is where it is read, `to` is where it is written. */
+export interface ImageCopy {
+  /** Source path, dataset-relative. */
+  from: string
+  /** Destination path relative to the copy's `destPrefix`. */
+  to: string
+}
+
 /**
  * Write access to an open dataset, mirroring the File System Access API's
  * permission states.
@@ -74,16 +82,24 @@ export interface DatasetSource {
   readText(handle: DatasetHandle, relPath: string): Promise<string>
   /** Write several text files at once. Throws when `canWrite` is false. */
   writeTexts(handle: DatasetHandle, files: TextFile[]): Promise<void>
-  /** Where a format's export is written, for both the writer and the UI. */
-  exportTarget(handle: DatasetHandle, format: string): ExportTarget
   /**
-   * Copy dataset-relative image files into `destPrefix` (also dataset-relative,
-   * possibly starting with `..` on desktop), preserving their directory
-   * structure, so an export can be a self-contained folder. Reports 0–1 progress.
+   * Where a format's export is written, for both the writer and the UI.
+   *
+   * `stamp` is a timestamp that becomes a folder segment, so repeated exports
+   * land in separate folders instead of overwriting one another.
+   */
+  exportTarget(handle: DatasetHandle, format: string, stamp: string): ExportTarget
+  /**
+   * Copy image files into `destPrefix` (dataset-relative, possibly starting
+   * with `..` on desktop), so an export can be a self-contained folder.
+   *
+   * Each entry maps a source path (dataset-relative, as read) to a destination
+   * path relative to `destPrefix`; the two differ when an export relocates
+   * images into a canonical layout. Reports 0–1 progress.
    */
   copyImages(
     handle: DatasetHandle,
-    relPaths: string[],
+    files: ImageCopy[],
     destPrefix: string,
     onProgress?: (value: number) => void,
   ): Promise<void>

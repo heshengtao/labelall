@@ -16,6 +16,7 @@ import {
   Divider,
   FormControlLabel,
   IconButton,
+  InputAdornment,
   LinearProgress,
   List,
   ListItem,
@@ -34,14 +35,35 @@ import type { ExportChoice, ExportFormat } from '@/core/formats/losses'
 import { collectLosses, resolveExportFormat } from '@/core/formats/losses'
 import { annotationCountByCategory, subsetByCategories } from '@/core/filter'
 import type { Category } from '@/core/model'
+import type { SplitRatios } from '@/core/split'
+import { DEFAULT_SPLIT_RATIOS, hasAnyRatio, partitionDataset } from '@/core/split'
 import { getDatasetSource } from '@/platform'
 import { useDatasetStore } from '@/store/datasetStore'
 import { useSettingsStore } from '@/store/settingsStore'
 import { useWriteAccessStore } from '@/store/writeAccessStore'
 
-import { exportDataset } from './exportDataset'
+import { exportDataset, type SplitLayout } from './exportDataset'
+import { createExportStamp } from './exportStamp'
+import { supportsLabelsFirst } from './labelsFirst'
 
-const CHOICES: ExportChoice[] = ['coco', 'yolo', 'voc', 'imagefolder']
+const CHOICES: ExportChoice[] = ['coco', 'yolo', 'mindyolo', 'voc', 'imagefolder', 'labelme', 'csv']
+
+/** Split ratios are edited as whole percentages. */
+interface SplitPercent {
+  train: number
+  val: number
+  test: number
+}
+
+const DEFAULT_SPLIT_PERCENT: SplitPercent = {
+  train: Math.round(DEFAULT_SPLIT_RATIOS.train * 100),
+  val: Math.round(DEFAULT_SPLIT_RATIOS.val * 100),
+  test: Math.round(DEFAULT_SPLIT_RATIOS.test * 100),
+}
+
+function percentToRatios(percent: SplitPercent): SplitRatios {
+  return { train: percent.train / 100, val: percent.val / 100, test: percent.test / 100 }
+}
 
 /** Cap the options rendered in the dropdown so a huge class list stays snappy. */
 const MAX_OPTION_ROWS = 200
@@ -57,6 +79,9 @@ function filterCategories(options: Category[], { inputValue }: { inputValue: str
 function defaultChoice(sourceFormat: string): ExportChoice {
   if (sourceFormat === 'yolo' || sourceFormat === 'yolo-seg' || sourceFormat === 'yolo-pose') {
     return 'yolo'
+  }
+  if (sourceFormat === 'mindyolo' || sourceFormat === 'labelme' || sourceFormat === 'csv') {
+    return sourceFormat
   }
   if (sourceFormat === 'voc' || sourceFormat === 'imagefolder') {
     return sourceFormat
@@ -85,6 +110,8 @@ interface ExportResult {
   images: number
   format: ExportFormat
   path: string
+  /** Per-split image counts, present only for a split export. */
+  splits?: { split: string; images: number }[]
 }
 
 export function ExportButton() {
@@ -100,6 +127,12 @@ export function ExportButton() {
   const [selected, setSelected] = useState<ReadonlySet<number>>(new Set())
   const [keepUnmatched, setKeepUnmatched] = useState(false)
   const [keepImages, setKeepImages] = useState(true)
+  const [split, setSplit] = useState(false)
+  const [percent, setPercent] = useState<SplitPercent>(DEFAULT_SPLIT_PERCENT)
+  const [seed, setSeed] = useState('0')
+  const [layout, setLayout] = useState<SplitLayout>('split-first')
+  // Decided when the dialog opens so the previewed path and the written path agree.
+  const [stamp, setStamp] = useState('')
   const [progress, setProgress] = useState(0)
 
   // A dataset with no classes has nothing to filter, so it is exported as-is.
@@ -127,13 +160,26 @@ export function ExportButton() {
     [filtered, choice],
   )
   const target = useMemo(
-    () => (handle && format ? source.exportTarget(handle, format) : null),
-    [source, handle, format],
+    () => (handle && format ? source.exportTarget(handle, format, stamp) : null),
+    [source, handle, format, stamp],
   )
   const losses = useMemo(
     () => (filtered && format ? collectLosses(filtered, format) : []),
     [filtered, format],
   )
+  const splitPreview = useMemo(() => {
+    if (!filtered || !split) {
+      return null
+    }
+    const ratios = percentToRatios(percent)
+    if (!hasAnyRatio(ratios)) {
+      return null
+    }
+    const parsedSeed = Number.parseInt(seed, 10)
+    return partitionDataset(filtered, ratios, Number.isFinite(parsedSeed) ? parsedSeed : 0).map(
+      (partition) => ({ split: partition.split, images: partition.dataset.images.length }),
+    )
+  }, [filtered, split, percent, seed])
   const selectedCategories = useMemo(
     () => (dataset ? dataset.categories.filter((category) => selected.has(category.id)) : []),
     [dataset, selected],
@@ -147,13 +193,19 @@ export function ExportButton() {
 
   const hasClasses = dataset.categories.length > 0
   const noClassesSelected = hasClasses && selected.size === 0
-  const canExport = !noClassesSelected && filtered.images.length > 0
+  const splitValid = !split || hasAnyRatio(percentToRatios(percent))
+  const canExport = !noClassesSelected && filtered.images.length > 0 && splitValid
 
   const openDialog = (): void => {
     const preferred = useSettingsStore.getState().defaultExportFormat
     setChoice(preferred ?? defaultChoice(dataset.sourceFormat))
     setSelected(new Set(dataset.categories.map((category) => category.id)))
     setKeepUnmatched(false)
+    setSplit(false)
+    setPercent(DEFAULT_SPLIT_PERCENT)
+    setSeed('0')
+    setLayout('split-first')
+    setStamp(createExportStamp())
     setError(null)
     setCopied(false)
     setProgress(0)
@@ -172,9 +224,18 @@ export function ExportButton() {
     setBusy(true)
     setError(null)
     setProgress(0)
+    const parsedSeed = Number.parseInt(seed, 10)
     try {
       const result = await exportDataset(source, handle, filtered, format, {
         copyImages: keepImages,
+        stamp,
+        ...(split
+          ? {
+              split: percentToRatios(percent),
+              seed: Number.isFinite(parsedSeed) ? parsedSeed : 0,
+              layout,
+            }
+          : {}),
         onProgress: setProgress,
       })
       setOpen(false)
@@ -184,6 +245,9 @@ export function ExportButton() {
         images: result.images,
         format,
         path: target.displayPath,
+        ...(result.splits
+          ? { splits: result.splits.map((entry) => ({ split: entry.split, images: entry.images })) }
+          : {}),
       })
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : String(cause))
@@ -233,6 +297,83 @@ export function ExportButton() {
                 </MenuItem>
               ))}
             </TextField>
+
+            <Divider />
+
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={split}
+                  onChange={(event) => setSplit(event.target.checked)}
+                />
+              }
+              label={<Typography variant="body2">{t('export.split')}</Typography>}
+            />
+
+            {split ? (
+              <>
+                <Stack direction="row" spacing={1}>
+                  {(['train', 'val', 'test'] as const).map((key) => (
+                    <TextField
+                      key={key}
+                      size="small"
+                      type="number"
+                      label={t(`export.${key}`)}
+                      value={percent[key]}
+                      onChange={(event) =>
+                        setPercent((current) => ({
+                          ...current,
+                          [key]: Math.max(0, Math.min(100, Number(event.target.value) || 0)),
+                        }))
+                      }
+                      slotProps={{
+                        input: {
+                          endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                        },
+                      }}
+                    />
+                  ))}
+                </Stack>
+
+                <TextField
+                  size="small"
+                  type="number"
+                  label={t('export.seed')}
+                  value={seed}
+                  onChange={(event) => setSeed(event.target.value)}
+                />
+
+                {format && supportsLabelsFirst(format) ? (
+                  <TextField
+                    select
+                    size="small"
+                    label={t('export.layout')}
+                    value={layout}
+                    onChange={(event) => setLayout(event.target.value as SplitLayout)}
+                  >
+                    <MenuItem value="split-first">{t('export.layoutSplitFirst')}</MenuItem>
+                    <MenuItem value="labels-first">{t('export.layoutLabelsFirst')}</MenuItem>
+                  </TextField>
+                ) : null}
+
+                {splitPreview ? (
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                    {t('export.splitPreview', {
+                      summary: splitPreview
+                        .map((entry) => `${t(`export.${entry.split}`)} ${entry.images}`)
+                        .join(' · '),
+                    })}
+                  </Typography>
+                ) : (
+                  <Alert severity="warning">{t('export.splitInvalid')}</Alert>
+                )}
+
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {t('export.splitHint', { path: target.displayPath })}
+                </Typography>
+              </>
+            ) : null}
 
             {hasClasses ? (
               <>
@@ -395,6 +536,13 @@ export function ExportButton() {
                     })
                   : t('export.done', { count: done.count, format: done.format })}
               </Typography>
+              {done.splits ? (
+                <Typography variant="caption" sx={{ display: 'block', opacity: 0.85 }}>
+                  {done.splits
+                    .map((entry) => `${t(`export.${entry.split}`)} ${entry.images}`)
+                    .join(' · ')}
+                </Typography>
+              ) : null}
               <Typography
                 variant="caption"
                 sx={{ display: 'block', wordBreak: 'break-all', opacity: 0.85 }}

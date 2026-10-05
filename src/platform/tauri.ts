@@ -96,24 +96,24 @@ export function createTauriSource(): DatasetSource {
       })
     },
 
-    exportTarget(handle, format) {
+    exportTarget(handle, format, stamp) {
       const { parent, separator } = splitParent(handle.root)
       return {
         // `..` keeps the contract dataset-relative; Rust resolves it against the root.
-        prefix: `../${EXPORT_DIR}/${format}`,
-        displayPath: [parent, EXPORT_DIR, format].filter(Boolean).join(separator),
+        prefix: `../${EXPORT_DIR}/${format}/${stamp}`,
+        displayPath: [parent, EXPORT_DIR, format, stamp].filter(Boolean).join(separator),
       }
     },
 
-    async copyImages(handle, relPaths, destPrefix, onProgress) {
+    async copyImages(handle, files, destPrefix, onProgress) {
       let copied = 0
-      await mapLimit(relPaths, COPY_CONCURRENCY, async (relPath) => {
+      await mapLimit(files, COPY_CONCURRENCY, async (file) => {
         await invoke('copy_file', {
-          from: joinRoot(handle.root, relPath),
-          to: joinRoot(handle.root, `${destPrefix}/${relPath}`),
+          from: joinRoot(handle.root, file.from),
+          to: joinRoot(handle.root, `${destPrefix}/${file.to}`),
         })
         copied += 1
-        onProgress?.(copied / Math.max(1, relPaths.length))
+        onProgress?.(copied / Math.max(1, files.length))
       })
     },
 

@@ -1,0 +1,38 @@
+<annotation>
+  <folder>voc-mini</folder>
+  <filename>0005.jpg</filename>
+  <path>JPEGImages/0005.jpg</path>
+  <source>
+    <database>LabelAll example</database>
+  </source>
+  <size>
+    <width>320</width>
+    <height>240</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>rectangle</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>31</xmin>
+      <ymin>141</ymin>
+      <xmax>150</xmax>
+      <ymax>210</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>rectangle</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>181</xmin>
+      <ymin>31</ymin>
+      <xmax>290</xmax>
+      <ymax>120</ymax>
+    </bndbox>
+  </object>
+</annotation>

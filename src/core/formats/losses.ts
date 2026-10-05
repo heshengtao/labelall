@@ -9,10 +9,19 @@
 import type { DatasetModel } from '../model'
 
 /** The format actually written, after resolving an ambiguous choice. */
-export type ExportFormat = 'coco' | 'yolo-detect' | 'yolo-seg' | 'yolo-pose' | 'voc' | 'imagefolder'
+export type ExportFormat =
+  | 'coco'
+  | 'yolo-detect'
+  | 'yolo-seg'
+  | 'yolo-pose'
+  | 'mindyolo'
+  | 'voc'
+  | 'imagefolder'
+  | 'labelme'
+  | 'csv'
 
 /** What the user picks in the export dialog. */
-export type ExportChoice = 'coco' | 'yolo' | 'voc' | 'imagefolder'
+export type ExportChoice = 'coco' | 'yolo' | 'mindyolo' | 'voc' | 'imagefolder' | 'labelme' | 'csv'
 
 /**
  * Pick the concrete YOLO task for a dataset: pose when it has keypoints, segment
@@ -78,6 +87,26 @@ export function collectLosses(dataset: DatasetModel, format: ExportFormat): stri
       }
       losses.push(
         'Only class names are written; image-to-class assignment relies on the folder layout.',
+      )
+      break
+
+    case 'labelme':
+      if (types.has('keypoints')) losses.push('Keypoints have no labelme shape and are dropped.')
+      if (types.has('mask')) losses.push('Masks have no labelme shape and are dropped.')
+      if (types.has('classification')) losses.push('Image-level class labels are skipped.')
+      losses.push('Only boxes and polygons round-trip through labelme.')
+      break
+
+    case 'csv':
+      if (types.has('mask')) losses.push('RLE masks have no CSV column and are skipped.')
+      break
+
+    case 'mindyolo':
+      if (types.has('mask')) losses.push('RLE masks are reduced to their bounding box.')
+      if (types.has('classification')) losses.push('Image-level class labels are skipped.')
+      losses.push('Annotation ids, areas, scores and attributes are not stored in MindYOLO labels.')
+      losses.push(
+        'MindYOLO expects numeric image file names for validation; images are not renamed.',
       )
       break
   }

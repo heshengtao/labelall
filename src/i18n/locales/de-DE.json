@@ -190,7 +190,21 @@
     "classesTruncated": "Es werden die ersten {{shown}} von {{total}} Klassen angezeigt; zum Eingrenzen tippen.",
     "copyImages": "Bilder in den Exportordner kopieren",
     "exporting": "Exportiere…",
-    "doneWithImages": "{{files}} Datei(en) und {{images}} Bild(er) als {{format}} exportiert"
+    "doneWithImages": "{{files}} Datei(en) und {{images}} Bild(er) als {{format}} exportiert",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "In Training / Validierung / Test aufteilen",
+    "train": "Training",
+    "val": "Validierung",
+    "test": "Test",
+    "seed": "Zufallsstartwert",
+    "splitPreview": "Geplante Aufteilung: {{summary}}",
+    "splitHint": "Jede Teilmenge wird in einem eigenen Unterordner unter {{path}} geschrieben; eine 0 %-Teilmenge wird ausgelassen.",
+    "splitInvalid": "Mindestens eine Teilmenge muss größer als 0 % sein",
+    "layout": "Ordnerstruktur",
+    "layoutSplitFirst": "Aufteilung zuerst — <split>/images/…",
+    "layoutLabelsFirst": "Inhalt zuerst — images/<split>/…"
   },
   "settings": {
     "title": "Einstellungen",

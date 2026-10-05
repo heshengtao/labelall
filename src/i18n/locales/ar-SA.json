@@ -190,7 +190,21 @@
     "classesTruncated": "يتم عرض أول {{shown}} من {{total}} فئة؛ اكتب للتصفية.",
     "copyImages": "نسخ الصور إلى مجلد التصدير",
     "exporting": "جارٍ التصدير…",
-    "doneWithImages": "تم تصدير {{files}} ملف و{{images}} صورة بصيغة {{format}}"
+    "doneWithImages": "تم تصدير {{files}} ملف و{{images}} صورة بصيغة {{format}}",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "التقسيم إلى تدريب / تحقق / اختبار",
+    "train": "تدريب",
+    "val": "تحقق",
+    "test": "اختبار",
+    "seed": "بذرة عشوائية",
+    "splitPreview": "التقسيم المخطط: {{summary}}",
+    "splitHint": "يُكتب كل قسم في مجلد فرعي خاص به داخل {{path}}؛ يتم تجاهل القسم بنسبة 0%.",
+    "splitInvalid": "يجب أن تكون نسبة قسم واحد على الأقل أكبر من 0%",
+    "layout": "بنية المجلدات",
+    "layoutSplitFirst": "التقسيم أولًا — <split>/images/…",
+    "layoutLabelsFirst": "المحتوى أولًا — images/<split>/…"
   },
   "settings": {
     "title": "الإعدادات",

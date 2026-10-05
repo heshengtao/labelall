@@ -7,11 +7,21 @@
  */
 
 import type { DatasetModel } from '../model'
+import type { NamedSplit } from '../split'
 import { writeCoco } from './coco'
+import { writeCsv } from './csv'
+import { writeLabelme } from './labelme'
 import type { ExportFormat } from './losses'
+import { writeMindyolo } from './mindyolo'
 import type { WriteResult } from './types'
 import { writeVoc } from './voc'
 import { writeYolo } from './yolo'
+
+/** Context a writer may need beyond the dataset itself. */
+export interface WriteOptions {
+  /** Which split is being written, for formats whose layout depends on it. */
+  splitName?: NamedSplit
+}
 
 /**
  * ImageFolder has no annotation files at all: the layout carries the labels, so
@@ -28,7 +38,11 @@ export function writeImageFolder(dataset: DatasetModel): WriteResult {
   }
 }
 
-export function writeDataset(dataset: DatasetModel, format: ExportFormat): WriteResult {
+export function writeDataset(
+  dataset: DatasetModel,
+  format: ExportFormat,
+  options: WriteOptions = {},
+): WriteResult {
   switch (format) {
     case 'coco':
       return writeCoco(dataset)
@@ -42,5 +56,13 @@ export function writeDataset(dataset: DatasetModel, format: ExportFormat): Write
       return writeYolo(dataset, 'pose')
     case 'imagefolder':
       return writeImageFolder(dataset)
+    case 'labelme':
+      return writeLabelme(dataset)
+    case 'csv':
+      return writeCsv(dataset)
+    case 'mindyolo':
+      return writeMindyolo(dataset, {
+        ...(options.splitName ? { splitName: options.splitName } : {}),
+      })
   }
 }

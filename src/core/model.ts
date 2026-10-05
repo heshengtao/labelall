@@ -200,7 +200,16 @@ export type Annotation =
 export type AnnotationType = Annotation['type']
 
 export type SourceFormat =
-  'coco' | 'yolo' | 'yolo-seg' | 'yolo-pose' | 'voc' | 'imagefolder' | 'labelme' | 'other'
+  | 'coco'
+  | 'yolo'
+  | 'yolo-seg'
+  | 'yolo-pose'
+  | 'mindyolo'
+  | 'voc'
+  | 'imagefolder'
+  | 'labelme'
+  | 'csv'
+  | 'other'
 
 export interface DatasetInfo {
   description?: string

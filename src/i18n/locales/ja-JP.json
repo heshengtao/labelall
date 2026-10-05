@@ -190,7 +190,21 @@
     "classesTruncated": "{{total}} クラス中、先頭 {{shown}} 件を表示中。入力で絞り込めます。",
     "copyImages": "画像を出力フォルダにコピー",
     "exporting": "エクスポート中…",
-    "doneWithImages": "{{format}} として {{files}} ファイルと {{images}} 画像をエクスポートしました"
+    "doneWithImages": "{{format}} として {{files}} ファイルと {{images}} 画像をエクスポートしました",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "訓練 / 検証 / テストに分割",
+    "train": "訓練",
+    "val": "検証",
+    "test": "テスト",
+    "seed": "ランダムシード",
+    "splitPreview": "分割プレビュー: {{summary}}",
+    "splitHint": "各分割は {{path}} 以下の個別のサブフォルダに書き出されます。0% の分割は出力されません。",
+    "splitInvalid": "少なくとも 1 つの分割を 0% より大きくしてください",
+    "layout": "フォルダ構成",
+    "layoutSplitFirst": "分割優先 — <split>/images/…",
+    "layoutLabelsFirst": "内容優先 — images/<split>/…"
   },
   "settings": {
     "title": "設定",

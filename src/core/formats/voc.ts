@@ -27,7 +27,7 @@ import type {
 } from '../model'
 import { assignCategoryColors } from '../palette'
 import { fileBasename, fileDirname, fileExtension, fileStem, joinPath } from '../path'
-import { IMAGE_EXTENSIONS, type DetectedFile } from './detect'
+import { IMAGE_EXTENSIONS, inferSplit, type DetectedFile } from './detect'
 import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
 
 const parser = new XMLParser({ ignoreAttributes: false, trimValues: true })
@@ -84,13 +84,17 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
       dataset: {
         sourceFormat: 'voc',
         root: options.root,
-        images: imageFiles.map((entry, index) => ({
-          id: index,
-          filePath: entry.path,
-          fileName: fileBasename(entry.path),
-          width: 0,
-          height: 0,
-        })),
+        images: imageFiles.map((entry, index) => {
+          const split = inferSplit(entry.path)
+          return {
+            id: index,
+            filePath: entry.path,
+            fileName: fileBasename(entry.path),
+            width: 0,
+            height: 0,
+            ...(split ? { split } : {}),
+          }
+        }),
         categories: [],
         annotations: [],
         origin: { boxPolicy: policy },
@@ -160,12 +164,14 @@ export async function readVoc(options: VocReadOptions): Promise<ReadResult> {
 
     const size = (node.size ?? {}) as { width?: unknown; height?: unknown }
     const imageId = images.length
+    const vocSplit = inferSplit(imagePath ?? target.path)
     images.push({
       id: imageId,
       filePath: imagePath ?? joinPath('JPEGImages', fileName),
       fileName,
       width: Number(size.width ?? 0) || 0,
       height: Number(size.height ?? 0) || 0,
+      ...(vocSplit ? { split: vocSplit } : {}),
       annotationPath: target.path,
     })
 

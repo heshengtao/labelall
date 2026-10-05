@@ -190,7 +190,21 @@
     "classesTruncated": "Mostrando las primeras {{shown}} de {{total}} clases; escribe para filtrar.",
     "copyImages": "Copiar las imágenes a la carpeta de exportación",
     "exporting": "Exportando…",
-    "doneWithImages": "Se exportaron {{files}} archivo(s) y {{images}} imagen(es) como {{format}}"
+    "doneWithImages": "Se exportaron {{files}} archivo(s) y {{images}} imagen(es) como {{format}}",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "Dividir en entrenamiento / validación / prueba",
+    "train": "Entrenamiento",
+    "val": "Validación",
+    "test": "Prueba",
+    "seed": "Semilla aleatoria",
+    "splitPreview": "División prevista: {{summary}}",
+    "splitHint": "Cada división se escribe en su propia subcarpeta dentro de {{path}}; una división del 0% se omite.",
+    "splitInvalid": "Al menos una división debe ser mayor que 0%",
+    "layout": "Estructura de carpetas",
+    "layoutSplitFirst": "División primero — <split>/images/…",
+    "layoutLabelsFirst": "Contenido primero — images/<split>/…"
   },
   "settings": {
     "title": "Ajustes",

@@ -50,6 +50,20 @@ export function subsetByCategories(
   }
 }
 
+/**
+ * Copy of `dataset` holding only the given images and their annotations.
+ *
+ * Categories and `classNames` are left untouched so class ids stay stable
+ * across the subset — a split export must not renumber the classes.
+ */
+export function subsetByImages(dataset: DatasetModel, imageIds: ReadonlySet<number>): DatasetModel {
+  return {
+    ...dataset,
+    images: dataset.images.filter((image) => imageIds.has(image.id)),
+    annotations: dataset.annotations.filter((annotation) => imageIds.has(annotation.imageId)),
+  }
+}
+
 /** How many annotations each category carries, for the export dialog's counts. */
 export function annotationCountByCategory(dataset: DatasetModel): Map<number, number> {
   const counts = new Map<number, number>()

@@ -27,6 +27,8 @@ import type {
 } from '../model'
 import { assignCategoryColors } from '../palette'
 import { fileBasename, joinPath } from '../path'
+import { inferSplit } from './detect'
+import { mergeDatasets } from './merge'
 import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
 
 interface RawCocoImage {
@@ -232,13 +234,14 @@ export async function readCoco(options: CocoReadOptions): Promise<ReadResult> {
     if (image.flickr_url) source.flickrUrl = image.flickr_url
     if (image.date_captured) source.dateCaptured = image.date_captured
 
+    const imageSplit = split ?? inferSplit(image.file_name)
     images.push({
       id: image.id,
       filePath: joinPath(imageDir, image.file_name),
       fileName: fileBasename(image.file_name),
       width: image.width ?? 0,
       height: image.height ?? 0,
-      ...(split ? { split } : {}),
+      ...(imageSplit ? { split: imageSplit } : {}),
       ...(Object.keys(source).length > 0 ? { source } : {}),
     })
   }
@@ -485,4 +488,59 @@ export function writeCoco(dataset: DatasetModel, options: CocoWriteOptions = {})
 
   const files: OutputFile[] = [{ path, contents: `${JSON.stringify(payload, null, 2)}\n` }]
   return { files, warnings }
+}
+
+/** One COCO annotation file taking part in a merged, multi-split dataset. */
+export interface CocoSource {
+  /** Path of the annotation JSON, relative to the dataset root. */
+  annotationPath: string
+  /** Directory `file_name` is relative to, when the source keeps one. */
+  imageDir?: string
+  /** Split the file's images belong to, inferred from its name or directory. */
+  split?: string
+}
+
+export interface CocoDatasetReadOptions extends ReadContext {
+  sources: CocoSource[]
+}
+
+/**
+ * Read every COCO annotation file of a split dataset into one dataset.
+ *
+ * A dataset split into `instances_train.json` / `instances_val.json` /
+ * `instances_test.json` is the norm, and a split may legitimately be absent —
+ * so a file that fails to read is only reported as a warning, as long as at
+ * least one source parses. Each image keeps its source's `split`.
+ */
+export async function readCocoDataset(options: CocoDatasetReadOptions): Promise<ReadResult> {
+  const { sources } = options
+  const warnings: string[] = []
+  const datasets: DatasetModel[] = []
+  let read = 0
+
+  for (const source of sources) {
+    try {
+      const result = await readCoco({
+        root: options.root,
+        readText: options.readText,
+        annotationPath: source.annotationPath,
+        ...(source.imageDir ? { imageDir: source.imageDir } : {}),
+        ...(source.split ? { split: source.split } : {}),
+      })
+      datasets.push(result.dataset)
+      for (const warning of result.warnings) {
+        warnings.push(`${source.annotationPath}: ${warning}`)
+      }
+    } catch (error) {
+      warnings.push(`${source.annotationPath} could not be read: ${(error as Error).message}`)
+    }
+    read += 1
+    options.onProgress?.(read / Math.max(1, sources.length))
+  }
+
+  if (datasets.length === 0) {
+    throw new Error('none of the COCO annotation files could be read')
+  }
+
+  return { dataset: mergeDatasets(datasets), warnings }
 }

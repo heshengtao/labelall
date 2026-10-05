@@ -24,9 +24,11 @@ const FORMAT_LABEL: Record<string, string> = {
   yolo: 'YOLO (detect)',
   'yolo-seg': 'YOLO (segment)',
   'yolo-pose': 'YOLO (pose)',
+  mindyolo: 'MindYOLO',
   voc: 'Pascal VOC',
   imagefolder: 'ImageFolder / ImageNet',
   labelme: 'labelme',
+  csv: 'CSV',
   other: 'Other',
 }
 

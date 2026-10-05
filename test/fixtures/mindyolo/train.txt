@@ -1,0 +1,2 @@
+./images/train/a.jpg
+./images/train/b.jpg

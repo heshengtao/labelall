@@ -190,7 +190,21 @@
     "classesTruncated": "仅显示前 {{shown}} / {{total}} 个类别，输入可筛选。",
     "copyImages": "复制图片到导出目录",
     "exporting": "正在导出…",
-    "doneWithImages": "已导出 {{format}}：{{files}} 个文件、{{images}} 张图片"
+    "doneWithImages": "已导出 {{format}}：{{files}} 个文件、{{images}} 张图片",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "划分为训练 / 验证 / 测试集",
+    "train": "训练集",
+    "val": "验证集",
+    "test": "测试集",
+    "seed": "随机种子",
+    "splitPreview": "划分预览：{{summary}}",
+    "splitHint": "每个子集写入 {{path}} 下独立的子文件夹；比例为 0% 的子集不会导出。",
+    "splitInvalid": "至少有一个子集比例需要大于 0%",
+    "layout": "目录结构",
+    "layoutSplitFirst": "先划分 — <split>/images/…",
+    "layoutLabelsFirst": "先图片标签 — images/<split>/…"
   },
   "settings": {
     "title": "设置",

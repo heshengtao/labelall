@@ -16,6 +16,7 @@ import { bboxFromCorners, bboxFromPolygons, polygonsArea } from '../geometry'
 import type { Annotation, Category, DatasetModel, ImageRecord, Polygon } from '../model'
 import { assignCategoryColors } from '../palette'
 import { fileBasename, joinPath, replaceExtension } from '../path'
+import { inferSplit } from './detect'
 import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
 
 interface RawLabelmeShape {
@@ -163,13 +164,14 @@ export function parseLabelme(text: string, options: LabelmeParseOptions): ReadRe
     categories.push({ id: categories.length, name })
   }
 
+  const imageSplit = split ?? inferSplit(annotationPath) ?? inferSplit(raw.imagePath)
   const image: ImageRecord = {
     id: 0,
     filePath: joinPath(imageDir, raw.imagePath),
     fileName: fileBasename(raw.imagePath),
     width: raw.imageWidth ?? 0,
     height: raw.imageHeight ?? 0,
-    ...(split ? { split } : {}),
+    ...(imageSplit ? { split: imageSplit } : {}),
     annotationPath,
   }
 

@@ -190,7 +190,21 @@
     "classesTruncated": "{{total}}개 클래스 중 처음 {{shown}}개만 표시됩니다. 입력하여 좁히세요.",
     "copyImages": "이미지를 내보내기 폴더로 복사",
     "exporting": "내보내는 중…",
-    "doneWithImages": "{{format}}(으)로 파일 {{files}}개와 이미지 {{images}}개를 내보냈습니다"
+    "doneWithImages": "{{format}}(으)로 파일 {{files}}개와 이미지 {{images}}개를 내보냈습니다",
+    "mindyolo": "MindYOLO",
+    "labelme": "labelme",
+    "csv": "CSV",
+    "split": "학습 / 검증 / 테스트로 분할",
+    "train": "학습",
+    "val": "검증",
+    "test": "테스트",
+    "seed": "랜덤 시드",
+    "splitPreview": "분할 미리보기: {{summary}}",
+    "splitHint": "각 분할은 {{path}} 아래의 별도 하위 폴더에 기록됩니다. 0% 분할은 생성되지 않습니다.",
+    "splitInvalid": "하나 이상의 분할 비율이 0%보다 커야 합니다",
+    "layout": "폴더 구조",
+    "layoutSplitFirst": "분할 우선 — <split>/images/…",
+    "layoutLabelsFirst": "콘텐츠 우선 — images/<split>/…"
   },
   "settings": {
     "title": "설정",

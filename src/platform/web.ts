@@ -301,14 +301,14 @@ export function createWebSource(): DatasetSource {
       }
     },
 
-    exportTarget(handle, format) {
+    exportTarget(handle, format, stamp) {
       // A browser cannot reach a sibling of the picked folder, so the export
       // nests inside it — under the same name the desktop build uses.
-      const prefix = `${EXPORT_DIR}/${format}`
+      const prefix = `${EXPORT_DIR}/${format}/${stamp}`
       return { prefix, displayPath: joinPath(handle.displayName, prefix) }
     },
 
-    async copyImages(handle, relPaths, destPrefix, onProgress) {
+    async copyImages(handle, files, destPrefix, onProgress) {
       const entry = stored.get(handle.id)
       if (!entry) {
         throw new Error('the dataset is no longer available; open it again')
@@ -317,9 +317,9 @@ export function createWebSource(): DatasetSource {
         throw new Error('this browser can only open datasets read-only')
       }
       let copied = 0
-      await mapLimit(relPaths, FILE_READ_CONCURRENCY, async (relPath) => {
-        const source = await readFsFile(entry.dir, relPath)
-        const segments = `${destPrefix}/${relPath}`.split('/')
+      await mapLimit(files, FILE_READ_CONCURRENCY, async (file) => {
+        const source = await readFsFile(entry.dir, file.from)
+        const segments = `${destPrefix}/${file.to}`.split('/')
         const name = segments.pop()
         if (!name) {
           return
@@ -331,7 +331,7 @@ export function createWebSource(): DatasetSource {
         await writable.write(source)
         await writable.close()
         copied += 1
-        onProgress?.(copied / Math.max(1, relPaths.length))
+        onProgress?.(copied / Math.max(1, files.length))
       })
     },
 

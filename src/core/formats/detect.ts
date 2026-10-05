@@ -11,6 +11,7 @@ import { parse as parseYaml } from 'yaml'
 import type { VocBoxPolicy } from '../geometry'
 import type { SourceFormat } from '../model'
 import { fileDirname, fileExtension, fileStem } from '../path'
+import type { CocoSource } from './coco'
 
 /** A file or directory listed relative to the dataset root (using `/`). */
 export interface DetectedFile {
@@ -32,6 +33,12 @@ export interface DetectContext {
 export interface DatasetParams {
   /** COCO: the annotation JSON to read. */
   annotationPath?: string
+  /**
+   * COCO: several split annotation files (e.g. `instances_train.json` and
+   * `instances_val.json`) that should be merged into one dataset. Takes
+   * precedence over `annotationPath` when present.
+   */
+  cocoSources?: CocoSource[]
   /** labelme: every per-image JSON that should be merged into one dataset. */
   annotationPaths?: string[]
   /** Directory that image paths in the annotation file are relative to. */
@@ -53,7 +60,7 @@ export interface DetectionCandidate {
 }
 
 /** Collapse the many spellings seen in the wild onto train/val/test. */
-function inferSplit(path: string): string | undefined {
+export function inferSplit(path: string): string | undefined {
   const match = /(?:^|[^a-z])(train|training|val|valid|validation|test|testing)(?:[^a-z]|$)/i.exec(
     path,
   )
@@ -141,18 +148,26 @@ async function probeJson(ctx: DetectContext, path: string): Promise<JsonShape> {
 async function probeYamlNames(
   ctx: DetectContext,
   path: string,
-): Promise<{ hasNames: boolean; hasKeypointShape: boolean }> {
+): Promise<{ hasNames: boolean; hasKeypointShape: boolean; hasSplitSets: boolean }> {
+  const none = { hasNames: false, hasKeypointShape: false, hasSplitSets: false }
   try {
     const data = parseYaml(await ctx.readText(path)) as Record<string, unknown> | null
     if (!data || typeof data !== 'object') {
-      return { hasNames: false, hasKeypointShape: false }
+      return none
     }
+    // Ultralytics keeps `names` at the top level; MindYOLO nests everything
+    // under `data:` and describes splits with `*_set` list files.
+    const block =
+      data.data && typeof data.data === 'object' ? (data.data as Record<string, unknown>) : data
     return {
-      hasNames: 'names' in data && data.names != null,
-      hasKeypointShape: 'kpt_shape' in data && data.kpt_shape != null,
+      hasNames: 'names' in block && block.names != null,
+      hasKeypointShape: 'kpt_shape' in block && block.kpt_shape != null,
+      hasSplitSets: (['train_set', 'val_set', 'test_set'] as const).some(
+        (key) => typeof block[key] === 'string',
+      ),
     }
   } catch {
-    return { hasNames: false, hasKeypointShape: false }
+    return none
   }
 }
 
@@ -171,6 +186,7 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
   const labelTxtFiles = files.filter(
     (entry) => fileExtension(entry.path) === '.txt' && /(^|\/)labels\//.test(entry.path),
   )
+  const csvFiles = files.filter((entry) => fileExtension(entry.path) === '.csv')
 
   const candidates: DetectionCandidate[] = []
   const probeable = jsonFiles.filter((entry) => entry.size <= MAX_PROBE_BYTES)
@@ -181,11 +197,12 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
       .filter(
         (entry) => /(^|\/)annotations\//.test(entry.path) || fileExtension(entry.path) === '.json',
       )
-      .slice(0, 3)
+      .slice(0, 6)
       .map(async (entry) => ({ entry, shape: await probeJson(ctx, entry.path) })),
   )
   const cocoHits = cocoProbes.filter((probe) => probe.shape.isCoco)
-  for (const hit of cocoHits) {
+  if (cocoHits.length === 1) {
+    const hit = cocoHits[0]
     candidates.push({
       format: 'coco',
       confidence: 1,
@@ -195,6 +212,21 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
         imageDir: inferCocoImageDir(hit.entry.path, dirs, images),
         split: inferSplit(hit.entry.path),
       },
+    })
+  } else if (cocoHits.length > 1) {
+    // A dataset split across `instances_train.json`, `instances_val.json`, …
+    // loads as one dataset, each file contributing its own split.
+    const sources: CocoSource[] = cocoHits.map((hit) => ({
+      annotationPath: hit.entry.path,
+      imageDir: inferCocoImageDir(hit.entry.path, dirs, images),
+      split: inferSplit(hit.entry.path),
+    }))
+    const labels = sources.map((source) => source.split ?? source.annotationPath).join(', ')
+    candidates.push({
+      format: 'coco',
+      confidence: 1,
+      reason: `COCO annotations found in ${sources.length} files (${labels})`,
+      params: { cocoSources: sources },
     })
   }
   if (
@@ -261,9 +293,16 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
       .slice(0, 3)
       .map(async (entry) => ({ entry, probe: await probeYamlNames(ctx, entry.path) })),
   )
+  const mindyoloYaml = yoloProbes.find((probe) => probe.probe.hasSplitSets)
   const yoloYaml = yoloProbes.find((probe) => probe.probe.hasNames)
 
-  if (hasImagesDir && hasLabelsDir) {
+  if (mindyoloYaml) {
+    candidates.push({
+      format: 'mindyolo',
+      confidence: 1,
+      reason: `MindYOLO split list files found in ${mindyoloYaml.entry.path}`,
+    })
+  } else if (hasImagesDir && hasLabelsDir) {
     const isPose = yoloYaml?.probe.hasKeypointShape ?? false
     candidates.push({
       format: isPose ? 'yolo-pose' : 'yolo',
@@ -309,9 +348,43 @@ export async function detectFormat(ctx: DetectContext): Promise<DetectionCandida
     })
   }
 
+  // ---- CSV -----------------------------------------------------------------
+  const csvProbes = await Promise.all(
+    csvFiles
+      .filter((entry) => entry.size <= MAX_PROBE_BYTES)
+      .slice(0, 3)
+      .map(async (entry) => {
+        try {
+          const header = (await ctx.readText(entry.path)).slice(0, 4096).split(/\r?\n/, 1)[0] ?? ''
+          const columns = header
+            .split(',')
+            .map((column) => column.trim().replace(/^"|"$/g, '').toLowerCase())
+          return {
+            entry,
+            hasImage: columns.includes('image') || columns.includes('filename'),
+          }
+        } catch {
+          return { entry, hasImage: false }
+        }
+      }),
+  )
+  const csvHit = csvProbes.find((probe) => probe.hasImage)
+  if (csvHit) {
+    candidates.push({
+      format: 'csv',
+      confidence: 0.9,
+      reason: `CSV annotations found in ${csvHit.entry.path}`,
+      params: { annotationPath: csvHit.entry.path },
+    })
+  }
+
   // ---- Classification / ImageFolder ---------------------------------------
   const hasAnnotationFiles =
-    jsonFiles.length > 0 || xmlFiles.length > 0 || yamlFiles.length > 0 || labelTxtFiles.length > 0
+    jsonFiles.length > 0 ||
+    xmlFiles.length > 0 ||
+    yamlFiles.length > 0 ||
+    labelTxtFiles.length > 0 ||
+    csvFiles.length > 0
   const parentDirs = new Set(images.map((entry) => fileDirname(entry.path)))
   // A flat folder of images is a single implicit class; nested folders look
   // like one directory per class.

@@ -5,6 +5,10 @@
  * or keypoints, and carry no ids, areas or scores — that is why the loss table
  * is noisy for YOLO. Reading needs image dimensions to denormalise; the caller
  * supplies them through `ReadContext.imageSize`.
+ *
+ * `readYolo` discovers the class names and image list from a directory listing;
+ * `readYoloImages` is the label-parsing core, shared with the MindYOLO reader,
+ * which supplies its images from split list files instead.
  */
 
 import { parse as parseYaml } from 'yaml'
@@ -24,7 +28,7 @@ import type {
 } from '../model'
 import { assignCategoryColors } from '../palette'
 import { fileExtension, imagesPathToLabelsPath } from '../path'
-import { IMAGE_EXTENSIONS, type DetectedFile } from './detect'
+import { IMAGE_EXTENSIONS, inferSplit, type DetectedFile } from './detect'
 import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
 
 export type YoloTask = 'detect' | 'seg' | 'pose'
@@ -33,7 +37,26 @@ export interface YoloReadOptions extends ReadContext {
   files: DetectedFile[]
 }
 
-function readNames(value: unknown): string[] {
+/** An image to read a YOLO label for, with an optional known split. */
+export interface YoloImageSource {
+  path: string
+  split?: string
+}
+
+export interface YoloCoreOptions extends ReadContext {
+  /** Images in output order; label paths are derived with the images→labels rule. */
+  images: YoloImageSource[]
+  /** Class names in index order (index = YOLO class id). */
+  names: string[]
+  /** YOLO `kpt_shape`, when the dataset is a pose task. */
+  kptShape?: number[]
+  /** YOLO `kpt_names`, when present. */
+  kptNames?: string[]
+  /** The `data.yaml` this dataset came from, recorded in `origin`. */
+  yamlPath?: string
+}
+
+export function readNames(value: unknown): string[] {
   if (Array.isArray(value)) {
     return value.map((item) => String(item))
   }
@@ -49,48 +72,32 @@ function toVisibility(value: number): KpVisibility {
   return value === 1 || value === 2 ? value : value > 0 ? 2 : 0
 }
 
-export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
-  const warnings: string[] = []
-  const yamlEntry = options.files.find(
-    (entry) => !entry.isDir && ['.yaml', '.yml'].includes(fileExtension(entry.path)),
-  )
-
-  let names: string[] = []
-  let kptShape: number[] | undefined
-  let kptNames: string[] = []
-  if (yamlEntry) {
-    try {
-      const data = parseYaml(await options.readText(yamlEntry.path)) as Record<
-        string,
-        unknown
-      > | null
-      if (data && typeof data === 'object') {
-        names = readNames(data.names)
-        if (Array.isArray(data.kpt_shape)) {
-          kptShape = data.kpt_shape.map(Number)
-        }
-        if (Array.isArray(data.kpt_names)) {
-          kptNames = data.kpt_names.map(String)
-        }
-      }
-    } catch (error) {
-      warnings.push(`${yamlEntry.path} could not be parsed: ${(error as Error).message}`)
-    }
+function poseNamesFor(kptNames: string[], kptShape: number[] | undefined): string[] {
+  if (kptNames.length > 0) {
+    return kptNames
   }
+  return kptShape ? Array.from({ length: kptShape[0] }, (_, index) => `kp-${index}`) : []
+}
 
-  const poseNames =
-    kptNames.length > 0
-      ? kptNames
-      : kptShape
-        ? Array.from({ length: kptShape[0] }, (_, index) => `kp-${index}`)
-        : []
-  const schema: KeypointSchema | undefined = kptShape
-    ? { names: poseNames, dims: kptShape[1] === 2 ? 2 : 3 }
-    : undefined
+function schemaFor(
+  kptShape: number[] | undefined,
+  poseNames: string[],
+): KeypointSchema | undefined {
+  return kptShape ? { names: poseNames, dims: kptShape[1] === 2 ? 2 : 3 } : undefined
+}
 
-  const imageFiles = options.files.filter(
-    (entry) => !entry.isDir && IMAGE_EXTENSIONS.has(fileExtension(entry.path)),
-  )
+/**
+ * Read the label files for the given images and build a dataset from them.
+ *
+ * This is the piece `readYolo` and `readMindyolo` share; the only difference
+ * between them is where the image list and class names come from.
+ */
+export async function readYoloImages(options: YoloCoreOptions): Promise<ReadResult> {
+  const warnings: string[] = []
+  const kptShape = options.kptShape
+  const poseNames = poseNamesFor(options.kptNames ?? [], kptShape)
+  const schema = schemaFor(kptShape, poseNames)
+  const imageFiles = options.images
 
   // Labels are one small file per image, so read them with bounded concurrency
   // instead of paying a full round-trip per file in sequence.
@@ -132,18 +139,20 @@ export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
   // the user deleted (an empty file) without inventing files for images that
   // never had any.
   const labelledImageIds: number[] = []
-  let maxClass = names.length - 1
+  let maxClass = options.names.length - 1
 
   for (let imageId = 0; imageId < total; imageId += 1) {
     const image = imageFiles[imageId]
     const labelPath = imagesPathToLabelsPath(image.path)
     const text = labelTexts[imageId]
     const size = dims[imageId]
+    const imageSplit = image.split ?? inferSplit(image.path)
     images.push({
       id: imageId,
       filePath: image.path,
       width: size?.width ?? 0,
       height: size?.height ?? 0,
+      ...(imageSplit ? { split: imageSplit } : {}),
     })
 
     if (!text || text.trim() === '') {
@@ -232,7 +241,7 @@ export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
   for (let id = 0; id <= maxClass; id += 1) {
     categories.push({
       id,
-      name: names[id] ?? `class-${id}`,
+      name: options.names[id] ?? `class-${id}`,
       ...(schema ? { keypointSchema: schema } : {}),
     })
   }
@@ -251,12 +260,60 @@ export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
     annotations,
     classNames: categories.map((category) => category.name),
     origin: {
-      ...(yamlEntry ? { yamlPath: yamlEntry.path } : {}),
+      ...(options.yamlPath ? { yamlPath: options.yamlPath } : {}),
       labelledImageIds,
     },
   }
 
   return { dataset, warnings }
+}
+
+export async function readYolo(options: YoloReadOptions): Promise<ReadResult> {
+  const warnings: string[] = []
+  const yamlEntry = options.files.find(
+    (entry) => !entry.isDir && ['.yaml', '.yml'].includes(fileExtension(entry.path)),
+  )
+
+  let names: string[] = []
+  let kptShape: number[] | undefined
+  let kptNames: string[] = []
+  if (yamlEntry) {
+    try {
+      const data = parseYaml(await options.readText(yamlEntry.path)) as Record<
+        string,
+        unknown
+      > | null
+      if (data && typeof data === 'object') {
+        names = readNames(data.names)
+        if (Array.isArray(data.kpt_shape)) {
+          kptShape = data.kpt_shape.map(Number)
+        }
+        if (Array.isArray(data.kpt_names)) {
+          kptNames = data.kpt_names.map(String)
+        }
+      }
+    } catch (error) {
+      warnings.push(`${yamlEntry.path} could not be parsed: ${(error as Error).message}`)
+    }
+  }
+
+  const imageFiles = options.files.filter(
+    (entry) => !entry.isDir && IMAGE_EXTENSIONS.has(fileExtension(entry.path)),
+  )
+
+  const result = await readYoloImages({
+    root: options.root,
+    readText: options.readText,
+    ...(options.imageSize ? { imageSize: options.imageSize } : {}),
+    ...(options.onProgress ? { onProgress: options.onProgress } : {}),
+    images: imageFiles.map((entry) => ({ path: entry.path })),
+    names,
+    ...(kptShape ? { kptShape } : {}),
+    ...(kptNames.length > 0 ? { kptNames } : {}),
+    ...(yamlEntry ? { yamlPath: yamlEntry.path } : {}),
+  })
+
+  return { dataset: result.dataset, warnings: [...warnings, ...result.warnings] }
 }
 
 function boxOf(annotation: Annotation): BBox | undefined {
@@ -268,6 +325,35 @@ function boxOf(annotation: Annotation): BBox | undefined {
 
 function formatYaml(names: string[], schema: KeypointSchema | undefined): string {
   const lines = ['path: .', 'names:']
+  names.forEach((name, index) => {
+    lines.push(`  ${index}: ${name}`)
+  })
+  if (schema) {
+    lines.push(`kpt_shape: [${schema.names.length}, ${schema.dims}]`)
+    if (schema.flipIdx) {
+      lines.push(`flip_idx: [${schema.flipIdx.join(', ')}]`)
+    }
+  }
+  return `${lines.join('\n')}\n`
+}
+
+/**
+ * Ultralytics `data.yaml` with explicit `train`/`val`/`test` paths, for a
+ * labels-first export where one config at the root points at per-split folders.
+ */
+export function formatYoloDataYaml(
+  names: string[],
+  schema: KeypointSchema | undefined,
+  splits: Partial<Record<'train' | 'val' | 'test', string>>,
+): string {
+  const lines = ['path: .']
+  for (const split of ['train', 'val', 'test'] as const) {
+    const dir = splits[split]
+    if (dir) {
+      lines.push(`${split}: ${dir}`)
+    }
+  }
+  lines.push('names:')
   names.forEach((name, index) => {
     lines.push(`  ${index}: ${name}`)
   })
@@ -293,18 +379,17 @@ export interface YoloWriteOptions {
   emitEmptyFor?: (image: ImageRecord) => boolean
 }
 
-/** Serialise a dataset to YOLO label files plus a `data.yaml`. */
-export function writeYolo(
+/** Serialise only the per-image YOLO label files (no `data.yaml`). */
+export function writeYoloLabels(
   dataset: DatasetModel,
   task: YoloTask,
-  options: YoloWriteOptions = {},
+  options: Pick<YoloWriteOptions, 'pathFor' | 'emitEmptyFor'> = {},
 ): WriteResult {
   const files: OutputFile[] = []
   const warnings: string[] = []
 
   const categories = [...dataset.categories].sort((a, b) => a.id - b.id)
   const classIndex = new Map(categories.map((category, index) => [category.id, index]))
-  const names = categories.map((category) => category.name)
   const schema = categories.find((category) => category.keypointSchema)?.keypointSchema
 
   for (const image of dataset.images) {
@@ -390,11 +475,31 @@ export function writeYolo(
     }
   }
 
-  files.push({
-    path: options.yamlPath ?? 'data.yaml',
-    contents: formatYaml(names, task === 'pose' ? schema : undefined),
-  })
   return { files, warnings }
+}
+
+/** Serialise a dataset to YOLO label files plus a `data.yaml`. */
+export function writeYolo(
+  dataset: DatasetModel,
+  task: YoloTask,
+  options: YoloWriteOptions = {},
+): WriteResult {
+  const result = writeYoloLabels(dataset, task, options)
+  const categories = [...dataset.categories].sort((a, b) => a.id - b.id)
+  const schema = categories.find((category) => category.keypointSchema)?.keypointSchema
+  return {
+    files: [
+      ...result.files,
+      {
+        path: options.yamlPath ?? 'data.yaml',
+        contents: formatYaml(
+          categories.map((category) => category.name),
+          task === 'pose' ? schema : undefined,
+        ),
+      },
+    ],
+    warnings: result.warnings,
+  }
 }
 
 function round(value: number): number {

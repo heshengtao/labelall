@@ -8,10 +8,12 @@
  */
 
 import type { SourceFormat } from '../model'
-import { readCoco } from './coco'
+import { readCoco, readCocoDataset } from './coco'
+import { readCsv } from './csv'
 import type { DatasetParams, DetectedFile } from './detect'
 import { readImageFolder } from './imagefolder'
 import { readLabelmeDataset } from './labelme'
+import { readMindyolo } from './mindyolo'
 import type { ReadContext, ReadResult } from './types'
 import { readVoc } from './voc'
 import { readYolo } from './yolo'
@@ -19,8 +21,10 @@ import { readYolo } from './yolo'
 /** Formats that have a reader today; the rest arrive in later milestones. */
 export const READABLE_FORMATS: ReadonlySet<SourceFormat> = new Set<SourceFormat>([
   'coco',
+  'csv',
   'imagefolder',
   'labelme',
+  'mindyolo',
   'voc',
   'yolo',
   'yolo-seg',
@@ -40,6 +44,14 @@ export async function parseDataset(request: ParseRequest, ctx: ReadContext): Pro
 
   switch (format) {
     case 'coco': {
+      if (params?.cocoSources && params.cocoSources.length > 0) {
+        return readCocoDataset({
+          root: ctx.root,
+          readText: ctx.readText,
+          sources: params.cocoSources,
+          ...(ctx.onProgress ? { onProgress: ctx.onProgress } : {}),
+        })
+      }
       const annotationPath = params?.annotationPath
       if (!annotationPath) {
         throw new Error('COCO dataset is missing its annotation file')
@@ -53,6 +65,19 @@ export async function parseDataset(request: ParseRequest, ctx: ReadContext): Pro
       })
     }
 
+    case 'csv': {
+      const annotationPath = params?.annotationPath
+      if (!annotationPath) {
+        throw new Error('CSV dataset is missing its annotation file')
+      }
+      return readCsv({
+        root: ctx.root,
+        readText: ctx.readText,
+        annotationPath,
+        ...(params?.split ? { split: params.split } : {}),
+      })
+    }
+
     case 'imagefolder':
       return readImageFolder({ root: ctx.root, readText: ctx.readText, files })
 
@@ -62,6 +87,15 @@ export async function parseDataset(request: ParseRequest, ctx: ReadContext): Pro
         readText: ctx.readText,
         annotationPaths: params?.annotationPaths ?? [],
         ...(params?.imageDir ? { imageDir: params.imageDir } : {}),
+      })
+
+    case 'mindyolo':
+      return readMindyolo({
+        root: ctx.root,
+        readText: ctx.readText,
+        files,
+        ...(ctx.imageSize ? { imageSize: ctx.imageSize } : {}),
+        ...(ctx.onProgress ? { onProgress: ctx.onProgress } : {}),
       })
 
     case 'voc':
