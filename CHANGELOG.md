@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-05
+
+### Added
+
+- **Split a dataset on export.** Deal the images into train / val / test at any
+  ratio, with a reproducible random seed; a 0% split is simply left out, so you
+  can export with no validation or test set. COCO, YOLO, MindYOLO and VOC also
+  offer the standard content-first layout (`images/<split>/`, `labels/<split>/`,
+  one root `data.yaml`) alongside the default split-first one (`<split>/images/…`).
+- **MindYOLO import and export**: a `data.yaml` with per-split image-list `.txt`
+  files, YOLO labels, and the eval `annotations/instances_<split>2017.json` that
+  MindYOLO's `test.py` expects. A missing split list loads normally.
+- **CSV import and export**: one row per annotation
+  (`image,width,height,label,type,xmin,ymin,xmax,ymax,polygon,keypoints`).
+- **labelme export** (boxes and polygons), matching the existing labelme reader.
+- Multi-split import: a dataset spread across `instances_train/val/test.json` (or
+  MindYOLO list files) merges into one dataset on open, and every reader now tags
+  images with their split. Missing splits load without error.
+- Exports land in a timestamped folder — `LabelAll_export/<format>/<timestamp>/` —
+  so running an export twice never overwrites the first.
+
+### Changed
+
+- The default split ratio is now 70 / 20 / 10.
+- YOLO / MindYOLO label paths for images that are not under `images/` are derived
+  the way Ultralytics and MindYOLO do (a sibling `.txt`), so exported labels are
+  found by those tools as well as by LabelAll.
+- The bundled `examples/voc-mini` example grew from 3 to 10 images.
+
 ## [0.3.0] - 2026-10-04
 
 ### Added
@@ -258,7 +287,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/heshengtao/labelall/releases/tag/v0.4.0
 [0.3.0]: https://github.com/heshengtao/labelall/releases/tag/v0.3.0
 [0.2.0]: https://github.com/heshengtao/labelall/releases/tag/v0.2.0
 [0.1.8]: https://github.com/heshengtao/labelall/releases/tag/v0.1.8
