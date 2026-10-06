@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-06
+
+### Added
+
+- **The export dialog remembers your configuration.** It reopens with the
+  format, split ratios, random seed, folder layout and the copy-images /
+  keep-unmatched switches from your last export, so a repeated export does not
+  have to be reconfigured. A **Restore defaults** button clears the memory and
+  falls back to the built-in defaults (and the default format from Settings).
+
 ## [0.4.0] - 2026-10-05
 
 ### Added
@@ -287,7 +297,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/heshengtao/labelall/releases/tag/v0.4.1
 [0.4.0]: https://github.com/heshengtao/labelall/releases/tag/v0.4.0
 [0.3.0]: https://github.com/heshengtao/labelall/releases/tag/v0.3.0
 [0.2.0]: https://github.com/heshengtao/labelall/releases/tag/v0.2.0
