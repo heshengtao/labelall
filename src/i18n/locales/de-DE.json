@@ -172,6 +172,7 @@
     "hint": "Die Dateien werden in {{path}} geschrieben; der ursprüngliche Datensatz bleibt unverändert.",
     "losses": "Manche Daten können nicht dargestellt werden:",
     "noLosses": "Dieses Format kann den gesamten Datensatz darstellen.",
+    "restoreDefaults": "Standard wiederherstellen",
     "confirm": "Exportieren",
     "done": "{{count}} Datei(en) als {{format}} exportiert",
     "readOnly": "Dieser Browser kann Datensätze nur lesend öffnen",

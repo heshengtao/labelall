@@ -172,6 +172,7 @@
     "hint": "Files are written to {{path}}; the original dataset is left untouched.",
     "losses": "Some data cannot be represented:",
     "noLosses": "This format can represent the whole dataset.",
+    "restoreDefaults": "Restore defaults",
     "confirm": "Export",
     "done": "Exported {{count}} file(s) as {{format}}",
     "readOnly": "This browser can only open datasets read-only",

@@ -172,6 +172,7 @@
     "hint": "Los archivos se escriben en {{path}}; el dataset original no se toca.",
     "losses": "Hay datos que no se pueden representar:",
     "noLosses": "Este formato puede representar todo el dataset.",
+    "restoreDefaults": "Restaurar valores predeterminados",
     "confirm": "Exportar",
     "done": "Se han exportado {{count}} archivo(s) como {{format}}",
     "readOnly": "Este navegador solo puede abrir datasets en modo lectura",

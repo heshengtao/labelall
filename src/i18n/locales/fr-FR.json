@@ -172,6 +172,7 @@
     "hint": "Les fichiers sont écrits dans {{path}} ; le jeu de données d'origine n'est pas modifié.",
     "losses": "Certaines données ne peuvent pas être représentées :",
     "noLosses": "Ce format peut représenter tout le jeu de données.",
+    "restoreDefaults": "Rétablir les valeurs par défaut",
     "confirm": "Exporter",
     "done": "{{count}} fichier(s) exporté(s) au format {{format}}",
     "readOnly": "Ce navigateur ne peut ouvrir les jeux de données qu'en lecture seule",

@@ -35,14 +35,14 @@ import type { ExportChoice, ExportFormat } from '@/core/formats/losses'
 import { collectLosses, resolveExportFormat } from '@/core/formats/losses'
 import { annotationCountByCategory, subsetByCategories } from '@/core/filter'
 import type { Category } from '@/core/model'
-import type { SplitRatios } from '@/core/split'
+import type { SplitLayout, SplitRatios } from '@/core/split'
 import { DEFAULT_SPLIT_RATIOS, hasAnyRatio, partitionDataset } from '@/core/split'
 import { getDatasetSource } from '@/platform'
 import { useDatasetStore } from '@/store/datasetStore'
-import { useSettingsStore } from '@/store/settingsStore'
+import { DEFAULT_EXPORT_CONFIG, useSettingsStore, type ExportConfig } from '@/store/settingsStore'
 import { useWriteAccessStore } from '@/store/writeAccessStore'
 
-import { exportDataset, type SplitLayout } from './exportDataset'
+import { exportDataset } from './exportDataset'
 import { createExportStamp } from './exportStamp'
 import { supportsLabelsFirst } from './labelsFirst'
 
@@ -63,6 +63,14 @@ const DEFAULT_SPLIT_PERCENT: SplitPercent = {
 
 function percentToRatios(percent: SplitPercent): SplitRatios {
   return { train: percent.train / 100, val: percent.val / 100, test: percent.test / 100 }
+}
+
+function ratiosToPercent(ratios: SplitRatios): SplitPercent {
+  return {
+    train: Math.round(ratios.train * 100),
+    val: Math.round(ratios.val * 100),
+    test: Math.round(ratios.test * 100),
+  }
 }
 
 /** Cap the options rendered in the dropdown so a huge class list stays snappy. */
@@ -196,20 +204,32 @@ export function ExportButton() {
   const splitValid = !split || hasAnyRatio(percentToRatios(percent))
   const canExport = !noClassesSelected && filtered.images.length > 0 && splitValid
 
-  const openDialog = (): void => {
+  /** Seed the dialog controls from the last export, or the built-in defaults. */
+  const applyConfig = (config: ExportConfig | null): void => {
     const preferred = useSettingsStore.getState().defaultExportFormat
-    setChoice(preferred ?? defaultChoice(dataset.sourceFormat))
+    setChoice(config?.format ?? preferred ?? defaultChoice(dataset.sourceFormat))
+    setKeepUnmatched(config?.keepUnmatched ?? DEFAULT_EXPORT_CONFIG.keepUnmatched)
+    setKeepImages(config?.copyImages ?? DEFAULT_EXPORT_CONFIG.copyImages)
+    setSplit(config?.split ?? DEFAULT_EXPORT_CONFIG.split)
+    setPercent(config ? ratiosToPercent(config.ratios) : DEFAULT_SPLIT_PERCENT)
+    setSeed(config?.seed ?? DEFAULT_EXPORT_CONFIG.seed)
+    setLayout(config?.layout ?? DEFAULT_EXPORT_CONFIG.layout)
+  }
+
+  const openDialog = (): void => {
+    applyConfig(useSettingsStore.getState().exportConfig)
     setSelected(new Set(dataset.categories.map((category) => category.id)))
-    setKeepUnmatched(false)
-    setSplit(false)
-    setPercent(DEFAULT_SPLIT_PERCENT)
-    setSeed('0')
-    setLayout('split-first')
     setStamp(createExportStamp())
     setError(null)
     setCopied(false)
     setProgress(0)
     setOpen(true)
+  }
+
+  const restoreDefaults = (): void => {
+    useSettingsStore.getState().forgetExportConfig()
+    applyConfig(null)
+    setSelected(new Set(dataset.categories.map((category) => category.id)))
   }
 
   const selectAll = (): void => {
@@ -237,6 +257,15 @@ export function ExportButton() {
             }
           : {}),
         onProgress: setProgress,
+      })
+      useSettingsStore.getState().rememberExportConfig({
+        format: choice,
+        split,
+        ratios: percentToRatios(percent),
+        seed,
+        layout,
+        keepUnmatched,
+        copyImages: keepImages,
       })
       setOpen(false)
       setCopied(false)
@@ -510,6 +539,9 @@ export function ExportButton() {
           </Stack>
         </DialogContent>
         <DialogActions>
+          <Button onClick={restoreDefaults} disabled={busy} sx={{ mr: 'auto' }}>
+            {t('export.restoreDefaults')}
+          </Button>
           <Button onClick={() => setOpen(false)} disabled={busy}>
             {t('common.cancel')}
           </Button>

@@ -2,21 +2,12 @@ import type { ExportFormat } from '@/core/formats/losses'
 import type { OutputFile } from '@/core/formats/types'
 import { writeDataset } from '@/core/formats/write'
 import type { DatasetModel } from '@/core/model'
-import type { NamedSplit, SplitRatios } from '@/core/split'
+import type { NamedSplit, SplitLayout, SplitRatios } from '@/core/split'
 import { partitionDataset } from '@/core/split'
 import type { DatasetHandle, DatasetSource } from '@/platform/types'
 
 import { createExportStamp } from './exportStamp'
 import { labelsFirstRootFiles, labelsFirstSplit, supportsLabelsFirst } from './labelsFirst'
-
-/**
- * How a split's folders are arranged:
- * - `split-first`  — `<split>/images/…`, `<split>/labels/…` (one self-contained
- *   folder per split; the generic layout).
- * - `labels-first` — `images/<split>/…`, `labels/<split>/…`, one root config
- *   (the Ultralytics / MindYOLO convention).
- */
-export type SplitLayout = 'split-first' | 'labels-first'
 
 export interface ExportOptions {
   /** Copy the dataset's images into the export folder so it is self-contained. */

@@ -172,6 +172,7 @@
     "hint": "檔案會寫入 {{path}}，不會更動原始資料集。",
     "losses": "以下內容無法完整表示：",
     "noLosses": "此格式可完整表示目前的資料集。",
+    "restoreDefaults": "還原預設值",
     "confirm": "匯出",
     "done": "已匯出 {{count}} 個檔案（{{format}}）",
     "readOnly": "目前瀏覽器僅支援唯讀開啟",

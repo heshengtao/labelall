@@ -172,6 +172,7 @@
     "hint": "文件写入 {{path}}，原始数据集不受影响。",
     "losses": "以下内容无法完整表示：",
     "noLosses": "该格式可以完整表示当前数据集。",
+    "restoreDefaults": "恢复默认",
     "confirm": "导出",
     "done": "已导出 {{count}} 个文件（{{format}}）",
     "readOnly": "当前浏览器仅支持只读打开",

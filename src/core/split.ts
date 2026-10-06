@@ -27,6 +27,15 @@ export interface SplitRatios {
 /** 70 / 20 / 10 — a common default that still exercises all three splits. */
 export const DEFAULT_SPLIT_RATIOS: SplitRatios = { train: 0.7, val: 0.2, test: 0.1 }
 
+/**
+ * How a split's folders are arranged on disk:
+ * - `split-first`  — `<split>/images/…`, `<split>/labels/…` (one self-contained
+ *   folder per split; the generic layout).
+ * - `labels-first` — `images/<split>/…`, `labels/<split>/…`, one root config
+ *   (the Ultralytics / MindYOLO convention).
+ */
+export type SplitLayout = 'split-first' | 'labels-first'
+
 /** One non-empty split together with the dataset restricted to it. */
 export interface SplitPartition {
   split: NamedSplit
