@@ -124,9 +124,12 @@ export async function exportDataset(
     )
     files += result.files.length
 
-    const copies = options.copyImages
-      ? partition.dataset.images.map((image) => ({ from: image.filePath, to: image.filePath }))
-      : []
+    // A writer may rename or relocate images (MindYOLO rewrites them to numeric
+    // names); when it does, the copies follow, otherwise they keep their paths.
+    const destinations =
+      result.images ??
+      partition.dataset.images.map((image) => ({ from: image.filePath, to: image.filePath }))
+    const copies = options.copyImages ? destinations : []
     if (copies.length > 0) {
       await source.copyImages(handle, copies, prefix, (value) =>
         report(0.05 + ((index + value) / total) * 0.95),

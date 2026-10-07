@@ -20,6 +20,8 @@ import {
   formatMindyoloDataYaml,
   mindyoloAnnotationsJson,
   mindyoloEvalJsonPath,
+  mindyoloImageName,
+  mindyoloTask,
 } from '@/core/formats/mindyolo'
 import type { OutputFile } from '@/core/formats/types'
 import { writeCoco } from '@/core/formats/coco'
@@ -68,8 +70,12 @@ export interface LabelsFirstSplit {
 
 /**
  * Build one split's labels-first files, relocating its images under
- * `<container>/<split>/`. Filenames are de-duplicated within the split so two
- * source images with the same basename do not overwrite each other.
+ * `<container>/<split>/`.
+ *
+ * Every other format keeps the source basenames, de-duplicated within the split
+ * so two images with the same name do not overwrite each other. MindYOLO is the
+ * exception: it addresses images by the number parsed from the file stem during
+ * evaluation, so they are renamed to `00000001.jpg`, `00000002.jpg`, … instead.
  */
 export function labelsFirstSplit(
   dataset: DatasetModel,
@@ -79,17 +85,21 @@ export function labelsFirstSplit(
   const dir = imageDirFor(format)
   const used = new Set<string>()
   const images: ImageCopy[] = []
-  const records = dataset.images.map((image) => {
+  const records = dataset.images.map((image, index) => {
     const base = fileBasename(image.filePath)
-    const stem = fileStem(base)
     const extension = fileExtension(base)
-    let name = base
-    let counter = 2
-    while (used.has(name)) {
-      name = `${stem}-${counter}${extension}`
-      counter += 1
+    let name: string
+    if (format === 'mindyolo') {
+      name = mindyoloImageName(index, extension || '.jpg')
+    } else {
+      name = base
+      let counter = 2
+      while (used.has(name)) {
+        name = `${fileStem(base)}-${counter}${extension}`
+        counter += 1
+      }
+      used.add(name)
     }
-    used.add(name)
     const to = `${dir}/${split}/${name}`
     images.push({ from: image.filePath, to })
     return { ...image, filePath: to }
@@ -167,14 +177,4 @@ export function labelsFirstRootFiles(
   }
 
   return []
-}
-
-function mindyoloTask(dataset: DatasetModel): YoloTask {
-  if (dataset.annotations.some((annotation) => annotation.type === 'keypoints')) {
-    return 'pose'
-  }
-  if (dataset.annotations.some((annotation) => annotation.type === 'polygon')) {
-    return 'seg'
-  }
-  return 'detect'
 }

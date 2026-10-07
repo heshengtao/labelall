@@ -33,7 +33,23 @@ export interface OutputFile {
   contents: string
 }
 
+/**
+ * A new location for an image, when a format requires renaming or relocating it
+ * (MindYOLO, for instance, only accepts numeric file names).
+ */
+export interface ImageRelocation {
+  /** Source path, dataset-relative, as read. */
+  from: string
+  /** Destination path relative to the export prefix. */
+  to: string
+}
+
 export interface WriteResult {
   files: OutputFile[]
   warnings: string[]
+  /**
+   * Images the format writes under a new name or directory. Absent when the
+   * writer keeps every image at its original path, which is the common case.
+   */
+  images?: ImageRelocation[]
 }

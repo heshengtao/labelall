@@ -28,6 +28,12 @@ export interface DatasetOrigin {
   imageDir?: string
   /** YOLO: the `data.yaml`/`*.yaml` to overwrite. */
   yamlPath?: string
+  /**
+   * MindYOLO: the parsed `data.yaml` document. Save rewrites it in place,
+   * keeping `dataset_name`, the split `*_set` paths and any custom keys while
+   * refreshing `nc`/`names`.
+   */
+  mindyoloConfig?: Record<string, unknown>
   /** VOC: the coordinate policy the dataset was read with, so writing inverts it exactly. */
   boxPolicy?: VocBoxPolicy
   /** YOLO: ids of images that had a non-empty label file, so a cleared label is still written. */

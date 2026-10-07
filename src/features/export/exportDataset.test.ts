@@ -95,6 +95,25 @@ describe('exportDataset', () => {
     }
   })
 
+  it('copies MindYOLO images under their numeric names', async () => {
+    const { source, copies, writes } = fakeSource()
+
+    await exportDataset(source, handle, dataset, 'mindyolo', { copyImages: true })
+
+    expect(copies).toEqual([
+      {
+        files: [
+          { from: 'images/a.jpg', to: 'images/00000001.jpg' },
+          { from: 'images/b.jpg', to: 'images/00000002.jpg' },
+        ],
+        destPrefix: '../LabelAll_export/coco',
+      },
+    ])
+    const written = writes.flat().map((file) => file.path)
+    expect(written).toContain('../LabelAll_export/coco/labels/00000001.txt')
+    expect(written).toContain('../LabelAll_export/coco/images.txt')
+  })
+
   it('skips copying when the dataset has no images', async () => {
     const { source, copies } = fakeSource()
     const progress: number[] = []

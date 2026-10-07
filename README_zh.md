@@ -81,7 +81,7 @@ LabelAll 是一款**免费开源**的工具，用来打开、浏览、标注和�
 | --- | :---: | :---: | --- |
 | **COCO** | ✅ | ✅ | 含多边形与 RLE 分割、关键点；打开时自动合并 `instances_train/val/test.json` 划分文件 |
 | **YOLO** | ✅ | ✅ | 检测 / 分割 / 姿态三种任务 |
-| **MindYOLO** | ✅ | ✅ | `data.yaml`、按子集的图片清单 `.txt`、YOLO 标签，以及评估用的 `annotations/instances_<split>2017.json`；缺少某个子集也能正常加载 |
+| **MindYOLO** | ✅ | ✅ | `data.yaml`、按子集的图片清单 `.txt`、YOLO 标签，以及评估用的 `annotations/instances_<split>2017.json`；图片与标签会重命名为纯数字文件名（MindYOLO 评估所必需）；缺少某个子集也能正常加载 |
 | **Pascal VOC** | ✅ | ✅ | 1 基坐标；XML 与图片同级或在 `Annotations/` 中 |
 | **分类文件夹 / ImageNet** | ✅ | 部分 | 目录名即类别名 |
 | **labelme** | ✅ | ✅ | 矩形框与多边形 |

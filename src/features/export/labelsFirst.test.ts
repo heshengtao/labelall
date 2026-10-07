@@ -55,12 +55,30 @@ describe('labelsFirstSplit', () => {
     expect(result.files.map((file) => file.path)).toContain('Annotations/val/x.xml')
   })
 
-  it('adds the MindYOLO eval JSON and split list', () => {
+  it('renames MindYOLO images to numeric names and adds the eval JSON and split list', () => {
     const result = labelsFirstSplit(dataset, 'mindyolo', 'train')
     const paths = result.files.map((file) => file.path)
     expect(paths).toContain('annotations/instances_train2017.json')
     expect(paths).toContain('train.txt')
-    expect(paths).toContain('labels/train/x.txt')
+    expect(paths).toContain('labels/train/00000001.txt')
+    expect(paths).toContain('labels/train/00000002.txt')
+
+    expect(result.images).toEqual([
+      { from: 'a/x.jpg', to: 'images/train/00000001.jpg' },
+      { from: 'b/x.jpg', to: 'images/train/00000002.jpg' },
+    ])
+
+    const list = result.files.find((file) => file.path === 'train.txt')?.contents
+    expect(list).toBe('./images/train/00000001.jpg\n./images/train/00000002.jpg\n')
+
+    const json = JSON.parse(
+      result.files.find((file) => file.path.endsWith('.json'))?.contents ?? '{}',
+    )
+    expect(json.images.map((image: { id: number }) => image.id)).toEqual([1, 2])
+    expect(json.images.map((image: { file_name: string }) => image.file_name)).toEqual([
+      '00000001.jpg',
+      '00000002.jpg',
+    ])
   })
 })
 

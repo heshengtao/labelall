@@ -105,9 +105,6 @@ export function collectLosses(dataset: DatasetModel, format: ExportFormat): stri
       if (types.has('mask')) losses.push('RLE masks are reduced to their bounding box.')
       if (types.has('classification')) losses.push('Image-level class labels are skipped.')
       losses.push('Annotation ids, areas, scores and attributes are not stored in MindYOLO labels.')
-      losses.push(
-        'MindYOLO expects numeric image file names for validation; images are not renamed.',
-      )
       break
   }
 

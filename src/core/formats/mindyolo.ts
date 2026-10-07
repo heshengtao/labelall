@@ -19,10 +19,10 @@
  * come from MindYOLO's own config.
  */
 
-import { parse as parseYaml } from 'yaml'
+import { parse as parseYaml, stringify as stringifyYaml } from 'yaml'
 
-import type { DatasetModel } from '../model'
-import { fileBasename, fileDirname, fileExtension, joinPath } from '../path'
+import type { DatasetModel, ImageRecord } from '../model'
+import { fileBasename, fileDirname, fileExtension, fileStem, joinPath } from '../path'
 import type { NamedSplit } from '../split'
 import type { DetectedFile } from './detect'
 import type { OutputFile, ReadContext, ReadResult, WriteResult } from './types'
@@ -108,12 +108,16 @@ export async function readMindyolo(options: MindyoloReadOptions): Promise<ReadRe
   }
 
   let block: Record<string, unknown> = {}
+  // The whole document is kept so save can rewrite it without losing the keys
+  // MindYOLO needs (`dataset_name`, the `*_set` list paths, transforms, …).
+  let document: Record<string, unknown> | undefined
   try {
     const parsed = parseYaml(await options.readText(yamlEntry.path)) as Record<
       string,
       unknown
     > | null
     if (parsed && typeof parsed === 'object') {
+      document = parsed
       block = configBlock(parsed)
     }
   } catch (error) {
@@ -166,7 +170,16 @@ export async function readMindyolo(options: MindyoloReadOptions): Promise<ReadRe
     yamlPath: yamlEntry.path,
   })
 
-  return { dataset: result.dataset, warnings: [...warnings, ...result.warnings] }
+  const dataset: DatasetModel = {
+    ...result.dataset,
+    sourceFormat: 'mindyolo',
+    origin: {
+      ...result.dataset.origin,
+      yamlPath: yamlEntry.path,
+      ...(document ? { mindyoloConfig: document } : {}),
+    },
+  }
+  return { dataset, warnings: [...warnings, ...result.warnings] }
 }
 
 export interface MindyoloWriteOptions {
@@ -174,7 +187,8 @@ export interface MindyoloWriteOptions {
   splitName?: NamedSplit
 }
 
-function mindyoloTask(dataset: DatasetModel): YoloTask {
+/** Whether the dataset needs a pose, segment or plain detect YOLO label set. */
+export function mindyoloTask(dataset: DatasetModel): YoloTask {
   if (dataset.annotations.some((annotation) => annotation.type === 'keypoints')) {
     return 'pose'
   }
@@ -209,13 +223,73 @@ export function formatMindyoloDataYaml(
   return lines.join('\n')
 }
 
+/** True for a plain object, which is what a YAML mapping parses to. */
+function isMapping(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/**
+ * Rewrite a MindYOLO `data.yaml` for save, refreshing the class list and count
+ * while carrying every other key through from the original document —
+ * `dataset_name`, the `*_set` split list paths, transforms and custom entries.
+ */
+export function formatMindyoloConfigYaml(
+  document: Record<string, unknown>,
+  names: string[],
+): string {
+  const clone = structuredClone(document)
+  const block = isMapping(clone.data) ? clone.data : clone
+  block.nc = names.length
+  block.names = [...names]
+  return stringifyYaml(clone)
+}
+
+/** Zero-padded width of MindYOLO's numeric image names. */
+const NUMERIC_NAME_WIDTH = 8
+
+/**
+ * MindYOLO's numeric name for the `index`-th image (0-based), e.g. `00000001.jpg`.
+ *
+ * MindYOLO derives an image's id during evaluation as `int(Path(im_file).stem)`,
+ * so a purely numeric name is mandatory — every conversion script MindYOLO
+ * ships renames the images for exactly this reason.
+ */
+export function mindyoloImageName(index: number, extension: string): string {
+  return `${String(index + 1).padStart(NUMERIC_NAME_WIDTH, '0')}${extension}`
+}
+
+/** Rename one image to a numeric basename, preserving its directory. */
+function numericImage(image: ImageRecord, index: number): ImageRecord {
+  const extension = fileExtension(image.filePath) || '.jpg'
+  return {
+    ...image,
+    filePath: joinPath(fileDirname(image.filePath), mindyoloImageName(index, extension)),
+  }
+}
+
+/**
+ * Rename every image to a purely numeric name. The label file mirrors the image
+ * name, so it becomes numeric too, and keeping the directory preserves the
+ * `images/`→`labels/` pairing the writers rely on.
+ */
+export function numericizeMindyoloImages(dataset: DatasetModel): DatasetModel {
+  return { ...dataset, images: dataset.images.map(numericImage) }
+}
+
+/** The image id MindYOLO reads back from a numeric stem, or null if it is not numeric. */
+function numericId(path: string): number | null {
+  const stem = fileStem(path)
+  return /^\d+$/.test(stem) ? Number.parseInt(stem, 10) : null
+}
+
 /**
  * COCO-format annotations for MindYOLO's evaluation stage.
  *
- * Mirrors the official `crejson.py` recipe: `file_name` is the image basename,
- * category ids are the 0-based YOLO class indices (so they line up with the
- * label files), and ids are sequential. Only geometry annotations are kept —
- * image-level labels have no box to score.
+ * Mirrors the official `crejson.py` recipe: `file_name` is the numeric image
+ * basename, category ids are the 0-based YOLO class indices (so they line up
+ * with the label files), and `image_id` is the number MindYOLO parses from the
+ * image stem. Only geometry annotations are kept — image-level labels have no
+ * box to score.
  */
 export function mindyoloAnnotationsJson(dataset: DatasetModel): string {
   const categories = [...dataset.categories].sort((a, b) => a.id - b.id)
@@ -223,10 +297,11 @@ export function mindyoloAnnotationsJson(dataset: DatasetModel): string {
   const imageIndex = new Map<number, number>()
 
   const images = dataset.images.map((image, index) => {
-    imageIndex.set(image.id, index + 1)
+    const id = numericId(image.filePath) ?? index + 1
+    imageIndex.set(image.id, id)
     return {
       file_name: fileBasename(image.filePath),
-      id: index + 1,
+      id,
       width: image.width,
       height: image.height,
     }
@@ -278,23 +353,30 @@ export function writeMindyolo(
   dataset: DatasetModel,
   options: MindyoloWriteOptions = {},
 ): WriteResult {
-  const task = mindyoloTask(dataset)
-  const labels = writeYoloLabels(dataset, task)
+  // MindYOLO only accepts numeric image names, so the labels, the image list and
+  // the eval JSON are all built from the renamed dataset.
+  const placed = numericizeMindyoloImages(dataset)
+  const task = mindyoloTask(placed)
+  const labels = writeYoloLabels(placed, task)
   const split = options.splitName ?? 'train'
 
   const listName = `${options.splitName ?? 'images'}.txt`
   const list =
-    dataset.images.length > 0
-      ? `${dataset.images.map((image) => `./${image.filePath}`).join('\n')}\n`
+    placed.images.length > 0
+      ? `${placed.images.map((image) => `./${image.filePath}`).join('\n')}\n`
       : ''
-  const names = [...dataset.categories].sort((a, b) => a.id - b.id).map((c) => c.name)
+  const names = [...placed.categories].sort((a, b) => a.id - b.id).map((c) => c.name)
   const yaml = formatMindyoloDataYaml(names, { [split]: `./${listName}` })
 
   const files: OutputFile[] = [
     ...labels.files,
     { path: listName, contents: list },
-    { path: mindyoloEvalJsonPath(split), contents: mindyoloAnnotationsJson(dataset) },
+    { path: mindyoloEvalJsonPath(split), contents: mindyoloAnnotationsJson(placed) },
     { path: 'data.yaml', contents: yaml },
   ]
-  return { files, warnings: labels.warnings }
+  const images = placed.images.map((image, index) => ({
+    from: dataset.images[index].filePath,
+    to: image.filePath,
+  }))
+  return { files, warnings: labels.warnings, images }
 }

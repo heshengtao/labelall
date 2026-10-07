@@ -17,10 +17,11 @@ import type { DatasetModel } from '../model'
 import { fileStem } from '../path'
 import { writeCoco } from './coco'
 import { writeLabelme } from './labelme'
+import { formatMindyoloConfigYaml, mindyoloTask } from './mindyolo'
 import type { OutputFile } from './types'
 import { writeVoc } from './voc'
 import { writeImageFolder } from './write'
-import { writeYolo, type YoloTask } from './yolo'
+import { writeYolo, writeYoloLabels, type YoloTask } from './yolo'
 
 export interface SavePlan {
   /** Whether this dataset's format can be written back in place at all. */
@@ -75,6 +76,31 @@ export function planSave(dataset: DatasetModel): SavePlan {
         emitEmptyFor: (image) => labelled.has(image.id),
       })
       return { supported: true, ...result }
+    }
+
+    case 'mindyolo': {
+      // The config is what makes the dataset MindYOLO rather than plain YOLO, so
+      // without it there is nothing faithful to write back.
+      const config = origin?.mindyoloConfig
+      if (!config) {
+        return { supported: false, files: [], warnings: [] }
+      }
+      const labelled = new Set(origin?.labelledImageIds ?? [])
+      const labels = writeYoloLabels(dataset, mindyoloTask(dataset), {
+        emitEmptyFor: (image) => labelled.has(image.id),
+      })
+      const names = [...dataset.categories].sort((a, b) => a.id - b.id).map((c) => c.name)
+      return {
+        supported: true,
+        files: [
+          ...labels.files,
+          {
+            path: origin?.yamlPath ?? 'data.yaml',
+            contents: formatMindyoloConfigYaml(config, names),
+          },
+        ],
+        warnings: labels.warnings,
+      }
     }
 
     case 'labelme': {

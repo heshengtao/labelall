@@ -93,7 +93,7 @@ anyone who needs to look at or fix a batch of image labels quickly.
 | --- | :---: | :---: | --- |
 | **COCO** | ✅ | ✅ | Polygon and RLE segmentation, keypoints; split `instances_train/val/test.json` files merge on open |
 | **YOLO** | ✅ | ✅ | Detect, segment and pose tasks |
-| **MindYOLO** | ✅ | ✅ | `data.yaml`, per-split image-list `.txt`, YOLO labels and the eval `annotations/instances_<split>2017.json`; missing splits are tolerated |
+| **MindYOLO** | ✅ | ✅ | `data.yaml`, per-split image-list `.txt`, YOLO labels and the eval `annotations/instances_<split>2017.json`; images and labels are renamed to numeric names (which MindYOLO's evaluation requires); missing splits are tolerated |
 | **Pascal VOC** | ✅ | ✅ | 1-based boxes, XML next to images or in `Annotations/` |
 | **Classification / ImageNet** | ✅ | Partial | The folder name is the class |
 | **labelme** | ✅ | ✅ | Boxes and polygons |

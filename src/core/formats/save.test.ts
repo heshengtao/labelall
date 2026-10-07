@@ -1,3 +1,4 @@
+import { parse as parseYaml } from 'yaml'
 import { describe, expect, it } from 'vitest'
 
 import type { DatasetModel } from '../model'
@@ -5,6 +6,7 @@ import { fixtureReader, scanFixture } from '../../test/fixtures'
 import { readCoco } from './coco'
 import { readImageFolder } from './imagefolder'
 import { parseLabelme, readLabelmeDataset, writeLabelme } from './labelme'
+import { readMindyolo } from './mindyolo'
 import { planSave } from './save'
 import { readVoc } from './voc'
 import { readYolo } from './yolo'
@@ -76,6 +78,90 @@ describe('planSave', () => {
 
     const plan = planSave(dataset)
     expect(plan.files.map((file) => file.path).sort()).toEqual(['data.yaml', 'labels/train/a.txt'])
+  })
+
+  it('saves a MindYOLO dataset by rewriting labels in place and its data.yaml', async () => {
+    const { dataset } = await readMindyolo({
+      root: 'mindyolo',
+      readText: fixtureReader('mindyolo'),
+      files: scanFixture('mindyolo'),
+      imageSize,
+    })
+
+    const plan = planSave(dataset)
+
+    expect(plan.supported).toBe(true)
+    expect(plan.files.map((file) => file.path).sort()).toEqual([
+      'data.yaml',
+      'labels/train/a.txt',
+      'labels/train/b.txt',
+      'labels/val/c.txt',
+    ])
+
+    // The MindYOLO config block survives: dataset_name and the split lists are
+    // kept, so the dataset is still recognised as MindYOLO after saving.
+    const yaml = plan.files.find((file) => file.path === 'data.yaml')?.contents ?? ''
+    const parsed = parseYaml(yaml) as { data: Record<string, unknown> }
+    expect(parsed.data).toMatchObject({
+      dataset_name: 'tiny',
+      train_set: './train.txt',
+      val_set: './val.txt',
+      nc: 2,
+    })
+    expect(parsed.data.names).toEqual(['cat', 'dog'])
+  })
+
+  it('refreshes the MindYOLO class list when classes change', async () => {
+    const { dataset } = await readMindyolo({
+      root: 'mindyolo',
+      readText: fixtureReader('mindyolo'),
+      files: scanFixture('mindyolo'),
+      imageSize,
+    })
+    const renamed = {
+      ...dataset,
+      categories: dataset.categories.map((category) =>
+        category.id === 0 ? { ...category, name: 'kitten' } : category,
+      ),
+    }
+
+    const plan = planSave(renamed)
+    const yaml = plan.files.find((file) => file.path === 'data.yaml')?.contents ?? ''
+    const parsed = parseYaml(yaml) as { data: { names: string[]; nc: number } }
+
+    expect(parsed.data.names).toEqual(['kitten', 'dog'])
+    expect(parsed.data.nc).toBe(2)
+  })
+
+  it('produces a MindYOLO config that still reads back as MindYOLO', async () => {
+    const fixtureText = fixtureReader('mindyolo')
+    const { dataset } = await readMindyolo({
+      root: 'mindyolo',
+      readText: fixtureText,
+      files: scanFixture('mindyolo'),
+      imageSize,
+    })
+    const plan = planSave(dataset)
+    const planFiles = new Map(plan.files.map((file) => [file.path, file.contents]))
+
+    const { dataset: reread } = await readMindyolo({
+      root: 'x',
+      // The saved data.yaml, with the untouched split lists from the fixture.
+      readText: (path) => {
+        const saved = planFiles.get(path)
+        return saved !== undefined ? Promise.resolve(saved) : fixtureText(path)
+      },
+      files: [
+        { path: 'data.yaml', isDir: false, size: 1 },
+        { path: 'images', isDir: true, size: 0 },
+        { path: 'labels', isDir: true, size: 0 },
+      ],
+      imageSize,
+    })
+
+    expect(reread.sourceFormat).toBe('mindyolo')
+    expect(reread.categories.map((category) => category.name)).toEqual(['cat', 'dog'])
+    expect(reread.annotations).toHaveLength(3)
   })
 
   it('writes one labelme JSON per image', async () => {
