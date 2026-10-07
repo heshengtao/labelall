@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-10-07
+
+### Fixed
+
+- **MindYOLO export now uses numeric image and label names.** Every image — and
+  the label file that mirrors it — is written as `00000001.jpg` / `00000001.txt`,
+  and each `image_id` in the eval `annotations/instances_<split>2017.json` is the
+  number parsed from the file name. MindYOLO derives the id that way during
+  evaluation, so a dataset whose images had string names could not be validated
+  before this. Applies to both the split (`labels-first`) and flat layouts.
+- **Saving a MindYOLO dataset no longer breaks its `data.yaml`.** Save rewrites
+  the config in place — keeping `dataset_name`, the split list paths and any
+  custom keys, and refreshing only `nc`/`names` from the current classes —
+  instead of overwriting it with a plain YOLO `data.yaml`.
+
 ## [0.4.1] - 2026-10-06
 
 ### Added
@@ -297,7 +312,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the project name from "LableAll" to "LabelAll".
 
-[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/heshengtao/labelall/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/heshengtao/labelall/releases/tag/v0.4.2
 [0.4.1]: https://github.com/heshengtao/labelall/releases/tag/v0.4.1
 [0.4.0]: https://github.com/heshengtao/labelall/releases/tag/v0.4.0
 [0.3.0]: https://github.com/heshengtao/labelall/releases/tag/v0.3.0
